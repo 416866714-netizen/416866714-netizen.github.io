@@ -1,0 +1,8 @@
+name = "curly-frog-9f44"
+main = "worker.js"
+compatibility_date = "2026-05-08"
+
+[assets]
+directory = "."
+binding = "ASSETS"
+not_found_handling = "single-page-application"
