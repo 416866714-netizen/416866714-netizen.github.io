@@ -5,170 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>大壮｜长沙装修独立顾问</title>
   <meta name="description" content="大壮长沙装修独立顾问，专注装修签约前风险把关、报价审核、合同审核、签约前双检服务。不卖施工，不做监理，先站在业主一边看风险。" />
-  <meta name="theme-color" content="#fbfbfd" />
+  <meta name="theme-color" content="#000000" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="globalnav">
-    <a class="brand" href="#top" aria-label="大壮装修顾问"><span>壮</span><b>大壮装修顾问</b></a>
-    <nav>
-      <a href="#risk">风险</a>
-      <a href="#service">服务</a>
-      <a href="#price">价格</a>
-      <a href="#faq">边界</a>
-    </nav>
+    <a class="brand" href="#top"><span>壮</span><b>大壮装修顾问</b></a>
+    <nav><a href="#story">理念</a><a href="#risk">风险</a><a href="#price">价格</a><a href="#start">开始</a></nav>
     <button class="nav-btn js-open-qr" type="button">加微信</button>
   </header>
 
   <main id="top">
-    <section class="hero apple-panel">
-      <p class="eyebrow">长沙装修签约前独立顾问</p>
-      <h1>签字前，<br />先看清风险。</h1>
-      <p class="subhead">不卖施工，不做监理。大壮只帮长沙装修业主在交定金、签合同、付款之前，看报价、看合同、看风险。</p>
-      <div class="hero-actions">
-        <button class="link-btn js-open-qr" type="button">发资料给大壮</button>
-        <a class="link-btn" href="#price">查看服务价格</a>
+    <section class="cinema hero" data-scene="hero">
+      <div class="ambient one"></div><div class="ambient two"></div>
+      <div class="hero-copy" data-parallax="-0.18">
+        <p class="eyebrow reveal">长沙装修签约前独立顾问</p>
+        <h1 class="hero-title reveal"><span>签字前，</span><span>先看清风险。</span></h1>
+        <p class="subhead reveal">不卖施工，不做监理。大壮只帮长沙装修业主在交定金、签合同、付款之前，看报价、看合同、看风险。</p>
+        <div class="hero-actions reveal"><button class="blue-link js-open-qr" type="button">发资料给大壮</button><a class="blue-link" href="#price">查看价格</a></div>
       </div>
-      <div class="hero-device" aria-label="服务定位卡片">
-        <div class="screen-card">
-          <span>签约前双检</span>
-          <strong>报价 + 合同</strong>
-          <p>把看不懂的装修文件，变成你能判断的风险清单。</p>
+      <div class="floating-stack" data-parallax="0.16" aria-hidden="true">
+        <div class="float-card card-a"><small>报价体检</small><b>3 个最大风险</b><span>漏项 / 材料 / 增项</span></div>
+        <div class="float-card card-b"><small>合同审核</small><b>签约前追问清单</b><span>付款 / 工期 / 售后</span></div>
+        <div class="float-card card-c"><small>双检服务</small><b>¥498</b><span>报价 + 合同</span></div>
+      </div>
+      <div class="scroll-hint">向下滚动</div>
+    </section>
+
+    <section class="sticky-story" id="story">
+      <div class="story-pin">
+        <div class="story-visual">
+          <div class="doc doc-1"><i></i><i></i><i></i><em>¥</em></div>
+          <div class="doc doc-2"><i></i><i></i><i></i><em>?</em></div>
+          <div class="lens"></div>
+        </div>
+        <div class="story-copy">
+          <p class="eyebrow fade-step">苹果式体验，不是堆信息。</p>
+          <h2 class="fade-step">装修报价很复杂。<br>网页应该让人一眼明白。</h2>
+          <p class="fade-step muted">我把官网改成滚动叙事：先建立判断感，再展示风险，再给清晰价格入口。</p>
         </div>
       </div>
     </section>
 
-    <section class="split-hero" id="risk">
-      <article class="tile dark">
-        <p class="eyebrow">报价风险</p>
-        <h2>看起来便宜，<br />不代表真的省钱。</h2>
-        <p>漏项、模糊材料、工艺没写清、后期增项，往往在报价表里已经出现信号。</p>
-      </article>
-      <article class="tile light">
-        <p class="eyebrow">合同风险</p>
-        <h2>签完再发现，<br />通常已经晚了。</h2>
-        <p>付款节点、增项规则、工期责任、售后边界，签约前必须先问清楚。</p>
-      </article>
-    </section>
-
-    <section class="statement">
-      <p>大壮不是装修公司销售。</p>
-      <h2>我只做一件事：<br />在你做决定前，给你一个独立判断。</h2>
-    </section>
-
-    <section class="services" id="service">
-      <div class="section-head">
-        <p class="eyebrow">服务内容</p>
-        <h2>把复杂装修文件，拆成你能看懂的判断。</h2>
+    <section class="risk-showcase" id="risk">
+      <div class="section-head reveal"><p class="eyebrow">签约前最该看的</p><h2>四个风险，决定你后面会不会被动。</h2></div>
+      <div class="risk-grid">
+        <article class="risk-card reveal"><span>01</span><h3>报价漏项</h3><p>前期看起来低，后期逐项加钱。</p></article>
+        <article class="risk-card reveal"><span>02</span><h3>材料模糊</h3><p>品牌、型号、规格没有写清。</p></article>
+        <article class="risk-card reveal"><span>03</span><h3>付款过快</h3><p>钱付太前，后面谈判空间变小。</p></article>
+        <article class="risk-card reveal"><span>04</span><h3>合同边界</h3><p>工期、增项、售后没有说透。</p></article>
       </div>
-      <div class="service-grid">
-        <article>
-          <span>01</span>
-          <h3>装修需求初诊</h3>
-          <p>先判断你处在什么阶段，最该防什么风险，下一步该不该继续推进。</p>
-        </article>
-        <article>
-          <span>02</span>
-          <h3>报价 / 预算体检</h3>
-          <p>看明显漏项、大项异常、材料模糊、可能增项和签约前追问清单。</p>
-        </article>
-        <article>
-          <span>03</span>
-          <h3>合同风险检查</h3>
-          <p>看付款、工期、违约、增项、售后，以及报价和合同是否一致。</p>
-        </article>
-        <article>
-          <span>04</span>
-          <h3>签约前双检</h3>
-          <p>报价和合同一起看，适合准备交定金、准备签合同前的关键节点。</p>
-        </article>
+    </section>
+
+    <section class="compare-scene">
+      <div class="compare-wrap reveal">
+        <div class="before"><p>签约前</p><h2>看不懂</h2></div>
+        <div class="after"><p>大壮看完</p><h2>知道该问什么</h2></div>
+        <div class="divider"></div>
       </div>
     </section>
 
     <section class="price-section" id="price">
-      <div class="section-head compact">
-        <p class="eyebrow">服务价格</p>
-        <h2>按你的装修阶段选择。</h2>
-      </div>
-      <div class="price-grid">
-        <article class="price-card">
-          <p>免费初诊</p>
-          <h3>¥0</h3>
-          <span>微信沟通，判断阶段和风险。</span>
-          <button class="small-link js-open-qr" type="button">开始初诊</button>
-        </article>
-        <article class="price-card">
-          <p>装修前规划卡</p>
-          <h3>¥99</h3>
-          <span>适合半年/一年后装修的远期业主。</span>
-          <button class="small-link js-open-qr" type="button">做规划</button>
-        </article>
-        <article class="price-card featured">
-          <p>报价体检</p>
-          <h3>¥199</h3>
-          <span>30 分钟沟通 + 一页风险结论。</span>
-          <button class="small-link js-open-qr" type="button">发报价单</button>
-        </article>
-        <article class="price-card">
-          <p>合同审核</p>
-          <h3>¥399</h3>
-          <span>不是法律审核，是装修签约风险检查。</span>
-          <button class="small-link js-open-qr" type="button">看合同</button>
-        </article>
-        <article class="price-card bundle">
-          <p>签约前双检服务</p>
-          <h3>¥498</h3>
-          <span>报价体检 + 合同审核，适合签约前。</span>
-          <button class="small-link js-open-qr" type="button">做双检</button>
-        </article>
+      <div class="section-head reveal"><p class="eyebrow">服务价格</p><h2>价格清楚，边界清楚。</h2></div>
+      <div class="price-track">
+        <article class="price-card reveal"><p>免费初诊</p><h3>¥0</h3><span>判断阶段和风险。</span><button class="small-link js-open-qr" type="button">开始</button></article>
+        <article class="price-card reveal"><p>装修前规划卡</p><h3>¥99</h3><span>适合远期装修。</span><button class="small-link js-open-qr" type="button">规划</button></article>
+        <article class="price-card featured reveal"><p>报价体检</p><h3>¥199</h3><span>30 分钟沟通 + 一页结论。</span><button class="small-link js-open-qr" type="button">发报价</button></article>
+        <article class="price-card reveal"><p>合同审核</p><h3>¥399</h3><span>装修签约风险检查。</span><button class="small-link js-open-qr" type="button">看合同</button></article>
+        <article class="price-card bundle reveal"><p>签约前双检服务</p><h3>¥498</h3><span>报价体检 + 合同审核。</span><button class="small-link js-open-qr" type="button">做双检</button></article>
       </div>
     </section>
 
-    <section class="big-copy">
-      <h2>装修最需要顾问的阶段，<br />不是吵起来以后，<br />而是签字以前。</h2>
+    <section class="boundary-scene">
+      <h2 class="reveal">不卖施工。<br>不做监理。<br>只在签约前帮你判断。</h2>
     </section>
 
-    <section class="process">
-      <div class="section-head compact">
-        <p class="eyebrow">怎么开始</p>
-        <h2>三步就够。</h2>
-      </div>
-      <div class="process-row">
-        <div><b>1</b><span>说清房子面积、装修阶段和你最担心的问题。</span></div>
-        <div><b>2</b><span>发报价单、预算表、合同、方案图或聊天截图。</span></div>
-        <div><b>3</b><span>大壮告诉你：哪里有风险，下一步该问什么。</span></div>
-      </div>
-    </section>
-
-    <section class="boundary" id="faq">
-      <p class="eyebrow">服务边界</p>
-      <h2>只做签约前风险把关。</h2>
-      <div class="boundary-list">
-        <p>不卖施工。</p>
-        <p>不做监理。</p>
-        <p>不做纠纷调解。</p>
-        <p>不替装修公司承担交付责任。</p>
-      </div>
-    </section>
-
-    <section class="final-cta">
-      <p class="eyebrow">准备装修前，先别急着签</p>
-      <h2>把资料发来，<br />先让大壮看一眼。</h2>
-      <button class="pill js-open-qr" type="button">添加企业微信</button>
+    <section class="final-cta" id="start">
+      <div class="reveal"><p class="eyebrow">准备装修前，先别急着签</p><h2>把资料发来，<br>先让大壮看一眼。</h2><button class="pill js-open-qr" type="button">添加企业微信</button></div>
     </section>
   </main>
 
   <footer>大壮｜长沙装修独立顾问 · 签约前风险把关</footer>
-
-  <div class="modal" id="qrModal" aria-hidden="true">
-    <div class="mask js-close-qr"></div>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-label="添加大壮企业微信">
-      <button class="close js-close-qr" type="button" aria-label="关闭">×</button>
-      <h2>添加大壮企业微信</h2>
-      <p>可以直接发：报价单、预算表、合同、方案图、户型图、装修公司聊天截图。</p>
-      <img class="qr-img" src="wechat-qr.jpg" alt="大壮企业微信二维码" />
-    </div>
-  </div>
+  <div class="modal" id="qrModal" aria-hidden="true"><div class="mask js-close-qr"></div><div class="modal-card" role="dialog" aria-modal="true"><button class="close js-close-qr" type="button">×</button><h2>添加大壮企业微信</h2><p>可以直接发：报价单、预算表、合同、方案图、户型图、装修公司聊天截图。</p><img class="qr-img" src="wechat-qr.jpg" alt="大壮企业微信二维码" /></div></div>
   <script src="script.js"></script>
 </body>
 </html>
