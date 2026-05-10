@@ -268,8 +268,10 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/tools/xhs-login' && request.method === 'POST') { const form=await request.formData(); if (form.get('password')==='0000') return new Response('',{status:302,headers:{'Location':'/tools/xhs/','Set-Cookie':'xhs_auth=1; Path=/tools/xhs; Max-Age=2592000; HttpOnly; SameSite=Lax'}}); return passwordPage('密码不正确'); }
-    if (url.pathname.startsWith('/tools/xhs') && !hasXhsAuth(request)) return passwordPage();
+    if (url.pathname.startsWith('/tools/xhs') && !hasXhsAuth(request)) { const res = passwordPage(); res.headers.set('Cache-Control','no-store'); return res; }
     if (url.pathname === '/api/xhs-generate') return handleXhsGenerate(request, env);
-    return env.ASSETS.fetch(request);
+    const res = await env.ASSETS.fetch(request);
+    if (url.pathname.startsWith('/tools/xhs')) res.headers.set('Cache-Control','no-store');
+    return res;
   },
 };
