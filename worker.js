@@ -129,28 +129,18 @@ function usageState(input = {}, provider = 'deepseek') {
 }
 
 function cleanImages(input = {}) {
-  const b=(input.images?.benchmark||[]).slice(0,2);
-  const m=(input.images?.mine||[]).slice(0,2);
+  const b=(input.images?.benchmark||[]).slice(0,3).map(x=>({...x,group:'对标图'}));
+  const m=(input.images?.mine||[]).slice(0,6).map(x=>({...x,group:'我的素材图'}));
   const all=[...b,...m];
-  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 420000).slice(0, 4);
+  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 420000).slice(0, 9);
 }
 
-async function callOpenAI(input = {}, body = {}, env) {
-  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
-  const current = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 10000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 3000)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 5000)}` : '';
-  const userText = buildUserPrompt(input, body.prompt) + current;
-  const content = [{ type: 'text', text: userText }];
-  for (const img of cleanImages(input)) {
-    content.push({ type: 'image_url', image_url: { url: img.dataUrl, detail: 'high' } });
-  }
+async function openAIChat(messages, env, maxTokens = 1800) {
   const payload = {
-    model: input.model || env.OPENAI_MODEL || 'gpt-4o',
-    messages: [
-      { role: 'system', content: buildSystemPrompt(input) + '\n如果收到图片，必须先OCR和描述图片，再把图片信息用于对标拆解和素材匹配。' },
-      { role: 'user', content },
-    ],
-    temperature: 0.72,
-    max_tokens: 2600,
+    model: env.OPENAI_MODEL || 'gpt-5.5',
+    messages,
+    temperature: 0.58,
+    max_tokens: maxTokens,
     response_format: { type: 'json_object' },
   };
   const resp = await fetch((env.OPENAI_BASE_URL || 'https://api.openai.com/v1') + '/chat/completions', {
@@ -159,11 +149,52 @@ async function callOpenAI(input = {}, body = {}, env) {
     body: JSON.stringify(payload),
   });
   const text = await resp.text();
-  if (!resp.ok) return json({ error: 'OpenAI/GPT request failed', status: resp.status, detail: text.startsWith('<') ? '上游或 Worker 返回 HTML 错误，通常是图片/文本过大或模型超时。' : text.slice(0, 1000) }, 502);
-  let data;
-  try { data = JSON.parse(text); } catch (_) { return json({ error: 'OpenAI/GPT returned non-json', detail: text.slice(0, 1000) }, 502); }
-  const result = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
+  if (!resp.ok) throw new Error(text.startsWith('<') ? '上游或 Worker 返回 HTML 错误，通常是图片/文本过大或模型超时。' : text.slice(0, 1000));
+  const data = JSON.parse(text);
+  return data.choices?.[0]?.message?.content || '';
+}
+
+async function analyzeImages(input = {}, env) {
+  const imgs = cleanImages(input);
+  const out = [];
+  for (let i = 0; i < imgs.length; i++) {
+    const img = imgs[i];
+    const content = [
+      { type: 'text', text: `请识别这张${img.group}${i+1}。输出JSON：{"group":"对标图/我的素材图","ocr":"图中文字","visual":"画面描述","content_points":["要点"],"xhs_use":"适合在小红书里承担的作用","risk":"可能误读/看不清的地方"}` },
+      { type: 'image_url', image_url: { url: img.dataUrl, detail: 'low' } },
+    ];
+    try {
+      const raw = await openAIChat([
+        { role: 'system', content: '你是图片OCR和小红书图文拆解助手。只输出JSON。' },
+        { role: 'user', content },
+      ], env, 700);
+      out.push(normalizeDeepSeekJSON(raw));
+    } catch (e) {
+      out.push({ group: img.group, error: String(e.message || e).slice(0, 500) });
+    }
+  }
+  return out;
+}
+
+async function callOpenAI(input = {}, body = {}, env) {
+  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
+  let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
+  if (body.action !== 'revise') imageAnalysis = await analyzeImages(input, env);
+  const current = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 10000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 3000)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 5000)}` : '';
+  const userText = buildUserPrompt({...input, images:{}}, body.prompt) + `\n\n【图片识别摘要/OCR】\n${textBlock(JSON.stringify(imageAnalysis, null, 2), 9000)}` + current;
+  let raw;
+  try {
+    raw = await openAIChat([
+      { role: 'system', content: buildSystemPrompt(input) + '\n你已经拿到图片OCR摘要，必须把图片信息用于对标拆解和素材匹配。必须明确引用素材里的具体信息，不能泛泛输出装修模板。' },
+      { role: 'user', content: userText },
+    ], env, 3200);
+  } catch (e) {
+    return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e.message || e).slice(0, 1000) }, 502);
+  }
+  const result = normalizeDeepSeekJSON(raw);
+  result.imageAnalysis = imageAnalysis;
   result.readState = usageState(input, 'openai');
+  result.readState.imageAnalysisCount = imageAnalysis.length;
   return json(result);
 }
 
@@ -173,7 +204,7 @@ async function handleXhsGenerate(request, env) {
     return json({ ok: Boolean(env.DEEPSEEK_API_KEY), deepseek: Boolean(env.DEEPSEEK_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'multi', endpoint: '/api/xhs-generate' });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
-  if (!env.DEEPSEEK_API_KEY) return json({ error: 'DEEPSEEK_API_KEY is not configured on server.' }, 500);
+  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
 
   const body = await request.json().catch(() => ({}));
   const input = body.input || {};
