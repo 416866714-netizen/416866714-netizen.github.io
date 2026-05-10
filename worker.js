@@ -222,6 +222,42 @@ async function callOpenAI(input = {}, body = {}, env) {
   return json(result);
 }
 
+
+function scriptsImages(input = {}) {
+  return (input.images || []).filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 420000).slice(0, 6).map(x=>({...x,group:'聊天记录截图'}));
+}
+async function analyzeScriptImages(input = {}, env) {
+  const imgs = scriptsImages(input), out=[];
+  for (let i=0;i<imgs.length;i++) {
+    const img=imgs[i];
+    try {
+      const raw=await openAIChat([
+        {role:'system',content:'你是聊天记录OCR和销售话术风格分析助手。只输出JSON。'},
+        {role:'user',content:[{type:'text',text:'识别这张聊天截图，区分“我说的”和“客户说的”，提取我的语气、句式、追问方式、成交节奏。输出JSON：{"ocr":"完整文字","my_style":"我的表达风格","customer_points":["客户关注点"],"usable_phrases":["可复用句子"],"avoid":"不确定/看不清"}'},{type:'image_url',image_url:{url:img.dataUrl,detail:'low'}}]}
+      ],env,900);
+      out.push(normalizeDeepSeekJSON(raw));
+    } catch(e) { out.push({error:String(e.message||e).slice(0,500)}); }
+  }
+  return out;
+}
+async function handleScriptsReply(request, env) {
+  if (request.method === 'OPTIONS') return new Response(null,{headers:CORS});
+  if (request.method === 'GET') return json({ok:Boolean(env.OPENAI_API_KEY), endpoint:'/api/scripts-reply', model: env.OPENAI_MODEL || 'gpt-5.5'});
+  if (request.method !== 'POST') return json({error:'Method Not Allowed'},405);
+  if (!env.OPENAI_API_KEY) return json({error:'OPENAI_API_KEY is not configured'},500);
+  const body=await request.json().catch(()=>({}));
+  const input=body.input||{};
+  const imageStyle = body.action==='revise' ? [] : await analyzeScriptImages(input, env);
+  const prompt = `【客户原话】\n${textBlock(input.customerQuestion,3000)}\n\n【场景】${input.scene||''}\n【客户状态】${input.status||''}\n\n【品牌知识库】\n${textBlock(input.brandKb,7000)}\n\n【标准话术库】\n${textBlock(input.scriptKb,9000)}\n\n【我的聊天风格库】\n${textBlock(input.styleKb,7000)}\n\n【聊天截图风格分析】\n${textBlock(JSON.stringify(imageStyle,null,2),9000)}\n\n【当前版本】\n${textBlock(body.current,6000)}\n\n【本次修改要求】\n${textBlock(body.revision,2000)}\n\n请输出JSON：{"best":"可直接发送的推荐回复，短句，像真人，不油腻，已空好行","versions":"温柔版/专业版/强势版/微信版/小红书私信版","analysis":"客户类型、真实意图、风险点、成交机会","next":"如果客户回复/不回复分别怎么接下一句","style":"从聊天记录里学到的我的表达风格和可复用句式"}`;
+  let raw;
+  try { raw=await openAIChat([
+    {role:'system',content:'你是大壮公司的销售话术总教练，擅长微信、小红书私信、评论区和代运营成交沟通。必须结合品牌知识库、标准话术库和我的聊天风格，输出自然、克制、有效的中文回复。不要像AI，不要油腻，不要过度承诺。输出JSON。'},
+    {role:'user',content:prompt}
+  ],env,2600); } catch(e) { return json({error:'GPT request failed', detail:String(e.message||e).slice(0,1000)},502); }
+  const r=normalizeDeepSeekJSON(raw);
+  return json({best:formatXhsText(r.best||r.final||''),versions:r.versions||'',analysis:r.analysis||'',next:r.next||'',style:r.style||'',imageStyle});
+}
+
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
@@ -268,10 +304,11 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/tools/xhs-login' && request.method === 'POST') { const form=await request.formData(); if (form.get('password')==='0000') return new Response('',{status:302,headers:{'Location':'/tools/xhs/','Set-Cookie':'xhs_auth=1; Path=/tools/xhs; Max-Age=2592000; HttpOnly; SameSite=Lax'}}); return passwordPage('密码不正确'); }
-    if (url.pathname.startsWith('/tools/xhs') && !hasXhsAuth(request)) { const res = passwordPage(); res.headers.set('Cache-Control','no-store'); return res; }
+    if ((url.pathname.startsWith('/tools/xhs') || url.pathname.startsWith('/tools/scripts')) && !hasXhsAuth(request)) { const res = passwordPage(); res.headers.set('Cache-Control','no-store'); return res; }
     if (url.pathname === '/api/xhs-generate') return handleXhsGenerate(request, env);
+    if (url.pathname === '/api/scripts-reply') return handleScriptsReply(request, env);
     const res = await env.ASSETS.fetch(request);
-    if (url.pathname.startsWith('/tools/xhs')) res.headers.set('Cache-Control','no-store');
+    if (url.pathname.startsWith('/tools/xhs') || url.pathname.startsWith('/tools/scripts')) res.headers.set('Cache-Control','no-store');
     return res;
   },
 };
