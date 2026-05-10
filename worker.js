@@ -53,13 +53,13 @@ function buildUserPrompt(input = {}, prompt = '') {
   return `请根据以下资料生成小红书图文方案。
 
 【企业知识库】
-${textBlock(input.knowledgeText, 12000)}
+${textBlock(input.knowledgeText, 8000)}
 
 【对标标题】
 ${textBlock(input.benchmarkTitle, 1200)}
 
 【对标正文】
-${textBlock(input.benchmarkText, 8000)}
+${textBlock(input.benchmarkText, 5000)}
 
 【对标亮点/我喜欢它哪里】
 ${textBlock(input.benchmarkNotes, 4000)}
@@ -68,7 +68,7 @@ ${textBlock(input.benchmarkNotes, 4000)}
 ${textBlock(input.benchmarkAnalysis, 3000)}
 
 【我的素材/案例背景】
-${textBlock(input.myNotes, 6000)}
+${textBlock(input.myNotes, 4000)}
 
 【核心观点】
 ${textBlock(input.corePoint, 1200)}
@@ -129,10 +129,10 @@ function usageState(input = {}, provider = 'deepseek') {
 }
 
 function cleanImages(input = {}) {
-  const b=(input.images?.benchmark||[]).slice(0,4);
-  const m=(input.images?.mine||[]).slice(0,6);
+  const b=(input.images?.benchmark||[]).slice(0,2);
+  const m=(input.images?.mine||[]).slice(0,2);
   const all=[...b,...m];
-  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 900000).slice(0, 10);
+  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 420000).slice(0, 4);
 }
 
 async function callOpenAI(input = {}, body = {}, env) {
@@ -150,7 +150,7 @@ async function callOpenAI(input = {}, body = {}, env) {
       { role: 'user', content },
     ],
     temperature: 0.72,
-    max_tokens: 4200,
+    max_tokens: 2600,
     response_format: { type: 'json_object' },
   };
   const resp = await fetch((env.OPENAI_BASE_URL || 'https://api.openai.com/v1') + '/chat/completions', {
@@ -187,7 +187,7 @@ async function handleXhsGenerate(request, env) {
       { role: 'user', content: buildUserPrompt(input, body.prompt) + reviseContext },
     ],
     temperature: 0.78,
-    max_tokens: 4200,
+    max_tokens: 2600,
     response_format: { type: 'json_object' },
   };
 
