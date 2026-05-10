@@ -4,17 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
-  <meta name="theme-color" content="#f5f5f7" />
+  <meta name="theme-color" content="#f6f3ee" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <title>大壮项目驾驶舱</title>
   <style>
-    :root{--bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--sub:#6e6e73;--line:rgba(0,0,0,.08);--blue:#0071e3;--red:#e60012;--green:#34c759;--orange:#ff9500}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}a{text-decoration:none;color:inherit}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang SC","Microsoft YaHei",Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-    body.lock{overflow:hidden}
-    .shell{max-width:1180px;margin:0 auto;padding:20px 20px 80px}
-    .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 16px;margin:0 -20px;background:rgba(245,245,247,.82);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--line)}
-    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;font-size:14px;font-weight:700}.brand span{width:28px;height:28px;border-radius:9px;background:var(--red);color:#fff;display:grid;place-items:center}.topbar nav{display:flex;gap:18px;color:var(--sub);font-size:13px}.pill{border:0;border-radius:999px;background:var(--blue);color:#fff;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer}.brand-hero-card{background:linear-gradient(180deg,#fff,rgba(255,255,255,.78));border:1px solid var(--line);border-radius:34px;padding:30px;box-shadow:0 24px 80px rgba(0,0,0,.06)}.brand-title{margin:0 0 16px;font-size:22px;font-weight:900;letter-spacing:-.04em}.brand-statement{margin:0;font-size:clamp(34px,5vw,58px);line-height:1.14;letter-spacing:-.065em;font-weight:900}.brand-statement span{display:block}.mvv{display:grid;gap:14px;margin-top:26px}.mvv-row{display:grid;grid-template-columns:86px 1fr;gap:16px;padding:18px 0;border-top:1px solid var(--line)}.mvv-row b{font-size:22px;letter-spacing:-.04em}.mvv-row p{margin:0;color:#2d2d2f;font-size:clamp(20px,2.5vw,30px);line-height:1.45;font-weight:650;letter-spacing:-.045em}.mvv-row ul{margin:0;padding-left:1.1em;color:#2d2d2f;font-size:clamp(18px,2.2vw,26px);line-height:1.55;font-weight:650;letter-spacing:-.04em}.hero{padding:30px 4px 18px}.eyebrow{margin:0 0 14px;color:var(--sub);font-size:16px;font-weight:800;letter-spacing:-.01em}.hero h1{margin:0;font-size:clamp(40px,6vw,74px);line-height:1.02;letter-spacing:-.07em}.lead{max-width:920px;margin:20px 0 0;color:#424245;font-size:clamp(18px,2.2vw,25px);line-height:1.45;font-weight:600}.status-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px}.status{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 18px 60px rgba(0,0,0,.05)}.status b{display:block;font-size:13px;color:var(--sub)}.status strong{display:block;margin-top:7px;font-size:18px;letter-spacing:-.03em}.section{padding:28px 0 0}.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}.section-head h2{margin:0;font-size:clamp(28px,4vw,46px);line-height:1.08;letter-spacing:-.06em}.section-head p{margin:0;color:var(--sub)}.project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 18px 60px rgba(0,0,0,.05);overflow:hidden}.card .top{display:flex;justify-content:space-between;align-items:center}.tag{font-size:12px;font-weight:800;border-radius:999px;padding:6px 10px;background:#f5f5f7;color:#515154}.card h3{margin:18px 0 8px;font-size:28px;line-height:1.08;letter-spacing:-.05em}.card p{margin:0;color:var(--sub);line-height:1.55;font-size:15px}.bar{height:8px;margin:18px 0 10px;background:#ececf1;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:var(--blue)}.card ul{margin:14px 0 0;padding-left:18px;color:#444;line-height:1.8;font-size:14px}.card a{position:absolute;right:22px;bottom:20px;color:var(--blue);text-decoration:none;font-weight:800;font-size:14px}.brand-card .bar i{background:var(--red)}.agency-card .bar i{background:var(--green)}.consultant-card .bar i{background:var(--orange)}.split{display:grid;grid-template-columns:.95fr 1.05fr;gap:14px;align-items:start}.panel{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 18px 60px rgba(0,0,0,.05)}.panel h3{margin:0 0 14px;font-size:24px;letter-spacing:-.05em}.todo{display:grid;gap:10px}.todo div{display:flex;gap:12px;padding:14px 16px;border-radius:18px;background:#fafafc}.todo b{color:var(--blue)}.matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.product{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.product div{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.04)}.product strong{display:block;font-size:26px;letter-spacing:-.05em}.product b{display:block;font-size:16px}.product span{display:block;margin-top:8px;color:var(--sub);line-height:1.5}.matrix div{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px}.matrix b{display:block;font-size:16px}.matrix span{display:block;margin-top:8px;color:var(--sub);line-height:1.5}.links{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.link-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;display:block;box-shadow:0 18px 60px rgba(0,0,0,.04)}.link-card b{display:block;font-size:18px}.link-card span{display:block;margin-top:8px;color:var(--sub);line-height:1.5}.footer{padding:24px 0 0;color:var(--sub);font-size:13px;text-align:center}.reveal{opacity:0;transform:translateY(18px);transition:opacity .65s cubic-bezier(.2,.8,.2,1),transform .65s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}.overlay{position:fixed;inset:0;z-index:999;background:rgba(245,245,247,.92);backdrop-filter:blur(22px);display:grid;place-items:center;padding:20px}.gate{width:min(460px,100%);background:#fff;border:1px solid var(--line);border-radius:28px;padding:26px;box-shadow:0 28px 100px rgba(0,0,0,.14);text-align:center}.gate h2{margin:12px 0 10px;font-size:30px;letter-spacing:-.05em}.gate p{margin:0;color:var(--sub);line-height:1.6}.gate input{width:100%;margin-top:18px;border:1px solid #d2d2d7;border-radius:18px;padding:14px 16px;font-size:16px;outline:none}.gate .actions{display:flex;gap:10px;margin-top:14px}.gate .actions button{flex:1;border:0;border-radius:16px;padding:12px 14px;font-size:15px;font-weight:800;cursor:pointer}.gate .actions .submit{background:var(--blue);color:#fff}.gate .actions .ghost{background:#f2f2f7;color:#1d1d1f}.hint{margin-top:12px;color:var(--sub);font-size:13px}.hide{display:none!important}@media(max-width:980px){.status-strip,.project-grid,.split,.matrix,.links{grid-template-columns:1fr 1fr}.product{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.shell{padding:14px 14px 64px}.brand-hero-card{border-radius:28px;padding:22px}.brand-title{font-size:20px}.brand-statement{font-size:32px;line-height:1.18}.mvv-row{grid-template-columns:1fr;gap:8px;padding:16px 0}.mvv-row b{font-size:24px}.mvv-row p,.mvv-row ul{font-size:22px}.topbar{margin:0 -14px;padding:0 14px}.topbar nav{display:none}.status-strip,.project-grid,.split,.matrix,.links,.product{grid-template-columns:1fr}.hero{padding-top:26px}.hero h1{font-size:42px}.lead{font-size:18px}.section-head{flex-direction:column;align-items:start}.card a{right:18px;bottom:18px}.gate{border-radius:24px;padding:22px}}
+    :root{--bg:#f6f3ee;--paper:#fffaf2;--card:#fff;--ink:#171717;--muted:#76716b;--line:rgba(28,24,20,.1);--red:#e60012;--blue:#0071e3;--green:#34c759;--orange:#ff9500;--shadow:0 24px 80px rgba(44,32,20,.09)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}a{text-decoration:none;color:inherit}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang SC","Microsoft YaHei",Arial,sans-serif;background:radial-gradient(circle at 10% -10%,#fff 0,#f6f3ee 42%,#ece8df 100%);color:var(--ink);-webkit-font-smoothing:antialiased}body.dark{--bg:#111113;--paper:#19191c;--card:#1d1d20;--ink:#f5f5f7;--muted:#a1a1a6;--line:rgba(255,255,255,.1);background:radial-gradient(circle at 20% 0,#29252b 0,#121214 48%,#09090a 100%);color:var(--ink)}body.lock{overflow:hidden}.shell{max-width:1180px;margin:0 auto;padding:20px 20px 88px}.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 16px;margin:0 -20px;background:rgba(246,243,238,.78);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--line)}body.dark .topbar{background:rgba(18,18,20,.78)}.brand{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:800}.brand span{width:28px;height:28px;border-radius:9px;background:var(--red);color:#fff;display:grid;place-items:center}.topbar nav{display:flex;gap:18px;color:var(--muted);font-size:13px}.pill{border:0;border-radius:999px;background:#171717;color:#fff;padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer}body.dark .pill{background:#f5f5f7;color:#171717}
+    .hero{padding:34px 0 18px}.hero-stage{position:relative;min-height:620px;border-radius:44px;background:linear-gradient(135deg,var(--paper) 0,#fff 55%,#f0ebe1 100%);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:1.08fr .92fr;gap:0}body.dark .hero-stage{background:linear-gradient(135deg,#202024 0,#171719 100%)}.hero-stage:before{content:"";position:absolute;right:-150px;top:-190px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(230,0,18,.18),rgba(230,0,18,0) 68%)}.hero-stage:after{content:"";position:absolute;left:56px;top:54px;width:84px;height:10px;border-radius:999px;background:var(--red)}.hero-copy{position:relative;z-index:1;padding:112px 56px 56px;display:flex;flex-direction:column;justify-content:flex-end}.eyebrow{margin:0 0 14px;color:var(--muted);font-size:15px;font-weight:900;letter-spacing:.04em}.hero h1{margin:0;font-size:clamp(58px,8.4vw,116px);line-height:.92;letter-spacing:-.085em}.hero h1 span{display:block}.lead{max-width:680px;margin:26px 0 0;color:#504b45;font-size:clamp(19px,2.15vw,27px);line-height:1.48;letter-spacing:-.035em;font-weight:650}body.dark .lead{color:#d2d2d7}.hero-side{position:relative;z-index:1;margin:22px;align-self:stretch;border-radius:32px;background:#171717;color:#fff;padding:28px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.hero-side:before{content:"";position:absolute;right:-70px;bottom:-95px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(0,113,227,.48),rgba(0,113,227,0) 70%)}.side-mark{position:relative;width:74px;height:74px;border-radius:22px;background:var(--red);display:grid;place-items:center;font-size:26px;font-weight:950;letter-spacing:-.08em}.status-strip{position:relative;display:grid;gap:12px}.status{padding:18px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09)}.status b{display:block;color:#a1a1a6;font-size:12px}.status strong{display:block;margin-top:8px;font-size:19px;line-height:1.35;letter-spacing:-.035em}.brand-principle{position:relative;z-index:1;margin-top:28px;padding-top:26px;border-top:1px solid rgba(255,255,255,.12)}.brand-principle small{display:block;color:#a1a1a6;font-weight:900;margin-bottom:10px}.brand-principle p{margin:0;font-size:22px;line-height:1.38;font-weight:850;letter-spacing:-.045em}
+    .section{padding:34px 0 0}.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:18px}.section-head h2{margin:0;font-size:clamp(30px,4.4vw,54px);line-height:1.08;letter-spacing:-.065em}.section-head p{margin:0;color:var(--muted)}.philosophy{display:grid;grid-template-columns:.95fr 1.05fr;gap:14px}.quote-card{border-radius:34px;background:#171717;color:#fff;padding:34px;min-height:360px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow);overflow:hidden;position:relative}.quote-card:after{content:"";position:absolute;right:-90px;top:-100px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(230,0,18,.38),rgba(230,0,18,0) 70%)}.quote-card h2{position:relative;margin:0;font-size:clamp(36px,5.8vw,72px);line-height:1.05;letter-spacing:-.075em}.quote-card p{position:relative;margin:26px 0 0;color:#a1a1a6;font-size:16px;line-height:1.7}.value-grid{display:grid;grid-template-columns:1fr;gap:12px}.value-card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:26px;box-shadow:var(--shadow)}.value-card span{display:block;color:var(--muted);font-size:13px;font-weight:900;margin-bottom:10px}.value-card b{display:block;font-size:27px;line-height:1.28;letter-spacing:-.05em}.project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:24px;box-shadow:var(--shadow);overflow:hidden;min-height:370px;display:flex;flex-direction:column}.card .top{display:flex;justify-content:space-between;align-items:center}.tag{font-style:normal;font-size:12px;font-weight:900;border-radius:999px;padding:7px 11px;background:#f3f0ea;color:#554f48}body.dark .tag{background:#2a2a2d;color:#d2d2d7}.card h3{margin:38px 0 10px;font-size:31px;line-height:1.08;letter-spacing:-.055em}.card p{margin:0;color:var(--muted);line-height:1.58;font-size:15px}.bar{height:8px;margin:22px 0 10px;background:#ece8df;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:var(--blue)}body.dark .bar{background:#2a2a2d}.card ul{margin:12px 0 0;padding-left:18px;color:#504b45;line-height:1.8;font-size:14px}body.dark .card ul{color:#d2d2d7}.card a{margin-top:auto;color:var(--blue);font-weight:900;font-size:14px}.brand-card .bar i{background:var(--red)}.agency-card .bar i{background:var(--green)}.consultant-card .bar i{background:var(--orange)}.split{display:grid;grid-template-columns:.95fr 1.05fr;gap:14px;align-items:start}.panel{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:24px;box-shadow:var(--shadow)}.panel h3{margin:0 0 16px;font-size:28px;letter-spacing:-.055em}.todo{display:grid;gap:10px}.todo div{display:flex;gap:12px;padding:15px 16px;border-radius:18px;background:rgba(0,0,0,.035)}body.dark .todo div{background:rgba(255,255,255,.06)}.todo b{color:var(--blue)}.matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.matrix div{background:rgba(0,0,0,.035);border-radius:22px;padding:20px}body.dark .matrix div{background:rgba(255,255,255,.06)}.matrix b,.matrix span{display:block}.matrix span{margin-top:8px;color:var(--muted);line-height:1.5}.links{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.link-card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:22px;display:block;box-shadow:var(--shadow);transition:transform .35s,box-shadow .35s}.link-card:hover{transform:translateY(-4px);box-shadow:0 28px 90px rgba(44,32,20,.13)}.link-card b{display:block;font-size:19px}.link-card span{display:block;margin-top:8px;color:var(--muted);line-height:1.55}.footer{padding:28px 0 0;color:var(--muted);font-size:13px;text-align:center}.reveal{opacity:0;transform:translateY(18px);transition:opacity .65s cubic-bezier(.2,.8,.2,1),transform .65s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}.overlay{position:fixed;inset:0;z-index:999;background:rgba(246,243,238,.9);backdrop-filter:blur(22px);display:grid;place-items:center;padding:20px}body.dark .overlay{background:rgba(18,18,20,.9)}.gate{width:min(460px,100%);background:var(--card);border:1px solid var(--line);border-radius:30px;padding:28px;box-shadow:0 28px 100px rgba(0,0,0,.14);text-align:center}.gate h2{margin:12px 0 10px;font-size:32px;letter-spacing:-.055em}.gate p{margin:0;color:var(--muted);line-height:1.6}.gate input{width:100%;margin-top:18px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:18px;padding:14px 16px;font-size:16px;outline:none}.gate .actions{display:flex;gap:10px;margin-top:14px}.gate .actions button{flex:1;border:0;border-radius:16px;padding:12px 14px;font-size:15px;font-weight:900;cursor:pointer}.gate .actions .submit{background:var(--blue);color:#fff}.gate .actions .ghost{background:#f2f2f7;color:#1d1d1f}.hint{margin-top:12px;color:var(--muted);font-size:13px}.hide{display:none!important}
+    @media(max-width:980px){.hero-stage,.philosophy,.project-grid,.split,.links{grid-template-columns:1fr}.hero-stage{min-height:auto}.hero-copy{padding:98px 34px 40px}.hero-side{min-height:430px}.matrix{grid-template-columns:1fr}}@media(max-width:720px){.shell{padding:14px 14px 64px}.topbar{margin:0 -14px;padding:0 14px}.topbar nav{display:none}.hero{padding-top:16px}.hero-stage{border-radius:32px}.hero-copy{padding:90px 22px 34px}.hero-stage:after{left:24px;top:34px}.hero h1{font-size:54px}.lead{font-size:18px}.hero-side{margin:12px;border-radius:24px;padding:22px;min-height:390px}.section-head{flex-direction:column;align-items:start}.quote-card{min-height:320px}.links{grid-template-columns:1fr}.gate{border-radius:24px;padding:22px}}
   </style>
 </head>
 <body class="lock">
@@ -32,24 +31,40 @@
   <div class="shell" id="app">
     <header class="topbar">
       <a class="brand" href="#top"><span>壮</span><b>项目驾驶舱</b></a>
-      <nav><a href="#projects">三个项目</a><a href="#products">产品体系</a><a href="#focus">当前重点</a><a href="#links">入口</a></nav>
+      <nav><a href="#philosophy">品牌理念</a><a href="#projects">三个项目</a><a href="#focus">当前重点</a><a href="#links">入口</a></nav>
       <button class="pill" id="theme">◐</button>
     </header>
 
     <main id="top">
       <section class="hero reveal">
-        <div class="brand-hero-card">
-          <p class="brand-title">大壮终身品牌</p>
-          <h1 class="brand-statement">
-            <span>以信任为入口，</span>
-            <span>以判断为壁垒，</span>
-            <span>以系统为杠杆，</span>
-            <span>长期构建大壮的行业资产。</span>
-          </h1>
-          <div class="mvv">
-            <div class="mvv-row"><b>使命</b><p>重建装修决策里的信任感。</p></div>
-            <div class="mvv-row"><b>愿景</b><p>成为长沙装修行业最值得信任的判断入口。</p></div>
-            <div class="mvv-row"><b>价值观</b><ul><li>长期信用高于短期成交。</li><li>判断力是核心壁垒。</li><li>真实业务必须沉淀资产。</li><li>系统放大个人，不消耗个人。</li></ul></div>
+        <div class="hero-stage">
+          <div class="hero-copy">
+            <p class="eyebrow">大壮终身品牌 · 内部总控台</p>
+            <h1><span>看清项目</span><span>守住主线</span></h1>
+            <p class="lead">这不是资料堆放页，而是大壮长期事业的判断面板：看每条业务线正在沉淀什么，也看哪些事情正在消耗大壮。</p>
+          </div>
+          <aside class="hero-side" aria-label="当前状态">
+            <div class="side-mark">DZ</div>
+            <div class="status-strip">
+              <div class="status"><b>更新时间</b><strong>2026-05-10</strong></div>
+              <div class="status"><b>负责人</b><strong>谭智敏</strong></div>
+              <div class="status"><b>当前主线</b><strong>信息补全 · 产品成型 · 资产沉淀</strong></div>
+            </div>
+            <div class="brand-principle"><small>判断原则</small><p>沉淀大壮，<br>不消耗大壮。</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section reveal" id="philosophy">
+        <div class="philosophy">
+          <article class="quote-card">
+            <div><p class="eyebrow">大壮终身品牌</p><h2>以信任为入口，<br>以判断为壁垒，<br>以系统为杠杆。</h2></div>
+            <p>目标不是做一个普通装修账号，而是长期构建大壮在长沙装修行业里的信任资产、判断标准和可复制系统。</p>
+          </article>
+          <div class="value-grid">
+            <article class="value-card"><span>MISSION · 使命</span><b>重建装修决策里的信任感。</b></article>
+            <article class="value-card"><span>VISION · 愿景</span><b>成为长沙装修行业最值得信任的判断入口。</b></article>
+            <article class="value-card"><span>VALUE · 价值观</span><b>长期信用高于短期成交，判断力是核心壁垒。</b></article>
           </div>
         </div>
       </section>
@@ -57,66 +72,55 @@
       <section class="section reveal" id="projects">
         <div class="section-head">
           <div><p class="eyebrow">三个正式主项目</p><h2>母品牌统领，两条业务线落地。</h2></div>
-          <p>详情入口已连接飞书云文档</p>
+          <p>点开进入飞书详情</p>
         </div>
         <div class="project-grid">
           <article class="card brand-card">
             <div class="top"><span>01</span><em class="tag">母项目</em></div>
             <h3>大壮终身品牌</h3>
-            <p>最高层级母项目，统领长期事业方向，负责沉淀品牌、内容、案例、方法论、AI 工作流和判断标准。</p>
-            <div class="bar"><i style="width:55%"></i></div>
-            <ul><li>阶段：产品体系 V1 已并入主线</li><li>重点：双边模型与资产沉淀</li><li>状态：阶段性已确认</li></ul>
+            <p>最高层级母项目，统领大壮未来 10 年、20 年甚至更长期的个人事业方向。</p>
+            <div class="bar"><i style="width:40%"></i></div>
+            <ul><li>阶段：战略建模前信息补全</li><li>重点：补齐关键问题</li><li>进度：40%</li></ul>
             <a href="https://u689puh5vc.feishu.cn/docx/Xs22dBGuvo5KSBx9Qp7cuurinmX" target="_blank" rel="noopener">进入详情</a>
           </article>
           <article class="card agency-card">
             <div class="top"><span>02</span><em class="tag">B 端增长线</em></div>
             <h3>大壮代运营</h3>
-            <p>短期现金流和样板案例主线：先通过按效果付费跑出真实流量、到店、签单和分成，再支撑 4999 元/月咨询。</p>
-            <div class="bar"><i style="width:48%"></i></div>
-            <ul><li>样板：不收月费，只拿分成</li><li>标准：4999 元/月运营咨询</li><li>门槛：老板愿意配合</li></ul>
+            <p>短期现金流主线，面向装修、设计、施工、定制品牌，沉淀案例与方法论。</p>
+            <div class="bar"><i style="width:35%"></i></div>
+            <ul><li>阶段：现金流与案例沉淀</li><li>重点：客户筛选、AI 工作流</li><li>进度：35%</li></ul>
             <a href="https://u689puh5vc.feishu.cn/docx/NyTid96rlo6gtxx5NvbcNGHAnl4" target="_blank" rel="noopener">进入详情</a>
           </article>
           <article class="card consultant-card">
             <div class="top"><span>03</span><em class="tag">C 端信任线</em></div>
             <h3>大壮装修顾问</h3>
-            <p>中长期主品牌方向。前端产品不是利润中心，而是建立信任、筛选客户、进入后端资源匹配。</p>
-            <div class="bar"><i style="width:58%"></i></div>
-            <ul><li>产品：99 / 199 / 399 / 498</li><li>利润：后端资源匹配</li><li>边界：不做监理和纠纷调解</li></ul>
+            <p>中长期主品牌方向，面向长沙装修业主，建立独立顾问和判断型信任资产。</p>
+            <div class="bar"><i style="width:45%"></i></div>
+            <ul><li>阶段：服务产品化启动</li><li>重点：官网、服务边界、交付</li><li>进度：45%</li></ul>
             <a href="https://u689puh5vc.feishu.cn/docx/VTxbdmIv8ouOtyxfB3bcgeNCn1o" target="_blank" rel="noopener">进入详情</a>
           </article>
-        </div>
-      </section>
-
-      <section class="section reveal" id="products">
-        <div class="section-head"><div><p class="eyebrow">产品体系 V1</p><h2>当前阶段，大壮到底卖什么。</h2></div><p>2026-05-10 已确认</p></div>
-        <div class="product">
-          <div><strong>99</strong><b>需求诊断</b><span>装修需求诊断 + 装修公司筛选标准 PDF，20 分钟一对一。</span></div>
-          <div><strong>199</strong><b>报价体检</b><span>包含 99 服务，输出 10 页报价 / 预算审核报告。</span></div>
-          <div><strong>399</strong><b>签约辅助</b><span>合同是否合规、需求是否满足、潜在风险提醒。</span></div>
-          <div><strong>498</strong><b>签约前双检</b><span>199 报价体检 + 399 合同风险提醒的组合服务。</span></div>
-          <div><strong>4999/月</strong><b>B 端咨询</b><span>每月 4 次深度见面咨询 + 1 份运营策划报告及复盘。</span></div>
         </div>
       </section>
 
       <section class="section split reveal" id="focus">
         <div class="panel">
           <p class="eyebrow">当前最重要</p>
-          <h3>先用真实业务证明，再产品化放大。</h3>
+          <h3>不要急着铺开，先把判断补完整。</h3>
           <div class="todo">
-            <div><b>1</b><span>C 端 99/199/399/498 负责建立信任和筛选客户，不把小单当主要利润中心。</span></div>
-            <div><b>2</b><span>后端优先连接装修公司、半包施工方、全屋定制、材料商，推荐费和佣金暂不统一。</span></div>
-            <div><b>3</b><span>B 端先跑按效果付费样板案例：小红书引流 → 微信承接 → 到店转化 → 签单分成。</span></div>
-            <div><b>4</b><span>4999 元/月服务卖的是判断、策划、复盘和方向调整，不是普通代发笔记。</span></div>
-            <div><b>5</b><span>每个客户、每个项目都必须反哺内容资产、案例资产、方法论资产和 AI 工作流。</span></div>
+            <div><b>1</b><span>不急着执行 2 万字研究报告。</span></div>
+            <div><b>2</b><span>先回答第一轮信息补全 12 个问题。</span></div>
+            <div><b>3</b><span>代运营项目必须反哺案例、方法论和 AI 工作流。</span></div>
+            <div><b>4</b><span>装修顾问必须守住服务边界，不变成免费装修客服。</span></div>
+            <div><b>5</b><span>所有新机会都用“沉淀还是消耗”做第一判断。</span></div>
           </div>
         </div>
         <div class="panel">
           <p class="eyebrow">战略框架</p>
-          <h3>C 端信任入口 + B 端增长合作 + 方法论资产。</h3>
+          <h3>三条资产线 × 四层升级路径 = 12 个待验证赛道。</h3>
           <div class="matrix">
-            <div><b>C 端业主信任线</b><span>需求诊断、报价体检、合同风险、签约前双检，最终沉淀业主信任和评分标准。</span></div>
-            <div><b>B 端装修公司增长线</b><span>按效果付费样板服务、4999 元/月咨询、高级定制增长服务。</span></div>
-            <div><b>方法论 / 知识产品线</b><span>报价问题库、服务 SOP、内容案例库、AI 工作流和可复制模板。</span></div>
+            <div><b>C 端业主信任线</b><span>避坑、筛选、推荐、决策支持</span></div>
+            <div><b>B 端装修公司增长线</b><span>获客、内容、转化、成交闭环</span></div>
+            <div><b>方法论 / 知识产品线</b><span>SOP、训练营、陪跑、模板、授权</span></div>
           </div>
         </div>
       </section>
@@ -124,8 +128,8 @@
       <section class="section reveal" id="links">
         <div class="section-head"><div><p class="eyebrow">入口</p><h2>常用项目入口，集中放这里。</h2></div></div>
         <div class="links">
-          <a class="link-card" href="https://u689puh5vc.feishu.cn/docx/Xs22dBGuvo5KSBx9Qp7cuurinmX" target="_blank" rel="noopener"><b>大壮终身品牌</b><span>飞书云文档 · 母品牌总档案 / 产品体系 V1 / 战略共识</span></a>
-          <a class="link-card" href="https://u689puh5vc.feishu.cn/docx/NyTid96rlo6gtxx5NvbcNGHAnl4" target="_blank" rel="noopener"><b>大壮代运营</b><span>飞书云文档 · B 端现金流 / 样板案例 / 4999 咨询</span></a>
+          <a class="link-card" href="https://u689puh5vc.feishu.cn/docx/Xs22dBGuvo5KSBx9Qp7cuurinmX" target="_blank" rel="noopener"><b>大壮终身品牌</b><span>飞书云文档 · 母品牌总档案 / 战略共识 / 三条资产线 / 12 个赛道</span></a>
+          <a class="link-card" href="https://u689puh5vc.feishu.cn/docx/NyTid96rlo6gtxx5NvbcNGHAnl4" target="_blank" rel="noopener"><b>大壮代运营</b><span>飞书云文档 · B 端现金流 / 客户筛选 / 案例沉淀 / AI 工作流</span></a>
           <a class="link-card" href="https://u689puh5vc.feishu.cn/docx/VTxbdmIv8ouOtyxfB3bcgeNCn1o" target="_blank" rel="noopener"><b>大壮装修顾问</b><span>飞书云文档 · C 端信任线 / 报价体检 / 合同审核 / 签约前双检</span></a>
           <a class="link-card" href="https://u689puh5vc.feishu.cn/docx/XSQxdX6PmoMm8SxPLCZcsrEBn7c" target="_blank" rel="noopener"><b>灵感讨论</b><span>飞书云文档 · 未归类想法 / 思想草稿池 / 后续归入三大主项目</span></a>
         </div>
@@ -138,7 +142,6 @@
   <script>
     const PW='0000';
     const gate=document.getElementById('gate');
-    const app=document.getElementById('app');
     const input=document.getElementById('pw');
     const enter=document.getElementById('enter');
     const clear=document.getElementById('clear');
