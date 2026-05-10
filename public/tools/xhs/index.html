@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#f7f3ec" />
+  <title>大壮小红书图文生成器</title>
+  <style>
+    :root{--bg:#f7f3ec;--paper:#fffaf2;--card:#fff;--ink:#171717;--muted:#746f68;--line:rgba(28,24,20,.1);--red:#e60012;--blue:#1677ff;--green:#22c55e;--orange:#f59e0b;--shadow:0 24px 80px rgba(44,32,20,.09);--radius:28px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang SC","Microsoft YaHei",Arial,sans-serif;background:radial-gradient(circle at 12% -12%,#fff 0,#f7f3ec 42%,#ebe4d8 100%);color:var(--ink);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}.shell{max-width:1440px;margin:0 auto;padding:20px 20px 80px}.topbar{position:sticky;top:0;z-index:20;margin:0 -20px;padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,243,236,.82);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:10px;font-weight:900}.brand-mark{width:32px;height:32px;border-radius:10px;background:var(--red);color:#fff;display:grid;place-items:center}.top-actions{display:flex;gap:10px;align-items:center}.pill{border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:999px;padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer}.pill.primary{border-color:#171717;background:#171717;color:#fff}.hero{padding:34px 0 22px;display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:stretch}.hero-card{position:relative;overflow:hidden;border-radius:36px;background:#171717;color:#fff;padding:34px;min-height:300px;box-shadow:var(--shadow)}.hero-card:after{content:"";position:absolute;right:-120px;top:-120px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(230,0,18,.42),rgba(230,0,18,0) 70%)}.eyebrow{margin:0 0 14px;color:#a9a9ae;font-size:13px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}.hero h1{position:relative;margin:0;font-size:clamp(44px,5.6vw,88px);line-height:.95;letter-spacing:-.085em}.hero p{position:relative;max-width:760px;margin:22px 0 0;color:#d7d7dc;font-size:19px;line-height:1.55;font-weight:650;letter-spacing:-.03em}.workflow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.step{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:22px;box-shadow:var(--shadow)}.step b{display:block;font-size:14px;color:var(--muted);margin-bottom:14px}.step strong{display:block;font-size:24px;line-height:1.12;letter-spacing:-.055em}.step span{display:block;margin-top:12px;color:var(--muted);line-height:1.5;font-size:14px}.workspace{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:14px;align-items:start}.panel{background:rgba(255,255,255,.84);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.panel-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.panel-head h2{margin:0;font-size:22px;letter-spacing:-.055em}.panel-head small{color:var(--muted);font-weight:800}.panel-body{padding:18px;display:grid;gap:14px}.field{display:grid;gap:8px}.field label{font-size:13px;font-weight:900;color:#3a3631}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:#fff;border-radius:18px;padding:13px 14px;color:var(--ink);outline:none;transition:border .2s,box-shadow .2s}.field textarea{min-height:124px;resize:vertical;line-height:1.55}.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(22,119,255,.55);box-shadow:0 0 0 4px rgba(22,119,255,.1)}.drop{position:relative;border:1.5px dashed rgba(28,24,20,.18);border-radius:22px;background:#fffaf5;padding:16px;display:grid;gap:12px}.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}.drop strong{font-size:15px}.drop span{font-size:13px;color:var(--muted);line-height:1.4}.preview{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.thumb{position:relative;border-radius:14px;overflow:hidden;background:#f1ece3;aspect-ratio:1/1;border:1px solid var(--line)}.thumb img{width:100%;height:100%;object-fit:cover;display:block}.thumb button{position:absolute;right:5px;top:5px;border:0;border-radius:999px;background:rgba(0,0,0,.7);color:#fff;width:24px;height:24px;cursor:pointer}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:13px;font-weight:800;cursor:pointer}.chip.active{background:#171717;color:#fff;border-color:#171717}.generate-box{position:sticky;top:76px}.settings{display:grid;grid-template-columns:1fr 1fr;gap:10px}.big-btn{border:0;border-radius:20px;background:linear-gradient(135deg,#171717,#3b3028);color:#fff;padding:16px 18px;font-size:16px;font-weight:950;cursor:pointer;box-shadow:0 18px 50px rgba(0,0,0,.18)}.big-btn:disabled{opacity:.58;cursor:not-allowed}.notice{border-radius:18px;background:#fff7e5;border:1px solid rgba(245,158,11,.22);padding:13px 14px;color:#76521c;font-size:13px;line-height:1.5}.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:13px;font-weight:900;cursor:pointer}.tab.active{background:var(--red);border-color:var(--red);color:#fff}.result-card{display:none;background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;line-height:1.68;white-space:pre-wrap;min-height:360px}.result-card.active{display:block}.copy-row{display:flex;gap:10px;flex-wrap:wrap}.copy-btn{border:0;border-radius:16px;background:#f1eee8;padding:11px 13px;font-weight:900;cursor:pointer}.copy-btn.blue{background:#e8f1ff;color:#0f58c8}.copy-btn.green{background:#e8f9ef;color:#137a38}.section-title{margin:28px 0 14px;font-size:30px;letter-spacing:-.06em}.api-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.api-card{background:#fff;border:1px solid var(--line);border-radius:26px;padding:22px;box-shadow:var(--shadow)}.api-card h3{margin:0 0 10px;font-size:22px;letter-spacing:-.05em}.api-card p,.api-card li{color:var(--muted);line-height:1.65}.api-card code{background:#f4f0e9;border-radius:8px;padding:2px 6px;color:#171717}.footer{padding:26px 0 0;text-align:center;color:var(--muted);font-size:13px}@media(max-width:1180px){.workspace{grid-template-columns:1fr}.generate-box{position:static}.hero{grid-template-columns:1fr}.workflow{grid-template-columns:1fr 1fr 1fr}}@media(max-width:720px){.shell{padding:14px 14px 60px}.topbar{margin:0 -14px;padding:0 14px}.top-actions .pill:not(.primary){display:none}.hero-card{border-radius:28px;padding:24px}.hero h1{font-size:46px}.workflow,.api-grid,.settings{grid-template-columns:1fr}.preview{grid-template-columns:repeat(2,1fr)}.panel-head{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#top"><span class="brand-mark">壮</span><span>小红书图文生成器</span></a>
+      <div class="top-actions"><button class="pill" id="clearAll">清空</button><button class="pill" id="saveDraft">保存草稿</button><button class="pill primary" id="topGenerate">生成文案</button></div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-card">
+          <p class="eyebrow">Dazhuang XHS Studio</p>
+          <h1>对标内容 + 我的素材<br>生成一篇新笔记</h1>
+          <p>把对标小红书的图文结构放进来，再放入大壮自己的图片和案例信息，快速生成标题、正文、封面文案、图片页脚本和标签。后续可接 DeepSeek 4 Pro 或 GPT-5.5。</p>
+        </div>
+        <div class="workflow">
+          <div class="step"><b>01</b><strong>放入对标图文</strong><span>粘贴标题、正文、截图或图片，提取它的结构和爆点。</span></div>
+          <div class="step"><b>02</b><strong>放入我的素材</strong><span>上传自己的图片，补充案例背景、客户痛点和想表达的观点。</span></div>
+          <div class="step"><b>03</b><strong>生成新笔记</strong><span>借结构不照抄，用你的素材重写一篇小红书图文方案。</span></div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="panel">
+          <div class="panel-head"><h2>1. 对标图文</h2><small>参考别人的结构，不复制原文</small></div>
+          <div class="panel-body">
+            <div class="field"><label>对标标题</label><input id="benchmarkTitle" placeholder="例如：长沙装修千万别一上来就问报价" /></div>
+            <div class="field"><label>对标正文 / 截图 OCR 文本</label><textarea id="benchmarkText" placeholder="把对标笔记正文、截图识别文字、你复制下来的内容放这里……"></textarea></div>
+            <div class="field"><label>我喜欢它哪里</label><textarea id="benchmarkNotes" placeholder="例如：标题很直接、封面冲突强、前 3 页痛点抓得准、评论区引导好……"></textarea></div>
+            <div class="drop"><input id="benchmarkImages" type="file" accept="image/*" multiple /><strong>上传对标图片 / 截图</strong><span>支持多图预览。第一版先用于整理素材，接 AI 后会参与图片理解。</span><div class="preview" id="benchmarkPreview"></div></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>2. 我的素材</h2><small>你的图片、案例和真实信息</small></div>
+          <div class="panel-body">
+            <div class="drop"><input id="myImages" type="file" accept="image/*" multiple /><strong>上传我的图片素材</strong><span>工地、设计图、报价单、聊天记录、现场照片都可以。</span><div class="preview" id="myPreview"></div></div>
+            <div class="field"><label>案例背景 / 素材说明</label><textarea id="myNotes" placeholder="例如：长沙 120 平改善房，业主准备签合同，想判断报价有没有漏项……"></textarea></div>
+            <div class="field"><label>想表达的核心观点</label><input id="corePoint" placeholder="例如：装修前不要先问价格，要先判断方案和边界" /></div>
+            <div class="settings"><div class="field"><label>目标人群</label><select id="audience"><option>长沙准备装修的业主</option><option>正在比价的业主</option><option>准备签合同的业主</option><option>装修公司老板</option><option>设计师 / 施工方</option></select></div><div class="field"><label>图片页数</label><select id="pageCount"><option>6</option><option>7</option><option>8</option><option>9</option></select></div></div>
+            <div class="field"><label>语气风格</label><div class="chips" id="toneChips"><button class="chip active" data-tone="专业判断型">专业判断型</button><button class="chip" data-tone="真实避坑型">真实避坑型</button><button class="chip" data-tone="业主朋友型">业主朋友型</button><button class="chip" data-tone="犀利点评型">犀利点评型</button><button class="chip" data-tone="温和科普型">温和科普型</button></div></div>
+          </div>
+        </div>
+
+        <div class="panel generate-box">
+          <div class="panel-head"><h2>3. 生成结果</h2><small>第一版已预留 AI 接口</small></div>
+          <div class="panel-body">
+            <div class="settings"><div class="field"><label>模型供应商</label><select id="provider"><option value="mock">先用本地结构生成</option><option value="deepseek">DeepSeek 4 Pro</option><option value="openai">GPT-5.5</option><option value="auto">自动选择</option></select></div><div class="field"><label>生成模式</label><select id="mode"><option>深度分析</option><option>快速生成</option><option>多版本生成</option></select></div></div>
+            <div class="notice">当前页面已经把接口位置预留好：后续只需要接 <b>/api/xhs-generate</b>，API Key 放在服务器环境变量里，不能写在网页前端。</div>
+            <button class="big-btn" id="generate">生成小红书图文方案</button>
+            <div class="tabs"><button class="tab active" data-tab="post">发布文案</button><button class="tab" data-tab="script">图片页脚本</button><button class="tab" data-tab="prompt">AI 接口提示词</button><button class="tab" data-tab="check">发布检查</button></div>
+            <div class="result-card active" id="resultPost">等待生成……</div>
+            <div class="result-card" id="resultScript">等待生成……</div>
+            <div class="result-card" id="resultPrompt">等待生成……</div>
+            <div class="result-card" id="resultCheck">等待生成……</div>
+            <div class="copy-row"><button class="copy-btn blue" data-copy="resultPost">复制发布文案</button><button class="copy-btn green" data-copy="resultScript">复制图片脚本</button><button class="copy-btn" data-copy="resultPrompt">复制 AI 提示词</button></div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">接口预留方案</h2>
+      <section class="api-grid">
+        <article class="api-card"><h3>前端请求</h3><p>页面后续会请求统一接口：<code>POST /api/xhs-generate</code>。前端只提交对标文字、图片素材描述、我的素材、目标人群和语气，不暴露任何 API Key。</p><ul><li>DeepSeek 4 Pro：适合深度文案和结构重写。</li><li>GPT-5.5：如果支持多模态，可直接看图 + 写文案。</li><li>自动模式：图片先识别，再交给文案模型生成。</li></ul></article>
+        <article class="api-card"><h3>后端安全</h3><p>真实密钥放服务器环境变量，例如 <code>DEEPSEEK_API_KEY</code> 和 <code>OPENAI_API_KEY</code>。如果 DeepSeek 不支持图片，就先用视觉模型把图片转成文字描述，再交给 DeepSeek 生成。</p><ul><li>借结构，不借原文。</li><li>借情绪，不照抄表达。</li><li>用大壮自己的素材重新生成。</li></ul></article>
+      </section>
+    </main>
+    <footer class="footer">大壮内部内容工具 · 小红书图文生成器 v1</footer>
+  </div>
+
+  <script>
+    const $=s=>document.querySelector(s);const $$=s=>Array.from(document.querySelectorAll(s));
+    const state={benchmarkImages:[],myImages:[],tone:'专业判断型'};
+    function bindImages(inputSel,previewSel,key){$(inputSel).addEventListener('change',e=>{[...e.target.files].forEach(file=>{if(!file.type.startsWith('image/'))return;const url=URL.createObjectURL(file);state[key].push({name:file.name,url});});renderPreview(previewSel,key);e.target.value='';});}
+    function renderPreview(sel,key){const box=$(sel);box.innerHTML='';state[key].forEach((img,i)=>{const div=document.createElement('div');div.className='thumb';div.innerHTML=`<img src="${img.url}" alt=""><button type="button">×</button>`;div.querySelector('button').onclick=()=>{URL.revokeObjectURL(img.url);state[key].splice(i,1);renderPreview(sel,key)};box.appendChild(div);});}
+    bindImages('#benchmarkImages','#benchmarkPreview','benchmarkImages');bindImages('#myImages','#myPreview','myImages');
+    $$('#toneChips .chip').forEach(btn=>btn.onclick=()=>{$$('#toneChips .chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');state.tone=btn.dataset.tone;});
+    $$('.tab').forEach(btn=>btn.onclick=()=>{$$('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$$('.result-card').forEach(c=>c.classList.remove('active'));$('#result'+btn.dataset.tab[0].toUpperCase()+btn.dataset.tab.slice(1)).classList.add('active');});
+    function val(id){return $(id).value.trim()||''}
+    function buildPrompt(){const data=getData();return `你是大壮的小红书图文策划智能体。请根据【对标图文】和【我的素材】生成一篇全新的小红书图文笔记。\n\n核心原则：借结构，不借原文；借情绪，不照抄表达；用我的素材重新生成。\n\n【模型供应商】${data.provider}\n【生成模式】${data.mode}\n【目标人群】${data.audience}\n【语气】${data.tone}\n【图片页数】${data.pageCount}\n\n【对标标题】\n${data.benchmarkTitle}\n\n【对标正文】\n${data.benchmarkText}\n\n【我喜欢它哪里】\n${data.benchmarkNotes}\n\n【我的素材说明】\n${data.myNotes}\n\n【核心观点】\n${data.corePoint}\n\n【素材数量】\n对标图片 ${state.benchmarkImages.length} 张；我的图片 ${state.myImages.length} 张。\n\n请输出：1）标题 5 个；2）封面文案 3 个；3）正文 1 篇；4）${data.pageCount} 页图片脚本；5）标签 15 个；6）发布风险检查。`;}
+    function getData(){return{benchmarkTitle:val('#benchmarkTitle'),benchmarkText:val('#benchmarkText'),benchmarkNotes:val('#benchmarkNotes'),myNotes:val('#myNotes'),corePoint:val('#corePoint'),audience:$('#audience').value,pageCount:$('#pageCount').value,tone:state.tone,provider:$('#provider').selectedOptions[0].text,mode:$('#mode').value}}
+    function generateLocal(){const d=getData();const topic=d.corePoint||d.benchmarkTitle||'装修前先看清楚这件事';const audience=d.audience;const tone=d.tone;const pages=Number(d.pageCount||6);const titles=[`长沙装修，别急着问价格，先看懂这件事`,`很多业主踩坑，不是因为不懂装修，而是顺序错了`,`装修前真正该判断的，不是贵不贵`,`准备装修的人，先把这几个问题问清楚`,`如果你正在看装修公司，这篇先收藏`];const cover=[`装修前先别急着签`,`报价低，不一定是真便宜`,`看懂这几点，少踩很多坑`];let post=`标题备选：\n${titles.map((t,i)=>`${i+1}. ${t}`).join('\n')}\n\n封面文案：\n${cover.map((t,i)=>`${i+1}. ${t}`).join('\n')}\n\n正文：\n很多${audience.replace('长沙','长沙的')}，一开始最容易问的是：这套房装下来多少钱？\n\n但真实情况是，价格只是结果，不是起点。真正决定你后面会不会踩坑的，是前面有没有把需求、方案、边界和责任讲清楚。\n\n${topic}。\n\n如果一家公司只给你一个很低的数字，却没有把材料、工艺、增项、付款节点和售后边界说清楚，这个价格就没有判断价值。\n\n我更建议你先看三件事：\n1. 方案是不是围绕你的真实生活方式，而不是套模板；\n2. 报价是不是能对应到具体项目，而不是只看总价；\n3. 对方有没有把不包含什么、后期可能增加什么讲明白。\n\n装修不是谁说得好听就选谁，而是谁把风险讲清楚，谁更值得信任。\n\n如果你正在长沙准备装修，可以先把方案、报价、合同拿出来做一次判断，再决定要不要签。\n\n标签：\n#长沙装修 #装修避坑 #装修顾问 #装修报价 #装修合同 #装修公司怎么选 #装修经验 #新房装修 #旧房改造 #长沙装修设计 #装修干货 #装修小白 #装修避雷 #大壮装修顾问 #装修前必看`;
+      let script='';for(let i=1;i<=pages;i++){const map={1:['封面','装修前，先别急着签','用最有冲击力、最清晰的一张现场图或报价图'],2:['痛点','很多人一开始就问价格','用对标/自己的问题素材，承接用户焦虑'],3:['判断','价格只是结果，不是起点','放报价单、方案图、现场细节图'],4:['拆解','先看方案、边界和责任','用你的素材做 3 点拆解'],5:['提醒','低价不一定是真便宜','放容易产生增项或误解的素材'],6:['行动','签之前，先做一次判断','放大壮顾问感/真实工作图'],7:['案例','这个案例最值得看的不是图','展示你的真实案例背景'],8:['清单','签约前问清这 5 个问题','做成列表页'],9:['收尾','装修不是拼运气，是拼判断','强化收藏和评论引导']};const m=map[i]||map[6];script+=`第 ${i} 页｜${m[0]}\n画面建议：${m[2]}\n页面大字：${m[1]}\n页面小字：围绕「${topic}」展开，不夸张，不吓人，用真实判断建立信任。\n\n`;}
+      const check=`发布检查：\n- 抄袭风险：低。当前方案只借对标结构，没有使用对标原句。\n- 广告感：中低。建议多讲判断逻辑，少直接推销服务。\n- 封面钩子：有。建议使用“别急着签 / 先看懂 / 不是价格”这类强判断句。\n- 素材完整度：对标图片 ${state.benchmarkImages.length} 张；我的图片 ${state.myImages.length} 张。图片越多，后续接入视觉模型后越准。\n- 语气：${tone}。`;
+      $('#resultPost').textContent=post;$('#resultScript').textContent=script;$('#resultPrompt').textContent=buildPrompt();$('#resultCheck').textContent=check;}
+    async function generate(){const provider=$('#provider').value;if(provider==='mock'){generateLocal();return;}const payload={provider,model:provider==='deepseek'?'deepseek-4-pro':provider==='openai'?'gpt-5.5':'auto',input:getData(),imageCounts:{benchmark:state.benchmarkImages.length,mine:state.myImages.length},prompt:buildPrompt()};try{$('#generate').disabled=true;$('#generate').textContent='正在请求 AI 接口……';const res=await fetch('/api/xhs-generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('接口暂未接通');const data=await res.json();$('#resultPost').textContent=data.postText||JSON.stringify(data,null,2);$('#resultScript').textContent=Array.isArray(data.imageScript)?data.imageScript.map(x=>`第 ${x.page} 页｜${x.type}\n画面：${x.imageSuggestion}\n大字：${x.mainText}\n小字：${x.subText}`).join('\n\n'):'';$('#resultPrompt').textContent=buildPrompt();$('#resultCheck').textContent=JSON.stringify(data.riskCheck||{},null,2);}catch(e){generateLocal();$('#resultCheck').textContent='AI 接口还没有正式接通，已自动使用本地结构生成。后续接 /api/xhs-generate 后即可真实调用 DeepSeek 4 Pro 或 GPT-5.5。\n\n错误信息：'+e.message;}finally{$('#generate').disabled=false;$('#generate').textContent='生成小红书图文方案';}}
+    $('#generate').onclick=generate;$('#topGenerate').onclick=generate;
+    $$('.copy-btn').forEach(btn=>btn.onclick=async()=>{const text=$('#'+btn.dataset.copy).textContent;await navigator.clipboard.writeText(text);const old=btn.textContent;btn.textContent='已复制';setTimeout(()=>btn.textContent=old,1000);});
+    $('#clearAll').onclick=()=>{if(!confirm('确认清空当前内容？'))return;$$('input,textarea').forEach(el=>{if(el.type!=='file')el.value=''});state.benchmarkImages=[];state.myImages=[];renderPreview('#benchmarkPreview','benchmarkImages');renderPreview('#myPreview','myImages');$$('.result-card').forEach(c=>c.textContent='等待生成……');localStorage.removeItem('dazhuang-xhs-draft')};
+    $('#saveDraft').onclick=()=>{localStorage.setItem('dazhuang-xhs-draft',JSON.stringify(getData()));alert('已保存草稿到当前浏览器')};
+    const draft=localStorage.getItem('dazhuang-xhs-draft');if(draft){try{const d=JSON.parse(draft);['benchmarkTitle','benchmarkText','benchmarkNotes','myNotes','corePoint'].forEach(k=>{const el=$('#'+k);if(el&&d[k])el.value=d[k]});if(d.audience)$('#audience').value=d.audience;if(d.pageCount)$('#pageCount').value=d.pageCount;if(d.mode)$('#mode').value=d.mode;}catch(e){}}
+  </script>
+</body>
+</html>
