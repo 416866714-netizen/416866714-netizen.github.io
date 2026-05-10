@@ -111,21 +111,77 @@ function normalizeDeepSeekJSON(content) {
   };
 }
 
+
+function usageState(input = {}, provider = 'deepseek') {
+  const knowledge = textBlock(input.knowledgeText, 12000);
+  const benchmark = `${input.benchmarkTitle || ''}${input.benchmarkText || ''}${input.benchmarkNotes || ''}`;
+  const mine = `${input.myNotes || ''}${input.corePoint || ''}${input.mustSay || ''}${input.avoidSay || ''}`;
+  const imgCount = (input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0);
+  return {
+    provider,
+    knowledgeChars: knowledge.length,
+    benchmarkChars: benchmark.length,
+    myMaterialChars: mine.length,
+    benchmarkImages: input.images?.benchmark?.length || input.imageCounts?.benchmark || 0,
+    myImages: input.images?.mine?.length || input.imageCounts?.mine || 0,
+    imageReadable: provider === 'openai' && imgCount > 0,
+  };
+}
+
+function cleanImages(input = {}) {
+  const all = [...(input.images?.benchmark || []), ...(input.images?.mine || [])];
+  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '')).slice(0, 10);
+}
+
+async function callOpenAI(input = {}, body = {}, env) {
+  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
+  const current = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 10000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 3000)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 5000)}` : '';
+  const userText = buildUserPrompt(input, body.prompt) + current;
+  const content = [{ type: 'text', text: userText }];
+  for (const img of cleanImages(input)) {
+    content.push({ type: 'image_url', image_url: { url: img.dataUrl, detail: 'high' } });
+  }
+  const payload = {
+    model: input.model || env.OPENAI_MODEL || 'gpt-4o',
+    messages: [
+      { role: 'system', content: buildSystemPrompt(input) + '\n如果收到图片，必须先OCR和描述图片，再把图片信息用于对标拆解和素材匹配。' },
+      { role: 'user', content },
+    ],
+    temperature: 0.72,
+    max_tokens: 4200,
+    response_format: { type: 'json_object' },
+  };
+  const resp = await fetch((env.OPENAI_BASE_URL || 'https://api.openai.com/v1') + '/chat/completions', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const text = await resp.text();
+  if (!resp.ok) return json({ error: 'OpenAI/GPT request failed', status: resp.status, detail: text.slice(0, 1000) }, 502);
+  let data;
+  try { data = JSON.parse(text); } catch (_) { return json({ error: 'OpenAI/GPT returned non-json', detail: text.slice(0, 1000) }, 502); }
+  const result = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
+  result.readState = usageState(input, 'openai');
+  return json(result);
+}
+
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
-    return json({ ok: Boolean(env.DEEPSEEK_API_KEY), provider: 'deepseek', endpoint: '/api/xhs-generate' });
+    return json({ ok: Boolean(env.DEEPSEEK_API_KEY), deepseek: Boolean(env.DEEPSEEK_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'multi', endpoint: '/api/xhs-generate' });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
   if (!env.DEEPSEEK_API_KEY) return json({ error: 'DEEPSEEK_API_KEY is not configured on server.' }, 500);
 
   const body = await request.json().catch(() => ({}));
   const input = body.input || {};
+  if (input.provider === 'openai') return callOpenAI(input, body, env);
+  const reviseContext = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 10000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 3000)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 5000)}` : '';
   const payload = {
-    model: env.DEEPSEEK_MODEL || 'deepseek-chat',
+    model: input.model || env.DEEPSEEK_MODEL || 'deepseek-chat',
     messages: [
       { role: 'system', content: buildSystemPrompt(input) },
-      { role: 'user', content: buildUserPrompt(input, body.prompt) },
+      { role: 'user', content: buildUserPrompt(input, body.prompt) + reviseContext },
     ],
     temperature: 0.78,
     max_tokens: 4200,
@@ -146,6 +202,7 @@ async function handleXhsGenerate(request, env) {
   try { data = JSON.parse(text); } catch (_) { return json({ error: 'DeepSeek returned non-json', detail: text.slice(0, 1000) }, 502); }
   const content = data.choices?.[0]?.message?.content || '';
   const result = normalizeDeepSeekJSON(content);
+  result.readState = usageState(input, 'deepseek');
   return json(result);
 }
 
