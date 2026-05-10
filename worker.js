@@ -129,8 +129,10 @@ function usageState(input = {}, provider = 'deepseek') {
 }
 
 function cleanImages(input = {}) {
-  const all = [...(input.images?.benchmark || []), ...(input.images?.mine || [])];
-  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '')).slice(0, 10);
+  const b=(input.images?.benchmark||[]).slice(0,4);
+  const m=(input.images?.mine||[]).slice(0,6);
+  const all=[...b,...m];
+  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 900000).slice(0, 10);
 }
 
 async function callOpenAI(input = {}, body = {}, env) {
@@ -157,7 +159,7 @@ async function callOpenAI(input = {}, body = {}, env) {
     body: JSON.stringify(payload),
   });
   const text = await resp.text();
-  if (!resp.ok) return json({ error: 'OpenAI/GPT request failed', status: resp.status, detail: text.slice(0, 1000) }, 502);
+  if (!resp.ok) return json({ error: 'OpenAI/GPT request failed', status: resp.status, detail: text.startsWith('<') ? '上游或 Worker 返回 HTML 错误，通常是图片/文本过大或模型超时。' : text.slice(0, 1000) }, 502);
   let data;
   try { data = JSON.parse(text); } catch (_) { return json({ error: 'OpenAI/GPT returned non-json', detail: text.slice(0, 1000) }, 502); }
   const result = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
@@ -175,7 +177,8 @@ async function handleXhsGenerate(request, env) {
 
   const body = await request.json().catch(() => ({}));
   const input = body.input || {};
-  if (input.provider === 'openai') return callOpenAI(input, body, env);
+  if (input.provider !== 'openai') input.provider = 'openai';
+  return callOpenAI(input, body, env);
   const reviseContext = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 10000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 3000)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 5000)}` : '';
   const payload = {
     model: input.model || env.DEEPSEEK_MODEL || 'deepseek-chat',
