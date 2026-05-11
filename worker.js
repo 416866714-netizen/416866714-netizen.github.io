@@ -223,6 +223,36 @@ async function callOpenAI(input = {}, body = {}, env) {
 }
 
 
+
+function getScriptsLibrary() {
+  const position = {
+    '8K设计': '长沙高审美住宅全案设计品牌：4K效果图、设计费清晰、设计到施工落地。',
+    '玖玖精工 / 玖玖半包': '长沙大宅高标准半包施工：真实工地、工艺标准、图纸精算、附近工地。',
+    '玖玖精装': '长沙高端精装房全案改造：8000元设计入口、瑞府背书、设计改造定制软装一体化。',
+    '宅师傅半包装修': '长沙普通家庭透明半包：438元/㎡起、免费量房出图预算、先施工后付款、零增项保障。'
+  };
+  const items = [
+    {brand:'8K设计', scene:'小红书私信', status:'Day1 首条触达', title:'8K设计 Day1 首条触达', text:'哈喽～看到你对 8K 设计内容感兴趣。我们专注全案设计落地，长沙有 100+ 别墅/复式/大平层项目落地中。如果你也在看长沙装修/设计，可以回个数字：\n\n1｜设计费和服务内容\n2｜同面积/同风格案例\n3｜设计到施工怎么落地\n\n也可以留个微信，我把详细资料和 4K 高清图发你看看。', logic:'用 1/2/3 让客户自选需求，最终动作落到留微信看高清图。'},
+    {brand:'8K设计', scene:'小红书私信', status:'Day2 未回复追发', title:'8K设计 Day2 4K效果图激活', text:'我这边整理了几套 8K 最近客户比较喜欢的 4K 高清效果图，不同面积和风格都有。微信上看图更清楚，直接留个微信，我发你参考一下。', logic:'不重复问需求，直接用4K高清效果图重新激活。'},
+    {brand:'8K设计', scene:'小红书私信', status:'Day3 轻收口', title:'8K设计 Day3 完工落地案例收口', text:'如果你后面还在看装修设计，我可以先发几套 4K 高清效果图和完工落地案例给你留着参考。微信上看图更清楚，留个微信就行，我发你。', logic:'加入完工落地案例，解决效果图能不能落地的顾虑。'},
+    {brand:'玖玖精工 / 玖玖半包', scene:'小红书私信', status:'Day1 首条触达', title:'玖玖精工 Day1 首条触达', text:'哈喽～看到你对玖玖精工的内容感兴趣。我们专注长沙高标准半包施工，目前有 100+ 别墅/复式/大平层工地在施工。如果你也在看长沙装修，可以回个数字：\n\n1｜看附近真实工地\n2｜半包报价/工价明细\n3｜有设计图，免费精算\n\n可以加个微信，我把工地、工艺和报价参考发你看看。', logic:'承接看工地、报价、图纸精算三类需求。'},
+    {brand:'玖玖精工 / 玖玖半包', scene:'小红书私信', status:'Day2 未回复追发', title:'玖玖精工 Day2 真实工地激活', text:'我这边整理了几个正在施工的真实工地案例，大平层、别墅、复式都有。小红书发图不太方便，直接留个微信，我把工地现场和工艺细节发你看看。', logic:'用真实工地和工艺细节建立信任。'},
+    {brand:'玖玖精工 / 玖玖半包', scene:'小红书私信', status:'Day3 轻收口', title:'玖玖精工 Day3 附近工地匹配', text:'如果你后面还在看装修施工，可以告诉我你在哪一片，我帮你看看附近有没有正在施工的工地。小红书发图不太方便，留个微信，我发你工地现场参考。', logic:'询问区域，推进到附近工地匹配。'},
+    {brand:'玖玖精装', scene:'小红书私信', status:'Day1 首条触达', title:'玖玖精装 Day1 首条触达', text:'哈喽～玖玖精装改造全案交付，长沙 100+ 大平层案例落地中，近期长沙瑞府有 30+ 套在设计/施工/定制推进中。您目前关注哪方面呢：\n\n1｜瑞府/相近户型效果图\n2｜真实现场/完工案例\n3｜设计费/改造参考\n\n小红书发图不太方便，直接留个微信，我把对应案例发你。', logic:'兼容瑞府和非瑞府客户，减少运营判断压力。'},
+    {brand:'玖玖精装', scene:'小红书私信', status:'Day2 未回复追发', title:'玖玖精装 Day2 精装改造效果图激活', text:'我这边整理了几套客户比较喜欢的精装改造 4K 高清效果图，瑞府也有不同风格的完工落地案例。微信上看图更清楚，直接留个微信，我按你喜欢的风格发你看看。', logic:'用精装改造4K效果图和瑞府完工案例激活。'},
+    {brand:'玖玖精装', scene:'小红书私信', status:'Day3 轻收口', title:'玖玖精装 Day3 精装房改造轻收口', text:'如果你后面还在看精装房改造，我可以先发几套 4K 高清效果图和完工落地案例给你留着参考。微信上看图更清楚，直接留个微信就行，我发你。', logic:'不制造压力，保留微信入口。'},
+    {brand:'宅师傅半包装修', scene:'小红书私信', status:'Day1 首条触达', title:'宅师傅 Day1 首条触达', text:'哈喽～看到你对宅师傅半包内容感兴趣。我们做长沙普通家庭透明半包，438 元/㎡起。可以免费量房，出平面图、施工图和精准预算，不签约也能带走参考。如果你也在看装修，可以回个数字：\n\n1｜看半包大概要多少钱\n2｜免费量房/出图/做预算\n3｜了解先装修后付款/零增项\n\n也可以留个微信，我把报价参考和免费出图流程发你看看。', logic:'打出438元/㎡起和免费量房出图预算，保持低决策成本。'},
+    {brand:'宅师傅半包装修', scene:'小红书私信', status:'Day2 未回复追发', title:'宅师傅 Day2 免费出图预算激活', text:'宅师傅这边可以先免费量房，出平面图、施工图和精准预算，不签约也能带走参考。你可以先把自己家怎么装、要花多少钱搞清楚，留个微信我发你流程。', logic:'强化免费拿资料和低决策成本。'},
+    {brand:'宅师傅半包装修', scene:'小红书私信', status:'Day3 轻收口', title:'宅师傅 Day3 先施工后付款收口', text:'宅师傅是先装修后付款，非图纸变更的增项公司负责。如果你还在看装修，可以先了解一下 438 半包报价和付款流程，留个微信我发你参考。', logic:'强化先施工后付款和增项保障。'},
+    {brand:'8K设计', scene:'微信接待', status:'第1句 我是谁', title:'8K微信第1句：我是谁', text:'您好～我是8K全案设计这边主理人。我们不是只出效果图的纯设计，主要做「设计 + 半包落地」：好设计、高审美，但不做高溢价。[愉快]', logic:'建立8K不是纯设计、而是设计+半包落地的边界。'},
+    {brand:'8K设计', scene:'微信接待', status:'第2句 有何不同', title:'8K微信第2句：有何不同', text:'我们原创设计师团队有12年+大宅设计经验，设计费按户型面积有清晰标准，200㎡内常规户型8000起。长沙别墅、复式楼、大平层100+项目施工落地中，工地随时可看。', logic:'证明原创团队、经验、设计费标准和施工落地能力。'},
+    {brand:'8K设计', scene:'微信接待', status:'第3句 有什么好处', title:'8K微信第3句：有什么好处', text:'我们最近做了很多好看的新案例，效果图、完工落地和不同风格都有。您是哪个楼盘、大概多大面积？我看看有没有同楼盘、同面积或相近风格的案例，先发您参考。', logic:'引导客户说楼盘、面积、风格，便于精准匹配案例。'},
+    {brand:'8K设计', scene:'微信接待', status:'第4句 降低开口成本', title:'8K微信第4句：数字选择题激活', text:'您如果暂时还没想清楚风格也没关系。我这边一般会先按三个方向帮客户看：\n\n1｜先看设计费和服务内容\n2｜先看同面积/同风格案例\n3｜先看效果图怎么落地成实景\n\n您回个数字就行，我按您想看的先发。', logic:'客户不回时，用数字选择题降低开口成本。'},
+    {brand:'8K设计', scene:'微信接待', status:'第5句 轻收口', title:'8K微信第5句：轻收口', text:'那我先不打扰您。您后面如果还在看装修设计，直接发我「楼盘+面积」就行。我可以先帮您匹配几套同面积/相近风格案例，您先看看方向，不用急着定。', logic:'不逼客户，留下楼盘+面积的长期入口。'}
+  ];
+  return items.map((x, idx) => ({ id: idx + 1, source: '飞书文档整理', position: position[x.brand] || '', ...x }));
+}
+
 function scriptsImages(input = {}) {
   return (input.images || []).filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 420000).slice(0, 6).map(x=>({...x,group:'聊天记录截图'}));
 }
@@ -307,6 +337,7 @@ export default {
     if ((url.pathname.startsWith('/tools/xhs') || url.pathname.startsWith('/tools/scripts')) && !hasXhsAuth(request)) { const res = passwordPage(); res.headers.set('Cache-Control','no-store'); return res; }
     if (url.pathname === '/api/xhs-generate') return handleXhsGenerate(request, env);
     if (url.pathname === '/api/scripts-reply') return handleScriptsReply(request, env);
+    if (url.pathname === '/api/scripts-library') return json({ ok: true, source: 'feishu-doc:NkgtdR8eAoW470xdgtMcYePVnmf', items: getScriptsLibrary() });
     const res = await env.ASSETS.fetch(request);
     if (url.pathname.startsWith('/tools/xhs') || url.pathname.startsWith('/tools/scripts')) res.headers.set('Cache-Control','no-store');
     return res;
