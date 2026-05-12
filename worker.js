@@ -295,10 +295,10 @@ async function handleScriptsReply(request, env) {
   const body=await request.json().catch(()=>({}));
   const input=body.input||{};
   const imageStyle = body.action==='revise' ? [] : await analyzeScriptImages(input, env);
-  const prompt = `【客户原话】\n${textBlock(input.customerQuestion,3000)}\n\n【场景】${input.scene||''}\n【客户状态】${input.status||''}\n\n【品牌知识库】\n${textBlock(input.brandKb,7000)}\n\n【标准话术库】\n${textBlock(input.scriptKb,9000)}\n\n【我的聊天风格库】\n${textBlock(input.styleKb,7000)}\n\n【聊天截图风格分析】\n${textBlock(JSON.stringify(imageStyle,null,2),9000)}\n\n【当前版本】\n${textBlock(body.current,6000)}\n\n【本次修改要求】\n${textBlock(body.revision,2000)}\n\n请输出JSON：{"best":"可直接发送的推荐回复，短句，像真人，不油腻，已空好行","versions":"温柔版/专业版/强势版/微信版/小红书私信版","analysis":"客户类型、真实意图、风险点、成交机会","next":"如果客户回复/不回复分别怎么接下一句","style":"从聊天记录里学到的我的表达风格和可复用句式"}`;
+  const prompt = `【最高优先级要求】\n你必须读取并使用下面的信息包。不要只看客户原话。生成时按优先级执行：1品牌知识库/服务边界/禁用表达；2标准话术库；3我的聊天风格；4知识草稿与训练反馈；5客户原话。若信息冲突，以品牌知识库和服务边界为准。\n\n【网页汇聚给 GPT 的完整信息包】\n${textBlock(input.gptContext || '',16000)}\n\n【客户原话】\n${textBlock(input.customerQuestion,3000)}\n\n【场景】${input.scene||''}\n【客户状态】${input.status||''}\n【当前品牌】${input.brand||''}\n\n【品牌知识库】\n${textBlock(input.brandKb,9000)}\n\n【标准话术库】\n${textBlock(input.scriptKb,12000)}\n\n【我的聊天风格库】\n${textBlock(input.styleKb,8000)}\n\n【当前未保存知识补充表单】\n${textBlock(input.currentKbForm,6000)}\n\n【最近训练反馈/好坏案例】\n${textBlock(input.feedbackKb,8000)}\n\n【聊天截图风格分析】\n${textBlock(JSON.stringify(imageStyle,null,2),9000)}\n\n【当前版本】\n${textBlock(body.current,6000)}\n\n【本次修改要求】\n${textBlock(body.revision,2000)}\n\n请输出JSON：{"best":"可直接发送的推荐回复，短句，像真人，不油腻，已空好行；必须体现当前品牌调性并避开服务边界外承诺","versions":"温柔版/专业版/强势版/微信版/小红书私信版","analysis":"客户类型、真实意图、风险点、成交机会，并说明本次用了哪些品牌信息/服务边界","next":"如果客户回复/不回复分别怎么接下一句","style":"从品牌知识库、话术库、聊天记录里学到的品牌调性、服务边界、禁用表达和可复用句式"}`;
   let raw;
   try { raw=await openAIChat([
-    {role:'system',content:'你是大壮公司的销售话术总教练，擅长微信、小红书私信、评论区和代运营成交沟通。必须结合品牌知识库、标准话术库和我的聊天风格，输出自然、克制、有效的中文回复。不要像AI，不要油腻，不要过度承诺。输出JSON。'},
+    {role:'system',content:'你是大壮公司的销售话术总教练，擅长微信、小红书私信、评论区和代运营成交沟通。你必须逐项读取网页汇聚的信息包，尤其是当前品牌知识库、服务边界、禁用表达、标准话术库、聊天风格、知识草稿和训练反馈。回复必须贴合当前品牌调性；不得输出与服务边界冲突的承诺；不要像AI，不要油腻，不要过度承诺。输出JSON。'},
     {role:'user',content:prompt}
   ],env,2600); } catch(e) { return json({error:'GPT request failed', detail:String(e.message||e).slice(0,1000)},502); }
   const r=normalizeDeepSeekJSON(raw);
