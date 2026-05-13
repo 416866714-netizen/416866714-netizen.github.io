@@ -161,20 +161,20 @@ function usageState(input = {}, provider = 'deepseek') {
 }
 
 function cleanImages(input = {}) {
-  const b=(input.images?.benchmark||[]).slice(0,3).map(x=>({...x,group:'对标图'}));
-  const m=(input.images?.mine||[]).slice(0,6).map(x=>({...x,group:'我的素材图'}));
+  const b=(input.images?.benchmark||[]).slice(0,1).map(x=>({...x,group:'对标图'}));
+  const m=(input.images?.mine||[]).slice(0,2).map(x=>({...x,group:'我的素材图'}));
   const all=[...b,...m];
-  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 420000).slice(0, 9);
+  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 320000).slice(0, 3);
 }
 
-async function openAIChat(messages, env, maxTokens = 1800) {
+async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort('timeout'), 52000);
+  const timer = setTimeout(() => controller.abort('timeout'), options.timeoutMs || 25000);
   const payload = {
-    model: env.OPENAI_MODEL || 'gpt-4o-mini',
+    model: env.OPENAI_MODEL || 'gpt-5.5',
     messages,
-    temperature: 0.5,
-    max_tokens: Math.min(maxTokens, 2400),
+    temperature: options.temperature ?? 0.45,
+    max_tokens: Math.min(maxTokens, options.maxTokensCap || 1800),
     response_format: { type: 'json_object' },
   };
   let resp, text;
@@ -252,7 +252,7 @@ async function analyzeImages(input = {}, env) {
       const raw = await openAIChat([
         { role: 'system', content: '你是图片OCR和小红书图文拆解助手。只输出JSON。' },
         { role: 'user', content },
-      ], env, 700);
+      ], env, 350, { timeoutMs: 12000, maxTokensCap: 500, temperature: 0.2 });
       out.push(normalizeDeepSeekJSON(raw));
     } catch (e) {
       out.push({ group: img.group, error: String(e.message || e).slice(0, 500) });
@@ -262,28 +262,59 @@ async function analyzeImages(input = {}, env) {
 }
 
 async function callOpenAI(input = {}, body = {}, env) {
-  if (!(String(input.mode || '').includes('深度') && ((input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0) > 0))) input = compactInput(input);
+  const originalCounts = {
+    benchmark: input.imageCounts?.benchmark || input.images?.benchmark?.length || 0,
+    mine: input.imageCounts?.mine || input.images?.mine?.length || 0,
+  };
+  const wantsDeep = String(input.mode || '').includes('深度');
+  const hasImages = ((input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0)) > 0;
+
+  // 快速/多版本/改稿：仍然只用 GPT-5.5，但不做逐图 OCR，避免截图里的 timeout。
+  if (!(wantsDeep && hasImages) || body.action === 'revise') input = compactInput(input);
+
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
-  if (body.action !== 'revise') imageAnalysis = await analyzeImages(input, env);
-  const current = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 10000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 3000)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 5000)}` : '';
-  const userText = buildUserPrompt({...input, images:{}}, '') + `\n\n【图片识别摘要/OCR】\n${textBlock(JSON.stringify(imageAnalysis, null, 2), 9000)}` + current;
+
+  // 只有“深度分析 + 有图”才读图；且只读少量图。读图失败不阻断成稿。
+  if (body.action !== 'revise' && wantsDeep && hasImages) {
+    imageAnalysis = await analyzeImages(input, env);
+  }
+
+  const current = body.action === 'revise' ? `
+
+【当前版本】
+${textBlock(body.currentVersion, 4500)}
+
+【修改要求】
+${textBlock(body.revisionInstruction, 1200)}
+
+【历史版本摘要】
+${textBlock(JSON.stringify(body.history || []), 1200)}` : '';
+  const userText = buildUserPrompt({...input, images:{}}, '') + `
+
+【图片识别摘要/OCR】
+${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
+  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。只输出JSON，字段：benchmarkAnalysis,final,titles,versions,script,story,check,scores。要求真实、短句、去AI味、可直接发布；没有图片OCR时，不要假装看到了图片。';
   let raw;
   try {
     raw = await openAIChat([
-      { role: 'system', content: buildSystemPrompt(input) + '\n你已经拿到图片OCR摘要，必须把图片信息用于对标拆解和素材匹配。必须明确引用素材里的具体信息，不能泛泛输出装修模板。' },
+      { role: 'system', content: system },
       { role: 'user', content: userText },
-    ], env, 3200);
+    ], env, 1600, { timeoutMs: 25000, maxTokensCap: 1800, temperature: 0.48 });
   } catch (e) {
-    return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e.message || e).slice(0, 1000) }, 502);
+    return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e.message || e).slice(0, 1000), tip: '已强制 GPT-5.5。若仍超时，请先用快速生成不读图；深度分析只发送少量图片。' }, 502);
   }
   const result = normalizeDeepSeekJSON(raw);
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result.imageAnalysis = imageAnalysis;
-  result.readState = usageState(input, 'openai-vision');
+  result.readState = usageState(input, 'openai-only');
   result.readState.model = env.OPENAI_MODEL || 'gpt-5.5';
   result.readState.imageAnalysisCount = imageAnalysis.length;
+  result.readState.benchmarkImages = originalCounts.benchmark;
+  result.readState.myImages = originalCounts.mine;
+  result.readState.imageReadable = imageAnalysis.length > 0;
+  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。快速生成不做逐图 OCR，以优先保证不超时；深度分析才读图。';
   return json(result);
 }
 
