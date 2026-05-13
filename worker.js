@@ -71,7 +71,7 @@ function buildSystemPrompt(input = {}) {
   return `你是“大壮小红书内容总编”和“创作教练”，服务于装修顾问品牌内容生产。你的任务不是泛泛写文案，而是根据对标内容、企业知识库和用户素材，生成可以直接发小红书的图文方案。
 
 【核心原则】
-1. 借结构，不借原文；借情绪，不照抄表达；借选题，不复制案例。
+1. 必须先拆解对标文案：标题钩子、开头痛点、段落节奏、转折结构、结尾引导；借结构，不借原文；借情绪，不照抄表达；借选题，不复制案例。
 2. 必须优先使用企业知识库和用户自己的素材。
 3. 必须去 AI 味：不要空话、套话、机械排比、首先其次最后、总而言之、在这个时代、作为专业人士等。
 4. 要像真实的人在分享经验：有具体场景、有判断、有克制、有口语停顿。
@@ -107,10 +107,16 @@ function buildUserPrompt(input = {}, prompt = '') {
 【品牌/企业知识库，最高优先级，必须使用】
 ${textBlock(input.knowledgeText, 1800)}
 
-【对标内容】
-标题：${textBlock(input.benchmarkTitle, 300)}
-正文：${textBlock(input.benchmarkText, 400)}
-喜欢点：${textBlock(input.benchmarkNotes, 500)}
+【对标文案，必须认真拆解；不是复制】
+对标标题：${textBlock(input.benchmarkTitle, 500)}
+对标正文全文/长段：${textBlock(input.benchmarkText, 2200)}
+我喜欢/要学习的点：${textBlock(input.benchmarkNotes, 800)}
+已有对标拆解补充：${textBlock(input.benchmarkAnalysis, 800)}
+
+【强制对标要求】
+1. 先在 benchmarkAnalysis 字段里拆出：标题钩子、开头痛点、正文结构、段落节奏、情绪推进、结尾引导。
+2. final 正文要学习对标的“结构和节奏”，但不能照抄原句、案例和具体表达。
+3. 如果对标文案为空，要在 check 里明确说明“未提供对标文案”。
 
 【我的素材】
 ${textBlock(input.myNotes, 500)}
@@ -125,7 +131,7 @@ ${textBlock(input.myNotes, 500)}
 【模式】${input.mode || ''}
 【图片数量】对标 ${input.imageCounts?.benchmark || 0} 张；我的素材 ${input.imageCounts?.mine || 0} 张。
 
-输出：1标题 2正文 3图片脚本 4发布检查。正文段落空行。`;
+输出：必须包含 benchmarkAnalysis、final、titles、script、check、scores。正文段落空行。`;
 }
 
 function normalizeDeepSeekJSON(content) {
@@ -196,7 +202,7 @@ function compactInput(input = {}) {
     ...input,
     knowledgeText: textBlock(input.knowledgeText, 2000),
     benchmarkTitle: textBlock(input.benchmarkTitle, 500),
-    benchmarkText: textBlock(input.benchmarkText, 1200),
+    benchmarkText: textBlock(input.benchmarkText, 2200),
     benchmarkNotes: textBlock(input.benchmarkNotes, 800),
     benchmarkAnalysis: textBlock(input.benchmarkAnalysis, 800),
     myNotes: textBlock(input.myNotes, 1000),
@@ -384,8 +390,9 @@ ${textBlock(JSON.stringify(body.history || []), 1200)}` : '';
 ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
 
 【强制要求】
-如果上面有图片识别摘要，正文和图片脚本必须引用至少2个具体画面细节/文字/风格/工地信息；不能只写泛泛行业文案。` + current;
-  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】和【我的图片素材识别摘要/OCR】；如果有图片摘要，正文必须关联图片里的具体细节。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。';
+如果上面有图片识别摘要，正文和图片脚本必须引用至少2个具体画面细节/文字/风格/工地信息；不能只写泛泛行业文案。
+对标文案也必须参与：先拆解，再改写成当前品牌和素材的版本。` + current;
+  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】和【我的图片素材识别摘要/OCR】；如果有图片摘要，正文必须关联图片里的具体细节。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。';
   let raw;
   try {
     raw = await openAIChat([
@@ -394,7 +401,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
     ], env, 650, { timeoutMs: 75000, maxTokensCap: 700, temperature: 0.35, reasoningEffort: 'low', json: false });
   } catch (e) {
     try {
-      const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。必须关联图片具体细节。输出JSON：{\"final\":\"标题+正文+标签\",\"titles\":\"5个标题\",\"script\":\"6页图片脚本\",\"check\":\"发布检查\",\"scores\":{\"hook\":80,\"real\":80,\"ai\":\"低\"}}`;
+      const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。对标：${textBlock(input.benchmarkTitle + '\n' + input.benchmarkText, 700)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。必须关联图片具体细节。输出JSON：{\"final\":\"标题+正文+标签\",\"titles\":\"5个标题\",\"script\":\"6页图片脚本\",\"check\":\"发布检查\",\"scores\":{\"hook\":80,\"real\":80,\"ai\":\"低\"}}`;
       raw = await openAIChat([
         { role: 'system', content: '你是大壮小红书内容总编，只用GPT-5.5。极速输出JSON，不要解释。' },
         { role: 'user', content: micro },
