@@ -282,7 +282,7 @@ async function callOpenAI(input = {}, body = {}, env) {
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result.imageAnalysis = imageAnalysis;
   result.readState = usageState(input, 'openai-vision');
-  result.readState.model = env.OPENAI_MODEL || 'gpt-4o-mini';
+  result.readState.model = env.OPENAI_MODEL || 'gpt-5.5';
   result.readState.imageAnalysisCount = imageAnalysis.length;
   return json(result);
 }
@@ -373,7 +373,7 @@ async function handleScriptsReply(request, env) {
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
-    return json({ ok: Boolean(env.DEEPSEEK_API_KEY || env.OPENAI_API_KEY), deepseek: Boolean(env.DEEPSEEK_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'selectable', endpoint: '/api/xhs-generate', models: { default: env.DEEPSEEK_MODEL || 'deepseek-chat', vision: env.OPENAI_MODEL || 'gpt-4o-mini' }, reasoning: 'fast' });
+    return json({ ok: Boolean(env.OPENAI_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'openai-only', endpoint: '/api/xhs-generate', model: env.OPENAI_MODEL || 'gpt-5.5', reasoning: 'fast', note: '小红书工作只允许使用 GPT-5.5' });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
@@ -382,26 +382,10 @@ async function handleXhsGenerate(request, env) {
   const imgCount = (input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0);
   const mode = String(input.mode || '');
 
-  const provider = String(input.provider || 'deepseek');
-
-  // 模型选择说明：
-  // deepseek = 极速文字生成；openai = GPT 视觉/读图；auto = 快速模式 DeepSeek，深度读图 GPT。
-  if (provider === 'deepseek') return callDeepSeek(input, body, env);
-  if (provider === 'openai') {
-    if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
-    input.provider = 'openai';
-    return callOpenAI(input, body, env);
-  }
-  if (provider === 'auto') {
-    if (!(mode.includes('深度') && imgCount > 0)) {
-      if (env.DEEPSEEK_API_KEY) return callDeepSeek(input, body, env);
-      if (!env.OPENAI_API_KEY) return json({ error: 'No AI API key configured on server.' }, 500);
-    }
-    if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
-    input.provider = 'openai';
-    return callOpenAI(input, body, env);
-  }
-  return json({ error: 'Unknown provider', provider }, 400);
+  // 小红书工作强制只走 GPT-5.5，不允许 DeepSeek 或自动路由。
+  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
+  input.provider = 'openai';
+  return callOpenAI(input, body, env);
 }
 
 export default {
