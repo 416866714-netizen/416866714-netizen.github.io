@@ -65,45 +65,29 @@ function buildSystemPrompt(input = {}) {
 }
 
 function buildUserPrompt(input = {}, prompt = '') {
-  return `请根据以下资料生成小红书图文方案。
+  return `请根据资料生成小红书图文方案，只输出 JSON。
 
-【企业知识库】
-${textBlock(input.knowledgeText, 8000)}
+【品牌/企业知识库，优先使用】
+${textBlock(input.knowledgeText, 2000)}
 
-【对标标题】
-${textBlock(input.benchmarkTitle, 1200)}
+【对标内容】
+标题：${textBlock(input.benchmarkTitle, 300)}
+正文：${textBlock(input.benchmarkText, 800)}
+喜欢点：${textBlock(input.benchmarkNotes, 500)}
 
-【对标正文】
-${textBlock(input.benchmarkText, 5000)}
+【我的素材】
+${textBlock(input.myNotes, 800)}
 
-【对标亮点/我喜欢它哪里】
-${textBlock(input.benchmarkNotes, 4000)}
-
-【已有对标拆解】
-${textBlock(input.benchmarkAnalysis, 3000)}
-
-【我的素材/案例背景】
-${textBlock(input.myNotes, 4000)}
-
-【核心观点】
-${textBlock(input.corePoint, 1200)}
-
-【必须出现】
-${textBlock(input.mustSay, 2000)}
-
-【不能出现】
-${textBlock(input.avoidSay, 2000)}
-
+【核心观点】${textBlock(input.corePoint, 200)}
+【必须出现】${textBlock(input.mustSay, 300)}
+【不能出现】${textBlock(input.avoidSay, 300)}
 【目标人群】${input.audience || ''}
-【图片页数】${input.pageCount || 6}
-【内容模板】${input.template || ''}
-【生成模式】${input.mode || ''}
+【页数】${input.pageCount || 6}
+【模板】${input.template || ''}
+【模式】${input.mode || ''}
 【图片数量】对标 ${input.imageCounts?.benchmark || 0} 张；我的素材 ${input.imageCounts?.mine || 0} 张。
 
-【前端拼装提示词备份】
-${textBlock(prompt, 6000)}
-
-请严格按 JSON 输出。`;
+输出 JSON 字段：final,titles,versions,script,story,check,scores,benchmarkAnalysis。final 要可直接发布，段落空行。`;
 }
 
 function normalizeDeepSeekJSON(content) {
@@ -169,12 +153,12 @@ function cleanImages(input = {}) {
 
 async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort('timeout'), options.timeoutMs || 25000);
+  const timer = setTimeout(() => controller.abort('timeout'), options.timeoutMs || 45000);
   const payload = {
     model: env.OPENAI_MODEL || 'gpt-5.5',
     messages,
     temperature: options.temperature ?? 0.45,
-    max_tokens: Math.min(maxTokens, options.maxTokensCap || 1800),
+    max_tokens: Math.min(maxTokens, options.maxTokensCap || 1200),
     response_format: { type: 'json_object' },
   };
   let resp, text;
@@ -300,7 +284,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
     raw = await openAIChat([
       { role: 'system', content: system },
       { role: 'user', content: userText },
-    ], env, 1600, { timeoutMs: 25000, maxTokensCap: 1800, temperature: 0.48 });
+    ], env, 1100, { timeoutMs: 45000, maxTokensCap: 1200, temperature: 0.42 });
   } catch (e) {
     return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e.message || e).slice(0, 1000), tip: '已强制 GPT-5.5。若仍超时，请先用快速生成不读图；深度分析只发送少量图片。' }, 502);
   }
