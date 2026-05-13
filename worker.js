@@ -297,10 +297,9 @@ async function callOpenAI(input = {}, body = {}, env) {
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
 
-  // 只有“深度分析 + 有图”才读图；且只读少量图。读图失败不阻断成稿。
-  if (body.action !== 'revise' && wantsDeep && hasImages) {
-    imageAnalysis = await analyzeImages(input, env);
-  }
+  // 生成链路不再逐图 OCR：截图里的失败就是深度分析+图片触发 GPT-5.5 超时。
+  // 仍然只用 GPT-5.5，但先保证“生成”一定能出结果；图片数量用于脚本建议。
+  imageAnalysis = [];
 
   const current = body.action === 'revise' ? `
 
@@ -343,8 +342,8 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
   result.readState.imageAnalysisCount = imageAnalysis.length;
   result.readState.benchmarkImages = originalCounts.benchmark;
   result.readState.myImages = originalCounts.mine;
-  result.readState.imageReadable = imageAnalysis.length > 0;
-  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。快速生成不做逐图 OCR，以优先保证不超时；深度分析才读图。';
+  result.readState.imageReadable = false;
+  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。为保证生成成功，生成链路暂不做图片 OCR；图片用于数量和脚本参考。';
   return json(result);
 }
 
