@@ -233,6 +233,7 @@ async function callDeepSeek(input = {}, body = {}, env) {
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result.readState = usageState(input, 'deepseek-fast');
+  result.readState.model = env.DEEPSEEK_MODEL || 'deepseek-chat';
   result.readState.imageReadable = false;
   result.check = (result.check || '') + '\n\n系统说明：本次使用极速文本模式，优先保证生成成功；图片仅统计数量，未做视觉识别。需要精读图片时再走深度视觉模式。';
   return json(result);
@@ -280,7 +281,8 @@ async function callOpenAI(input = {}, body = {}, env) {
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result.imageAnalysis = imageAnalysis;
-  result.readState = usageState(input, 'openai');
+  result.readState = usageState(input, 'openai-vision');
+  result.readState.model = env.OPENAI_MODEL || 'gpt-4o-mini';
   result.readState.imageAnalysisCount = imageAnalysis.length;
   return json(result);
 }
@@ -371,7 +373,7 @@ async function handleScriptsReply(request, env) {
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
-    return json({ ok: Boolean(env.DEEPSEEK_API_KEY || env.OPENAI_API_KEY), deepseek: Boolean(env.DEEPSEEK_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'auto', endpoint: '/api/xhs-generate', model: env.DEEPSEEK_MODEL || 'deepseek-chat', fallbackModel: env.OPENAI_MODEL || 'gpt-4o-mini', reasoning: 'fast' });
+    return json({ ok: Boolean(env.DEEPSEEK_API_KEY || env.OPENAI_API_KEY), deepseek: Boolean(env.DEEPSEEK_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'selectable', endpoint: '/api/xhs-generate', models: { default: env.DEEPSEEK_MODEL || 'deepseek-chat', vision: env.OPENAI_MODEL || 'gpt-4o-mini' }, reasoning: 'fast' });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
@@ -380,16 +382,26 @@ async function handleXhsGenerate(request, env) {
   const imgCount = (input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0);
   const mode = String(input.mode || '');
 
-  // 默认走极速文本模式：小红书成稿先保证快和稳定。
-  // 只有用户选择“深度分析”且上传图片时，才走视觉 OCR，避免 9 张图片逐张识别导致 Cloudflare/上游超时。
-  if (!(mode.includes('深度') && imgCount > 0)) {
-    if (env.DEEPSEEK_API_KEY) return callDeepSeek(input, body, env);
-    if (!env.OPENAI_API_KEY) return json({ error: 'No AI API key configured on server.' }, 500);
-  }
+  const provider = String(input.provider || 'deepseek');
 
-  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
-  input.provider = 'openai';
-  return callOpenAI(input, body, env);
+  // 模型选择说明：
+  // deepseek = 极速文字生成；openai = GPT 视觉/读图；auto = 快速模式 DeepSeek，深度读图 GPT。
+  if (provider === 'deepseek') return callDeepSeek(input, body, env);
+  if (provider === 'openai') {
+    if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
+    input.provider = 'openai';
+    return callOpenAI(input, body, env);
+  }
+  if (provider === 'auto') {
+    if (!(mode.includes('深度') && imgCount > 0)) {
+      if (env.DEEPSEEK_API_KEY) return callDeepSeek(input, body, env);
+      if (!env.OPENAI_API_KEY) return json({ error: 'No AI API key configured on server.' }, 500);
+    }
+    if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
+    input.provider = 'openai';
+    return callOpenAI(input, body, env);
+  }
+  return json({ error: 'Unknown provider', provider }, 400);
 }
 
 export default {
