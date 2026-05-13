@@ -110,6 +110,22 @@ function normalizeDeepSeekJSON(content) {
   };
 }
 
+function standardizeXhsResult(result = {}) {
+  if (!result || typeof result !== 'object') return result;
+  if (!result.final) {
+    const title = result['标题'] || result.title || '';
+    const body = result['正文'] || result.body || result.content || '';
+    if (title || body) result.final = `${title ? '标题：' + title + '\n\n' : ''}${body}`;
+  }
+  if (!result.titles && result['标题']) result.titles = String(result['标题']);
+  if (!result.script && result['图片脚本']) result.script = Array.isArray(result['图片脚本']) ? result['图片脚本'].map(x => typeof x === 'string' ? x : JSON.stringify(x, null, 2)).join('\n\n') : String(result['图片脚本']);
+  if (!result.check && result['发布检查']) result.check = typeof result['发布检查'] === 'string' ? result['发布检查'] : JSON.stringify(result['发布检查'], null, 2);
+  if (!result.versions && result['正文']) result.versions = String(result['正文']);
+  if (!result.scores) result.scores = { hook: '--', real: '--', ai: '低' };
+  return result;
+}
+
+
 
 
 function compactInput(input = {}) {
@@ -308,9 +324,17 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
       { role: 'user', content: userText },
     ], env, 650, { timeoutMs: 75000, maxTokensCap: 700, temperature: 0.35, reasoningEffort: 'low', json: false });
   } catch (e) {
-    return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e.message || e).slice(0, 1000), tip: '已强制 GPT-5.5。若仍超时，请先用快速生成不读图；深度分析只发送少量图片。' }, 502);
+    try {
+      const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。我的素材：${textBlock(input.myNotes, 300)}。输出JSON：{\"final\":\"标题+正文+标签\",\"titles\":\"5个标题\",\"script\":\"6页图片脚本\",\"check\":\"发布检查\",\"scores\":{\"hook\":80,\"real\":80,\"ai\":\"低\"}}`;
+      raw = await openAIChat([
+        { role: 'system', content: '你是大壮小红书内容总编，只用GPT-5.5。极速输出JSON，不要解释。' },
+        { role: 'user', content: micro },
+      ], env, 420, { timeoutMs: 25000, maxTokensCap: 450, temperature: 0.3, reasoningEffort: 'low', json: false });
+    } catch (e2) {
+      return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e2.message || e.message || e).slice(0, 1000), tip: 'GPT-5.5 上游连续超时；已确认后端强制 GPT-5.5，没有切换其他模型。' }, 502);
+    }
   }
-  const result = normalizeDeepSeekJSON(raw);
+  const result = standardizeXhsResult(normalizeDeepSeekJSON(raw));
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result.imageAnalysis = imageAnalysis;
