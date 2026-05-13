@@ -224,10 +224,9 @@ function usageState(input = {}, provider = 'deepseek') {
 }
 
 function cleanImages(input = {}) {
-  const b=(input.images?.benchmark||[]).slice(0,1).map(x=>({...x,group:'对标图'}));
-  const m=(input.images?.mine||[]).slice(0,2).map(x=>({...x,group:'我的素材图'}));
-  const all=[...b,...m];
-  return all.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 320000).slice(0, 3);
+  // 生成文案时只读取“我的图片素材”，不读对标图，避免文案跑到对标账号。
+  const m=(input.images?.mine||[]).slice(0,2).map((x,i)=>({...x,group:'我的素材图'+(i+1)}));
+  return m.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 420000).slice(0, 2);
 }
 
 async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
@@ -319,7 +318,7 @@ async function callDeepSeek(input = {}, body = {}, env) {
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result.readState = usageState(input, 'deepseek-fast');
   result.readState.model = env.DEEPSEEK_MODEL || 'deepseek-chat';
-  result.readState.imageReadable = false;
+  result.readState.imageReadable = imageAnalysis.length > 0;
   result.check = (result.check || '') + '\n\n系统说明：本次使用极速文本模式，优先保证生成成功；图片仅统计数量，未做视觉识别。需要精读图片时再走深度视觉模式。';
   return json(result);
 }
@@ -330,12 +329,12 @@ async function analyzeImages(input = {}, env) {
   for (let i = 0; i < imgs.length; i++) {
     const img = imgs[i];
     const content = [
-      { type: 'text', text: `请识别这张${img.group}${i+1}。输出JSON：{"group":"对标图/我的素材图","ocr":"图中文字","visual":"画面描述","content_points":["要点"],"xhs_use":"适合在小红书里承担的作用","risk":"可能误读/看不清的地方"}` },
+      { type: 'text', text: `请仔细识别这张${img.group}，这是用户自己的图片素材，后续文案必须关联它。输出JSON：{"group":"我的素材图","ocr":"图中文字/招牌/价格/楼盘/品牌/工地文字","visual":"画面里具体有什么，空间/工地/户型/材料/人物/颜色/风格","content_points":["可写进正文的具体素材点"],"xhs_use":"这张图适合承担封面/痛点/证据/案例/收尾中的哪个作用","must_mention":["正文必须关联的画面细节"],"risk":"可能误读/看不清的地方"}` },
       { type: 'image_url', image_url: { url: img.dataUrl, detail: 'low' } },
     ];
     try {
       const raw = await openAIChat([
-        { role: 'system', content: '你是图片OCR和小红书图文拆解助手。只输出JSON。' },
+        { role: 'system', content: '你是图片OCR和小红书图文拆解助手。只输出JSON。重点提取可写进小红书正文的具体画面细节。' },
         { role: 'user', content },
       ], env, 350, { timeoutMs: 12000, maxTokensCap: 500, temperature: 0.2 });
       out.push(normalizeDeepSeekJSON(raw));
@@ -361,9 +360,12 @@ async function callOpenAI(input = {}, body = {}, env) {
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
 
-  // 生成链路不再逐图 OCR：截图里的失败就是深度分析+图片触发 GPT-5.5 超时。
-  // 仍然只用 GPT-5.5，但先保证“生成”一定能出结果；图片数量用于脚本建议。
-  imageAnalysis = [];
+  // 只读取“我的图片素材”前 1-2 张；不读对标图。读图失败不阻断生成，但会在读取状态里说明。
+  if (body.action !== 'revise' && (input.images?.mine?.length || 0) > 0) {
+    imageAnalysis = await analyzeImages(input, env);
+  } else {
+    imageAnalysis = [];
+  }
 
   const current = body.action === 'revise' ? `
 
@@ -377,9 +379,12 @@ ${textBlock(body.revisionInstruction, 1200)}
 ${textBlock(JSON.stringify(body.history || []), 1200)}` : '';
   const userText = buildUserPrompt({...input, images:{}}, '') + `
 
-【图片识别摘要/OCR】
-${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
-  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】和【网页内置品牌资料】；文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。';
+【我的图片素材识别摘要/OCR，最高优先级之一】
+${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
+
+【强制要求】
+如果上面有图片识别摘要，正文和图片脚本必须引用至少2个具体画面细节/文字/风格/工地信息；不能只写泛泛行业文案。` + current;
+  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】和【我的图片素材识别摘要/OCR】；如果有图片摘要，正文必须关联图片里的具体细节。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。';
   let raw;
   try {
     raw = await openAIChat([
@@ -388,7 +393,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
     ], env, 650, { timeoutMs: 75000, maxTokensCap: 700, temperature: 0.35, reasoningEffort: 'low', json: false });
   } catch (e) {
     try {
-      const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。我的素材：${textBlock(input.myNotes, 300)}。输出JSON：{\"final\":\"标题+正文+标签\",\"titles\":\"5个标题\",\"script\":\"6页图片脚本\",\"check\":\"发布检查\",\"scores\":{\"hook\":80,\"real\":80,\"ai\":\"低\"}}`;
+      const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。必须关联图片具体细节。输出JSON：{\"final\":\"标题+正文+标签\",\"titles\":\"5个标题\",\"script\":\"6页图片脚本\",\"check\":\"发布检查\",\"scores\":{\"hook\":80,\"real\":80,\"ai\":\"低\"}}`;
       raw = await openAIChat([
         { role: 'system', content: '你是大壮小红书内容总编，只用GPT-5.5。极速输出JSON，不要解释。' },
         { role: 'user', content: micro },
@@ -407,8 +412,8 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
   result.readState.imageAnalysisCount = imageAnalysis.length;
   result.readState.benchmarkImages = originalCounts.benchmark;
   result.readState.myImages = originalCounts.mine;
-  result.readState.imageReadable = false;
-  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。为保证生成成功，生成链路暂不做图片 OCR；图片用于数量和脚本参考。';
+  result.readState.imageReadable = imageAnalysis.length > 0;
+  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。已读取“我的图片素材”前 1-2 张并把识别摘要写入生成提示；不读取对标图，避免跑偏。';
   return json(result);
 }
 
