@@ -201,15 +201,15 @@ async function callDeepSeek(input = {}, body = {}, env) {
   if (!env.DEEPSEEK_API_KEY) return json({ error: 'DEEPSEEK_API_KEY is not configured on server.' }, 500);
   const reviseContext = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 9000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 2500)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 3000)}` : '';
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort('timeout'), 45000);
+  const timer = setTimeout(() => controller.abort('timeout'), 18000);
   const payload = {
     model: env.DEEPSEEK_MODEL || 'deepseek-chat',
     messages: [
-      { role: 'system', content: buildSystemPrompt(input) + '\n优先保证快速、稳定、可直接发布。没有图片 OCR 时，不要假装看到了图片，只基于文字素材生成。' },
+      { role: 'system', content: '你是大壮小红书内容编辑。只输出JSON，字段：final,titles,versions,script,story,check,scores。要求：真实、短句、去AI味、可直接发布。' },
       { role: 'user', content: buildUserPrompt({...input, images:{}}, '') + reviseContext },
     ],
-    temperature: 0.72,
-    max_tokens: 2400,
+    temperature: 0.62,
+    max_tokens: 1400,
     response_format: { type: 'json_object' },
   };
   let resp, text;
