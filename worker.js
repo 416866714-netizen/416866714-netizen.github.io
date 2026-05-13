@@ -164,7 +164,7 @@ async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
   // GPT-5 系列用 max_completion_tokens 更稳；旧模型仍用 max_tokens。
   if (/gpt-5/i.test(model)) payload.max_completion_tokens = limit;
   else payload.max_tokens = limit;
-  if (/gpt-5/i.test(model)) payload.reasoning_effort = options.reasoningEffort || 'minimal';
+  if (/gpt-5/i.test(model)) payload.reasoning_effort = options.reasoningEffort || 'low';
   if (options.json !== false) payload.response_format = { type: 'json_object' };
   let resp, text;
   try {
@@ -306,7 +306,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
     raw = await openAIChat([
       { role: 'system', content: system },
       { role: 'user', content: userText },
-    ], env, 650, { timeoutMs: 75000, maxTokensCap: 700, temperature: 0.35, reasoningEffort: 'minimal', json: false });
+    ], env, 650, { timeoutMs: 75000, maxTokensCap: 700, temperature: 0.35, reasoningEffort: 'low', json: false });
   } catch (e) {
     return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e.message || e).slice(0, 1000), tip: '已强制 GPT-5.5。若仍超时，请先用快速生成不读图；深度分析只发送少量图片。' }, 502);
   }
