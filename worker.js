@@ -233,7 +233,7 @@ function usageState(input = {}, provider = 'deepseek') {
 function cleanImages(input = {}) {
   // 生成文案时只读取“我的图片素材”，不读对标图，避免文案跑到对标账号。
   const m=(input.images?.mine||[]).slice(0,2).map((x,i)=>({...x,group:'我的素材图'+(i+1)}));
-  return m.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 420000).slice(0, 2);
+  return m.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 900000).slice(0, 2);
 }
 
 async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
@@ -344,7 +344,7 @@ async function analyzeImages(input = {}, env) {
       const raw = await openAIChat([
         { role: 'system', content: '你是图片OCR和小红书图文拆解助手。只输出JSON。重点提取可写进小红书正文的具体画面细节。' },
         { role: 'user', content },
-      ], env, 350, { timeoutMs: 12000, maxTokensCap: 500, temperature: 0.2 });
+      ], env, 420, { timeoutMs: 20000, maxTokensCap: 600, temperature: 0.2, reasoningEffort: 'low', json: false });
       out.push(normalizeDeepSeekJSON(raw));
     } catch (e) {
       out.push({ group: img.group, error: String(e.message || e).slice(0, 500) });
@@ -386,10 +386,13 @@ async function callOpenAI(input = {}, body = {}, env) {
 
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
+  let imageSentForOcr = 0;
 
   // 只读取“我的图片素材”前 1-2 张；不读对标图。读图失败不阻断生成，但会在读取状态里说明。
   if (body.action !== 'revise' && (input.images?.mine?.length || 0) > 0) {
-    imageAnalysis = await analyzeImages(input, env);
+    const imgsForOcr = cleanImages(input);
+    imageSentForOcr = imgsForOcr.length;
+    imageAnalysis = await analyzeImages({...input, images:{benchmark:[], mine: imgsForOcr}}, env);
   } else {
     imageAnalysis = [];
   }
@@ -438,11 +441,13 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   result.imageAnalysis = imageAnalysis;
   result.readState = usageState(input, 'openai-only');
   result.readState.model = env.OPENAI_MODEL || 'gpt-5.5';
-  result.readState.imageAnalysisCount = imageAnalysis.length;
+  result.readState.imageAnalysisCount = imageAnalysis.filter(x=>!x.error).length;
+  result.readState.imageOcrAttempted = imageSentForOcr;
+  result.readState.imageOcrErrors = imageAnalysis.filter(x=>x.error).length;
   result.readState.benchmarkImages = originalCounts.benchmark;
   result.readState.myImages = originalCounts.mine;
-  result.readState.imageReadable = imageAnalysis.length > 0;
-  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。已读取“我的图片素材”前 1-2 张并把识别摘要写入生成提示；不读取对标图，避免跑偏。';
+  result.readState.imageReadable = imageAnalysis.some(x=>!x.error);
+  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。已尝试读取“我的图片素材”前 1-2 张，并把成功识别的摘要写入生成提示；不读取对标图，避免跑偏。';
   return json(result);
 }
 
