@@ -127,6 +127,23 @@ function normalizeDeepSeekJSON(content) {
 }
 
 
+
+function compactInput(input = {}) {
+  return {
+    ...input,
+    knowledgeText: textBlock(input.knowledgeText, 2000),
+    benchmarkTitle: textBlock(input.benchmarkTitle, 500),
+    benchmarkText: textBlock(input.benchmarkText, 1200),
+    benchmarkNotes: textBlock(input.benchmarkNotes, 800),
+    benchmarkAnalysis: textBlock(input.benchmarkAnalysis, 800),
+    myNotes: textBlock(input.myNotes, 1000),
+    corePoint: textBlock(input.corePoint, 300),
+    mustSay: textBlock(input.mustSay, 500),
+    avoidSay: textBlock(input.avoidSay, 500),
+    images: { benchmark: [], mine: [] },
+  };
+}
+
 function usageState(input = {}, provider = 'deepseek') {
   const knowledge = textBlock(input.knowledgeText, 12000);
   const benchmark = `${input.benchmarkTitle || ''}${input.benchmarkText || ''}${input.benchmarkNotes || ''}`;
@@ -151,29 +168,74 @@ function cleanImages(input = {}) {
 }
 
 async function openAIChat(messages, env, maxTokens = 1800) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort('timeout'), 52000);
   const payload = {
-    model: env.OPENAI_MODEL || 'gpt-5.5',
+    model: env.OPENAI_MODEL || 'gpt-4o-mini',
     messages,
-    temperature: 0.58,
-    max_tokens: maxTokens,
-    reasoning_effort: 'high',
-    reasoning: { effort: 'high' },
+    temperature: 0.5,
+    max_tokens: Math.min(maxTokens, 2400),
     response_format: { type: 'json_object' },
   };
-  let resp = await fetch((env.OPENAI_BASE_URL || 'https://api.openai.com/v1') + '/chat/completions', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  let text = await resp.text();
-  if (!resp.ok && /reasoning|effort|unsupported|unknown/i.test(text)) {
-    delete payload.reasoning_effort; delete payload.reasoning;
-    resp = await fetch((env.OPENAI_BASE_URL || 'https://api.openai.com/v1') + '/chat/completions', {method:'POST',headers:{'Authorization':`Bearer ${env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  let resp, text;
+  try {
+    resp = await fetch((env.OPENAI_BASE_URL || 'https://api.openai.com/v1') + '/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
     text = await resp.text();
+  } catch (e) {
+    throw new Error('GPT 请求超时或网络失败：' + String(e.message || e).slice(0, 300));
+  } finally {
+    clearTimeout(timer);
   }
   if (!resp.ok) throw new Error(text.startsWith('<') ? '上游或 Worker 返回 HTML 错误，通常是图片/文本过大或模型超时。' : text.slice(0, 1000));
   const data = JSON.parse(text);
   return data.choices?.[0]?.message?.content || '';
+}
+
+async function callDeepSeek(input = {}, body = {}, env) {
+  input = compactInput(input);
+  if (!env.DEEPSEEK_API_KEY) return json({ error: 'DEEPSEEK_API_KEY is not configured on server.' }, 500);
+  const reviseContext = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 9000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 2500)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 3000)}` : '';
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort('timeout'), 45000);
+  const payload = {
+    model: env.DEEPSEEK_MODEL || 'deepseek-chat',
+    messages: [
+      { role: 'system', content: buildSystemPrompt(input) + '\n优先保证快速、稳定、可直接发布。没有图片 OCR 时，不要假装看到了图片，只基于文字素材生成。' },
+      { role: 'user', content: buildUserPrompt({...input, images:{}}, '') + reviseContext },
+    ],
+    temperature: 0.72,
+    max_tokens: 2400,
+    response_format: { type: 'json_object' },
+  };
+  let resp, text;
+  try {
+    resp = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    text = await resp.text();
+  } catch (e) {
+    clearTimeout(timer);
+    return json({ error: 'DeepSeek request timeout/network failed', detail: String(e.message || e).slice(0, 500) }, 502);
+  }
+  clearTimeout(timer);
+  if (!resp.ok) return json({ error: 'DeepSeek request failed', status: resp.status, detail: text.slice(0, 1000) }, 502);
+  let data;
+  try { data = JSON.parse(text); } catch (_) { return json({ error: 'DeepSeek returned non-json', detail: text.slice(0, 1000) }, 502); }
+  const result = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
+  if (typeof result.final === 'string') result.final = formatXhsText(result.final);
+  if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
+  result.readState = usageState(input, 'deepseek-fast');
+  result.readState.imageReadable = false;
+  result.check = (result.check || '') + '\n\n系统说明：本次使用极速文本模式，优先保证生成成功；图片仅统计数量，未做视觉识别。需要精读图片时再走深度视觉模式。';
+  return json(result);
 }
 
 async function analyzeImages(input = {}, env) {
@@ -199,11 +261,12 @@ async function analyzeImages(input = {}, env) {
 }
 
 async function callOpenAI(input = {}, body = {}, env) {
+  if (!(String(input.mode || '').includes('深度') && ((input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0) > 0))) input = compactInput(input);
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
   if (body.action !== 'revise') imageAnalysis = await analyzeImages(input, env);
   const current = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 10000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 3000)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 5000)}` : '';
-  const userText = buildUserPrompt({...input, images:{}}, body.prompt) + `\n\n【图片识别摘要/OCR】\n${textBlock(JSON.stringify(imageAnalysis, null, 2), 9000)}` + current;
+  const userText = buildUserPrompt({...input, images:{}}, '') + `\n\n【图片识别摘要/OCR】\n${textBlock(JSON.stringify(imageAnalysis, null, 2), 9000)}` + current;
   let raw;
   try {
     raw = await openAIChat([
@@ -308,43 +371,25 @@ async function handleScriptsReply(request, env) {
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
-    return json({ ok: Boolean(env.DEEPSEEK_API_KEY), deepseek: Boolean(env.DEEPSEEK_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'multi', endpoint: '/api/xhs-generate', model: env.OPENAI_MODEL || 'gpt-5.5', reasoning: 'high' });
+    return json({ ok: Boolean(env.DEEPSEEK_API_KEY || env.OPENAI_API_KEY), deepseek: Boolean(env.DEEPSEEK_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'auto', endpoint: '/api/xhs-generate', model: env.DEEPSEEK_MODEL || 'deepseek-chat', fallbackModel: env.OPENAI_MODEL || 'gpt-4o-mini', reasoning: 'fast' });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
-  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
 
   const body = await request.json().catch(() => ({}));
   const input = body.input || {};
-  if (input.provider !== 'openai') input.provider = 'openai';
-  return callOpenAI(input, body, env);
-  const reviseContext = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 10000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 3000)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 5000)}` : '';
-  const payload = {
-    model: input.model || env.DEEPSEEK_MODEL || 'deepseek-chat',
-    messages: [
-      { role: 'system', content: buildSystemPrompt(input) },
-      { role: 'user', content: buildUserPrompt(input, body.prompt) + reviseContext },
-    ],
-    temperature: 0.78,
-    max_tokens: 2600,
-    response_format: { type: 'json_object' },
-  };
+  const imgCount = (input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0);
+  const mode = String(input.mode || '');
 
-  const resp = await fetch('https://api.deepseek.com/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.DEEPSEEK_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-  const text = await resp.text();
-  if (!resp.ok) return json({ error: 'DeepSeek request failed', status: resp.status, detail: text.slice(0, 1000) }, 502);
-  let data;
-  try { data = JSON.parse(text); } catch (_) { return json({ error: 'DeepSeek returned non-json', detail: text.slice(0, 1000) }, 502); }
-  const content = data.choices?.[0]?.message?.content || '';
-  const result = normalizeDeepSeekJSON(content);
-  result.readState = usageState(input, 'deepseek');
-  return json(result);
+  // 默认走极速文本模式：小红书成稿先保证快和稳定。
+  // 只有用户选择“深度分析”且上传图片时，才走视觉 OCR，避免 9 张图片逐张识别导致 Cloudflare/上游超时。
+  if (!(mode.includes('深度') && imgCount > 0)) {
+    if (env.DEEPSEEK_API_KEY) return callDeepSeek(input, body, env);
+    if (!env.OPENAI_API_KEY) return json({ error: 'No AI API key configured on server.' }, 500);
+  }
+
+  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
+  input.provider = 'openai';
+  return callOpenAI(input, body, env);
 }
 
 export default {
