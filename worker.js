@@ -344,7 +344,7 @@ async function analyzeImages(input = {}, env) {
       const raw = await openAIChat([
         { role: 'system', content: '你是图片OCR和小红书图文拆解助手。只输出JSON。重点提取可写进小红书正文的具体画面细节。' },
         { role: 'user', content },
-      ], env, 420, { timeoutMs: 20000, maxTokensCap: 600, temperature: 0.2, reasoningEffort: 'low', json: false });
+      ], env, 520, { timeoutMs: 45000, maxTokensCap: 700, temperature: 0.2, reasoningEffort: 'low', json: false });
       out.push(normalizeDeepSeekJSON(raw));
     } catch (e) {
       out.push({ group: img.group, error: String(e.message || e).slice(0, 500) });
@@ -372,28 +372,30 @@ function limitXhsFinalLength(result = {}, max = 1000) {
 }
 
 async function openAIChatWithUserImages(input = {}, imageAnalysis = [], env, current = '') {
-  const imgs = cleanImages(input).slice(0, 2);
+  const imgs = cleanImages(input).slice(0, 1);
   const imageBlocks = imgs.map(img => ({ type: 'image_url', image_url: { url: img.dataUrl, detail: 'low' } }));
   const text = buildUserPrompt({...input, images:{}}, '') + `
 
 【我的图片素材】
-已随本消息附上 ${imgs.length} 张用户自己的图片素材。必须直接观察图片，并把图片里的具体画面/文字/风格/工地细节写入正文和图片脚本。
+本消息附上 ${imgs.length} 张用户自己的图片素材。你必须先看图，再写文案。
 
-【如果图片看不清】
-也要在 check 里说明图片看不清，不要假装已经识别。
+【图片关联硬性要求】
+1. 先在 benchmarkAnalysis 之后增加/包含 imageMaterial 字段，写出你从图片里看到的具体内容：画面主体、文字、颜色/风格、空间/工地/材料/页面信息。
+2. final 正文开头前3段内必须出现至少1个图片里的具体细节。
+3. script 每一页都要说明用哪张图、图里哪个局部或文字作为画面依据。
+4. 如果你看不清图片，final 不要泛写，必须明确说“图片看不清，需要补充文字素材”，并停止编造。
+5. 禁止只写品牌通用卖点，必须把图片内容当成案例素材。
 
 【OCR辅助摘要】
 ${textBlock(JSON.stringify(imageAnalysis, null, 2), 1200)}
 
-【强制要求】
-1. 正文必须关联图片里的具体信息；
-2. benchmarkAnalysis 必须拆解对标文案；
-3. final 不超过1000字。` + current;
+【输出JSON字段】
+benchmarkAnalysis, imageMaterial, final, titles, script, check, scores。final 不超过1000字。` + current;
   const content = [{ type: 'text', text }, ...imageBlocks];
   return await openAIChat([
-    { role: 'system', content: '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。你必须直接观察用户上传的图片素材，并结合品牌资料和对标结构生成内容。只输出JSON或直接正文。' },
+    { role: 'system', content: '你是小红书图文编辑和图片观察员。小红书工作只允许使用 GPT-5.5。最高优先级：必须看用户上传图片，并把图片具体细节写进正文；如果看不清就明说，不能写泛泛装修文案。' },
     { role: 'user', content },
-  ], env, 850, { timeoutMs: 105000, maxTokensCap: 900, temperature: 0.3, reasoningEffort: 'low', json: false });
+  ], env, 900, { timeoutMs: 120000, maxTokensCap: 950, temperature: 0.25, reasoningEffort: 'low', json: false });
 }
 
 async function callOpenAI(input = {}, body = {}, env) {
@@ -467,6 +469,9 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result = limitXhsFinalLength(result, 1000);
+  if ((input.images?.mine?.length || 0) > 0 && !result.imageMaterial && !imageAnalysis.some(x=>!x.error)) {
+    result.check = (result.check || '') + '\n\n图片关联警告：GPT-5.5 未返回可验证的图片细节。本次不应视为有效看图，请补充图片文字描述或降低图片复杂度后重试。';
+  }
   result.imageAnalysis = imageAnalysis;
   result.readState = usageState(input, 'openai-only');
   result.readState.model = env.OPENAI_MODEL || 'gpt-5.5';
@@ -475,8 +480,9 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   result.readState.imageOcrErrors = imageAnalysis.filter(x=>x.error).length;
   result.readState.benchmarkImages = originalCounts.benchmark;
   result.readState.myImages = originalCounts.mine;
-  result.readState.imageReadable = imageAnalysis.some(x=>!x.error) || ((input.images?.mine?.length || 0) > 0 && !String(raw||'').includes('图片识别失败'));
+  result.readState.imageReadable = Boolean(result.imageMaterial) || imageAnalysis.some(x=>!x.error);
   result.readState.directImagesAttached = (input.images?.mine?.length || 0) > 0;
+  result.readState.imageMaterialReturned = Boolean(result.imageMaterial);
   result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。已把“我的图片素材”前 1-2 张直接附给 GPT-5.5 生成；OCR摘要成功则同时使用，失败则以直接看图为准；不读取对标图，避免跑偏。';
   return json(result);
 }
