@@ -78,6 +78,7 @@ function buildSystemPrompt(input = {}) {
 5. 不要恐吓业主，不要绝对化承诺，不要贬低具体公司，不要过度广告。
 6. 大壮是装修决策顾问，不是装修公司；核心是帮助业主先判断方案、报价、合同、边界和责任。
 7. 最终正文必须已经空好格：每 1-2 句话一段，段落之间空一行，不要连续大段文字。
+8. 小红书正文硬限制：生成的最终正文含标题、正文、标签合计不得超过1000个中文字符；优先控制在800-950字。
 
 【已启用创作技能】${skills || '去 AI 味、小红书结构、故事化表达、强冲突标题、大壮装修顾问语气'}
 
@@ -109,7 +110,7 @@ ${textBlock(input.knowledgeText, 1800)}
 
 【对标文案，必须认真拆解；不是复制】
 对标标题：${textBlock(input.benchmarkTitle, 500)}
-对标正文全文/长段：${textBlock(input.benchmarkText, 2200)}
+对标正文，最多1000字：${textBlock(input.benchmarkText, 1000)}
 我喜欢/要学习的点：${textBlock(input.benchmarkNotes, 800)}
 已有对标拆解补充：${textBlock(input.benchmarkAnalysis, 800)}
 
@@ -131,7 +132,7 @@ ${textBlock(input.myNotes, 500)}
 【模式】${input.mode || ''}
 【图片数量】对标 ${input.imageCounts?.benchmark || 0} 张；我的素材 ${input.imageCounts?.mine || 0} 张。
 
-输出：必须包含 benchmarkAnalysis、final、titles、script、check、scores。正文段落空行。`;
+输出：必须包含 benchmarkAnalysis、final、titles、script、check、scores。final 含标题、正文、标签合计不超过1000字；正文段落空行。`;
 }
 
 function normalizeDeepSeekJSON(content) {
@@ -202,7 +203,7 @@ function compactInput(input = {}) {
     ...input,
     knowledgeText: textBlock(input.knowledgeText, 2000),
     benchmarkTitle: textBlock(input.benchmarkTitle, 500),
-    benchmarkText: textBlock(input.benchmarkText, 2200),
+    benchmarkText: textBlock(input.benchmarkText, 1000),
     benchmarkNotes: textBlock(input.benchmarkNotes, 800),
     benchmarkAnalysis: textBlock(input.benchmarkAnalysis, 800),
     myNotes: textBlock(input.myNotes, 1000),
@@ -319,12 +320,13 @@ async function callDeepSeek(input = {}, body = {}, env) {
   if (!resp.ok) return json({ error: 'DeepSeek request failed', status: resp.status, detail: text.slice(0, 1000) }, 502);
   let data;
   try { data = JSON.parse(text); } catch (_) { return json({ error: 'DeepSeek returned non-json', detail: text.slice(0, 1000) }, 502); }
-  const result = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
+  let result = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
+  result = limitXhsFinalLength(result, 1000);
   result.readState = usageState(input, 'deepseek-fast');
   result.readState.model = env.DEEPSEEK_MODEL || 'deepseek-chat';
-  result.readState.imageReadable = imageAnalysis.length > 0;
+  result.readState.imageReadable = false;
   result.check = (result.check || '') + '\n\n系统说明：本次使用极速文本模式，优先保证生成成功；图片仅统计数量，未做视觉识别。需要精读图片时再走深度视觉模式。';
   return json(result);
 }
@@ -349,6 +351,24 @@ async function analyzeImages(input = {}, env) {
     }
   }
   return out;
+}
+
+function limitXhsFinalLength(result = {}, max = 1000) {
+  const trim = (s) => {
+    s = String(s || '').trim();
+    if (s.length <= max) return s;
+    const cut = s.slice(0, max - 36).replace(/[，、；：,.!！?？][^，、；：,.!！?？]*$/, '');
+    return cut + '\n\n（正文已按小红书1000字限制自动收束）';
+  };
+  if (typeof result.final === 'string') result.final = trim(result.final);
+  if (result.final && typeof result.final === 'object') {
+    if (result.final.body) result.final.body = trim(result.final.body);
+    else result.final = trim(JSON.stringify(result.final, null, 2));
+  }
+  result.check = (result.check || '') + `
+
+长度检查：最终正文已按小红书1000字限制控制。`;
+  return result;
 }
 
 async function callOpenAI(input = {}, body = {}, env) {
@@ -392,7 +412,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
 【强制要求】
 如果上面有图片识别摘要，正文和图片脚本必须引用至少2个具体画面细节/文字/风格/工地信息；不能只写泛泛行业文案。
 对标文案也必须参与：先拆解，再改写成当前品牌和素材的版本。` + current;
-  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】和【我的图片素材识别摘要/OCR】；如果有图片摘要，正文必须关联图片里的具体细节。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。';
+  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】和【我的图片素材识别摘要/OCR】；如果有图片摘要，正文必须关联图片里的具体细节。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。最终发布正文不得超过1000字。';
   let raw;
   try {
     raw = await openAIChat([
@@ -414,6 +434,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   result = enforceXhsBrandMention(result, input);
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
+  result = limitXhsFinalLength(result, 1000);
   result.imageAnalysis = imageAnalysis;
   result.readState = usageState(input, 'openai-only');
   result.readState.model = env.OPENAI_MODEL || 'gpt-5.5';
