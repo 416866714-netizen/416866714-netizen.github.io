@@ -354,8 +354,9 @@ async function callOpenAI(input = {}, body = {}, env) {
   const wantsDeep = String(input.mode || '').includes('深度');
   const hasImages = ((input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0)) > 0;
 
-  // 快速/多版本/改稿：仍然只用 GPT-5.5，但不做逐图 OCR，避免截图里的 timeout。
-  if (!(wantsDeep && hasImages) || body.action === 'revise') input = compactInput(input);
+  // 没有我的图片时才压缩掉图片；有我的图片时保留前2张给 GPT-5.5 读取。
+  const hasMineImages = (input.images?.mine?.length || 0) > 0;
+  if ((!hasMineImages && !(wantsDeep && hasImages)) || body.action === 'revise') input = compactInput(input);
 
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
