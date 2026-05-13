@@ -87,7 +87,7 @@ ${textBlock(input.myNotes, 800)}
 【模式】${input.mode || ''}
 【图片数量】对标 ${input.imageCounts?.benchmark || 0} 张；我的素材 ${input.imageCounts?.mine || 0} 张。
 
-输出 JSON 字段：final,titles,versions,script,story,check,scores,benchmarkAnalysis。final 要可直接发布，段落空行。`;
+请优先给：标题、最终正文、6页图片脚本、发布检查。尽量JSON；final必须可直接发布，段落空行。`;
 }
 
 function normalizeDeepSeekJSON(content) {
@@ -159,8 +159,8 @@ async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
     messages,
     temperature: options.temperature ?? 0.45,
     max_tokens: Math.min(maxTokens, options.maxTokensCap || 1200),
-    response_format: { type: 'json_object' },
   };
+  if (options.json !== false) payload.response_format = { type: 'json_object' };
   let resp, text;
   try {
     resp = await fetch((env.OPENAI_BASE_URL || 'https://api.openai.com/v1') + '/chat/completions', {
@@ -278,13 +278,13 @@ ${textBlock(JSON.stringify(body.history || []), 1200)}` : '';
 
 【图片识别摘要/OCR】
 ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
-  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。只输出JSON，字段：benchmarkAnalysis,final,titles,versions,script,story,check,scores。要求真实、短句、去AI味、可直接发布；没有图片OCR时，不要假装看到了图片。';
+  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。尽量输出JSON，字段：benchmarkAnalysis,final,titles,versions,script,story,check,scores；如果JSON会拖慢，就直接输出正文也可以。要求真实、短句、去AI味、可直接发布；没有图片OCR时，不要假装看到了图片。';
   let raw;
   try {
     raw = await openAIChat([
       { role: 'system', content: system },
       { role: 'user', content: userText },
-    ], env, 1100, { timeoutMs: 45000, maxTokensCap: 1200, temperature: 0.42 });
+    ], env, 900, { timeoutMs: 55000, maxTokensCap: 1000, temperature: 0.42, json: false });
   } catch (e) {
     return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e.message || e).slice(0, 1000), tip: '已强制 GPT-5.5。若仍超时，请先用快速生成不读图；深度分析只发送少量图片。' }, 502);
   }
