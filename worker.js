@@ -22,6 +22,32 @@ function hasXhsAuth(request) {
 function passwordPage(error = '') {
   return new Response(`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>大壮内容工作台</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f2ea;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;color:#171717}.box{width:min(420px,92vw);background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,.1);padding:28px}h1{margin:0 0 8px;font-size:24px}p{color:#746f68}input{width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:14px;padding:13px;font-size:18px}button{margin-top:12px;width:100%;border:0;border-radius:14px;background:#171717;color:#fff;padding:13px;font-weight:900}.err{color:#e60012;font-size:13px}</style></head><body><form class="box" method="POST" action="/tools/xhs-login"><h1>大壮小红书内容工作台</h1><p>请输入访问密码</p><input name="password" type="password" autocomplete="current-password" autofocus placeholder="密码"><button>进入</button>${error?`<div class="err">${error}</div>`:''}</form></body></html>`,{headers:{'Content-Type':'text/html; charset=utf-8'}});
 }
+
+const XHS_DEFAULT_BRANDS = {
+  brand1: { name: '玖玖精装', knowledge: '核心吸引人群：长沙高端楼盘业主；精装房想重新改造的客户；大平层、改善型住宅客户；想省心做设计、改造、定制、软装一体化交付的人。品牌定位：长沙高端精装房全案改造品牌。不是普通装修公司，而是用高审美设计和8000元设计费切入高端精装房客户，再依靠自有改造施工团队、自有定制设计/安装团队，完成设计、改造、定制、软装一体化落地。核心卖点：高审美设计；8000元设计入口；自有改造施工团队；自有定制设计和安装；软装统一搭配；长沙瑞府等高端楼盘背书。表达要克制、真实、专业，不要承诺保证省钱、保证零增项。' },
+  brand2: { name: '大壮装修顾问', knowledge: '核心吸引人群：长沙准备装修、正在比价、准备签合同、看不懂报价和合同的业主。品牌定位：大壮是装修决策顾问，不是装修公司。核心服务是帮业主在签约前判断方案、报价、合同边界和责任。核心服务：报价体检、合同风险提示、装修需求初诊、选公司判断、签约前避坑提醒。表达风格：真实、克制、专业、不吓人、不油腻。不能承诺保证省钱、保证不增项、保证装修公司一定靠谱。' },
+  brand3: { name: '8K设计', knowledge: '核心吸引人群：长沙重视审美、效果图、原创设计和落地效果的改善型住宅、大平层、复式、别墅业主。品牌定位：长沙高审美住宅全案设计品牌。不是只出图，而是强调原创设计、4K效果图、设计费清晰、设计到施工落地。核心卖点：原创设计师团队；12年+大宅设计经验；200㎡内常规户型8000起；100+别墅/复式/大平层施工落地中；真实工地随时可看；可按楼盘、面积、风格匹配案例。' },
+  brand4: { name: '玖玖精工 / 玖玖半包', knowledge: '核心吸引人群：长沙别墅、复式、大平层客户；有设计图正在找靠谱施工方的人；想要好工艺又不想多花顶级公司溢价的人。品牌定位：玖玖精工是长沙大宅高标准半包施工品牌。不是最低价半包，而是工艺好、工地多、懂设计落地、价格比顶级公司更合理的大宅施工团队。核心卖点：100+别墅/复式/大平层工地在施工；长期承接长沙设计工作室高端设计落地；工艺接近头部施工公司；价格比顶级公司更合理；支持先装修后付款；懂设计师图纸和复杂节点还原。表达重点：高标准施工里的高性价比选择。不要占便宜半包心智，不要说成精装房改造品牌。必须明确出现玖玖精工或玖玖半包的信息。' },
+  brand5: { name: '宅师傅半包装修', knowledge: '核心吸引人群：长沙普通家庭、预算敏感、第一次装修、想先把报价和流程搞清楚的业主。品牌定位：长沙普通家庭透明半包服务。核心卖点：438元/㎡起；免费量房；出平面图、施工图和精准预算；不签约也能带走参考；先装修后付款；透明半包。表达重点：真实、清楚、低门槛。不要过度承诺，不要把低价说成最终价。' }
+};
+
+function hydrateXhsBrand(input = {}) {
+  const slot = input.brandSlot || 'brand1';
+  const def = XHS_DEFAULT_BRANDS[slot] || XHS_DEFAULT_BRANDS.brand1;
+  const name = String(input.brandName || '').trim() || def.name;
+  const userKb = String(input.knowledgeText || '').trim();
+  return {
+    ...input,
+    brandName: name,
+    knowledgeText: `【当前选择品牌】${name}
+【网页内置品牌资料】
+${def.knowledge}
+
+【用户补充/本机保存品牌资料】
+${userKb}`.trim(),
+  };
+}
+
 function formatXhsText(value='') {
   return String(value).replace(/\r/g,'').split('\n').map(x=>x.trim()).filter(Boolean).flatMap(p=>{
     if (p.length<=46) return [p];
@@ -65,9 +91,9 @@ function buildSystemPrompt(input = {}) {
 }
 
 function buildUserPrompt(input = {}, prompt = '') {
-  return `请根据资料生成小红书图文方案，只输出 JSON。
+  return `请根据资料生成小红书图文方案。必须围绕当前选择品牌，不能忽略品牌资料。
 
-【品牌/企业知识库，优先使用】
+【品牌/企业知识库，最高优先级，必须使用】
 ${textBlock(input.knowledgeText, 1200)}
 
 【对标内容】
@@ -284,6 +310,7 @@ async function analyzeImages(input = {}, env) {
 }
 
 async function callOpenAI(input = {}, body = {}, env) {
+  input = hydrateXhsBrand(input);
   const originalCounts = {
     benchmark: input.imageCounts?.benchmark || input.images?.benchmark?.length || 0,
     mine: input.imageCounts?.mine || input.images?.mine?.length || 0,
@@ -315,7 +342,7 @@ ${textBlock(JSON.stringify(body.history || []), 1200)}` : '';
 
 【图片识别摘要/OCR】
 ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
-  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。';
+  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】和【网页内置品牌资料】；文案必须出现当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。';
   let raw;
   try {
     raw = await openAIChat([
