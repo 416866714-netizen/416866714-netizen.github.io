@@ -68,15 +68,15 @@ function buildUserPrompt(input = {}, prompt = '') {
   return `请根据资料生成小红书图文方案，只输出 JSON。
 
 【品牌/企业知识库，优先使用】
-${textBlock(input.knowledgeText, 2000)}
+${textBlock(input.knowledgeText, 1200)}
 
 【对标内容】
 标题：${textBlock(input.benchmarkTitle, 300)}
-正文：${textBlock(input.benchmarkText, 800)}
+正文：${textBlock(input.benchmarkText, 400)}
 喜欢点：${textBlock(input.benchmarkNotes, 500)}
 
 【我的素材】
-${textBlock(input.myNotes, 800)}
+${textBlock(input.myNotes, 500)}
 
 【核心观点】${textBlock(input.corePoint, 200)}
 【必须出现】${textBlock(input.mustSay, 300)}
@@ -87,7 +87,7 @@ ${textBlock(input.myNotes, 800)}
 【模式】${input.mode || ''}
 【图片数量】对标 ${input.imageCounts?.benchmark || 0} 张；我的素材 ${input.imageCounts?.mine || 0} 张。
 
-请优先给：标题、最终正文、6页图片脚本、发布检查。尽量JSON；final必须可直接发布，段落空行。`;
+输出：1标题 2正文 3图片脚本 4发布检查。正文段落空行。`;
 }
 
 function normalizeDeepSeekJSON(content) {
@@ -154,12 +154,17 @@ function cleanImages(input = {}) {
 async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort('timeout'), options.timeoutMs || 45000);
+  const model = env.OPENAI_MODEL || 'gpt-5.5';
+  const limit = Math.min(maxTokens, options.maxTokensCap || 900);
   const payload = {
-    model: env.OPENAI_MODEL || 'gpt-5.5',
+    model,
     messages,
-    temperature: options.temperature ?? 0.45,
-    max_tokens: Math.min(maxTokens, options.maxTokensCap || 1200),
+    temperature: options.temperature ?? 0.35,
   };
+  // GPT-5 系列用 max_completion_tokens 更稳；旧模型仍用 max_tokens。
+  if (/gpt-5/i.test(model)) payload.max_completion_tokens = limit;
+  else payload.max_tokens = limit;
+  if (/gpt-5/i.test(model)) payload.reasoning_effort = options.reasoningEffort || 'minimal';
   if (options.json !== false) payload.response_format = { type: 'json_object' };
   let resp, text;
   try {
@@ -175,7 +180,24 @@ async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
   } finally {
     clearTimeout(timer);
   }
-  if (!resp.ok) throw new Error(text.startsWith('<') ? '上游或 Worker 返回 HTML 错误，通常是图片/文本过大或模型超时。' : text.slice(0, 1000));
+  if (!resp.ok) {
+    const errText = text.startsWith('<') ? '上游或 Worker 返回 HTML 错误，通常是图片/文本过大或模型超时。' : text.slice(0, 1000);
+    // 部分代理不支持 GPT-5 附加参数，自动移除后重试一次，仍然是同一个 GPT-5.5 模型。
+    if (/reasoning_effort|max_completion_tokens|unsupported|Unknown parameter|Unrecognized/i.test(errText)) {
+      delete payload.reasoning_effort;
+      if (payload.max_completion_tokens) { payload.max_tokens = payload.max_completion_tokens; delete payload.max_completion_tokens; }
+      const retry = await fetch((env.OPENAI_BASE_URL || 'https://api.openai.com/v1') + '/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const retryText = await retry.text();
+      if (!retry.ok) throw new Error(retryText.slice(0, 1000));
+      const retryData = JSON.parse(retryText);
+      return retryData.choices?.[0]?.message?.content || '';
+    }
+    throw new Error(errText);
+  }
   const data = JSON.parse(text);
   return data.choices?.[0]?.message?.content || '';
 }
@@ -278,13 +300,13 @@ ${textBlock(JSON.stringify(body.history || []), 1200)}` : '';
 
 【图片识别摘要/OCR】
 ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
-  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。尽量输出JSON，字段：benchmarkAnalysis,final,titles,versions,script,story,check,scores；如果JSON会拖慢，就直接输出正文也可以。要求真实、短句、去AI味、可直接发布；没有图片OCR时，不要假装看到了图片。';
+  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。';
   let raw;
   try {
     raw = await openAIChat([
       { role: 'system', content: system },
       { role: 'user', content: userText },
-    ], env, 900, { timeoutMs: 55000, maxTokensCap: 1000, temperature: 0.42, json: false });
+    ], env, 650, { timeoutMs: 75000, maxTokensCap: 700, temperature: 0.35, reasoningEffort: 'minimal', json: false });
   } catch (e) {
     return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e.message || e).slice(0, 1000), tip: '已强制 GPT-5.5。若仍超时，请先用快速生成不读图；深度分析只发送少量图片。' }, 502);
   }
