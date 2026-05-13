@@ -109,6 +109,7 @@ ${textBlock(input.myNotes, 500)}
 【不能出现】${textBlock(input.avoidSay, 300)}
 【目标人群】${input.audience || ''}
 【页数】${input.pageCount || 6}
+【当前品牌名称】${input.brandName || ''}
 【模板】${input.template || ''}
 【模式】${input.mode || ''}
 【图片数量】对标 ${input.imageCounts?.benchmark || 0} 张；我的素材 ${input.imageCounts?.mine || 0} 张。
@@ -152,6 +153,24 @@ function standardizeXhsResult(result = {}) {
 }
 
 
+
+function enforceXhsBrandMention(result = {}, input = {}) {
+  const brand = String(input.brandName || '').trim();
+  if (!brand) return result;
+  const short = brand.split('/')[0].trim();
+  const all = JSON.stringify(result, null, 2);
+  if (all.includes(short) || all.includes(brand)) return result;
+  const brandLine = `
+
+如果你是长沙别墅、复式、大平层业主，有设计图想找靠谱半包施工方，可以重点了解${brand}：高标准半包施工、真实工地、懂设计落地，适合不想只看低价的大宅业主。`;
+  if (typeof result.final === 'string') result.final += brandLine;
+  else if (result.final && typeof result.final === 'object') result.final.brandNote = brandLine.trim();
+  else result.final = `当前品牌：${brand}${brandLine}`;
+  result.check = (result.check || '') + `
+
+品牌读取检查：已强制使用当前选择品牌「${brand}」。`;
+  return result;
+}
 
 
 function compactInput(input = {}) {
@@ -342,7 +361,7 @@ ${textBlock(JSON.stringify(body.history || []), 1200)}` : '';
 
 【图片识别摘要/OCR】
 ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
-  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】和【网页内置品牌资料】；文案必须出现当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。';
+  const system = '你是大壮小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】和【网页内置品牌资料】；文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。';
   let raw;
   try {
     raw = await openAIChat([
@@ -360,7 +379,8 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 2500)}` + current;
       return json({ error: 'OpenAI/GPT request failed', status: 502, detail: String(e2.message || e.message || e).slice(0, 1000), tip: 'GPT-5.5 上游连续超时；已确认后端强制 GPT-5.5，没有切换其他模型。' }, 502);
     }
   }
-  const result = standardizeXhsResult(normalizeDeepSeekJSON(raw));
+  let result = standardizeXhsResult(normalizeDeepSeekJSON(raw));
+  result = enforceXhsBrandMention(result, input);
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result.imageAnalysis = imageAnalysis;
