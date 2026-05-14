@@ -1,7 +1,7 @@
 {
-  "name": "大壮项目驾驶舱",
-  "short_name": "大壮驾驶舱",
-  "description": "大壮终身品牌内部项目驾驶舱",
+  "name": "老谭项目驾驶舱",
+  "short_name": "老谭驾驶舱",
+  "description": "老谭终身品牌内部项目驾驶舱",
   "start_url": "/dashboard/",
   "scope": "/dashboard/",
   "display": "standalone",

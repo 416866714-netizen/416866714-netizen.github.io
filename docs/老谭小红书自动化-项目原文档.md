@@ -1,14 +1,14 @@
-# 大壮小红书自动化｜项目原文档
+# 老谭小红书自动化｜项目原文档
 
 更新时间：2026-05-10
-项目编号：大壮第三个项目
-项目名称：大壮小红书自动化
+项目编号：老谭第三个项目
+项目名称：老谭小红书自动化
 
 ## 1. 项目定位
 
-“大壮小红书自动化”是大壮内部使用的小红书图文内容生产工具。
+“老谭小红书自动化”是老谭内部使用的小红书图文内容生产工具。
 
-它不是普通文案生成器，而是一个围绕大壮多个品牌知识库、对标图文、个人素材、GPT 读图、改稿对话、历史版本管理的小红书内容工作台。
+它不是普通文案生成器，而是一个围绕老谭多个品牌知识库、对标图文、个人素材、GPT 读图、改稿对话、历史版本管理的小红书内容工作台。
 
 核心目标：
 
@@ -26,13 +26,13 @@
 线上工具地址：
 
 ```text
-https://dazhuanguwen.com/tools/xhs/
+https://laotanuwen.com/tools/xhs/
 ```
 
 当前带版本号访问：
 
 ```text
-https://dazhuanguwen.com/tools/xhs/?v=202605101740
+https://laotanuwen.com/tools/xhs/?v=202605101740
 ```
 
 访问密码：
@@ -48,31 +48,31 @@ https://dazhuanguwen.com/tools/xhs/?v=202605101740
 ### 3.1 线上源码主路径
 
 ```text
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页
 ```
 
 ### 3.2 页面文件
 
 ```text
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页/public/tools/xhs/index.html
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页/public/tools/xhs/index.html
 ```
 
 同步备份页面：
 
 ```text
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页/tools/xhs/index.html
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页/tools/xhs/index.html
 ```
 
 ### 3.3 后端 Worker 文件
 
 ```text
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页/worker.js
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页/worker.js
 ```
 
 ### 3.4 Cloudflare 配置文件
 
 ```text
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页/wrangler.toml
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页/wrangler.toml
 ```
 
 ### 3.5 项目原文档路径
@@ -80,25 +80,25 @@ https://dazhuanguwen.com/tools/xhs/?v=202605101740
 桌面备份：
 
 ```text
-/Users/tanzhimin/Desktop/大壮小红书自动化-项目原文档.md
+/Users/tanzhimin/Desktop/老谭小红书自动化-项目原文档.md
 ```
 
 仓库文档备份：
 
 ```text
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页/docs/大壮小红书自动化-项目原文档.md
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页/docs/老谭小红书自动化-项目原文档.md
 ```
 
 线上公开备份文件：
 
 ```text
-https://dazhuanguwen.com/docs/xhs-automation.md
+https://laotanuwen.com/docs/xhs-automation.md
 ```
 
 对应源码：
 
 ```text
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页/public/docs/xhs-automation.md
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页/public/docs/xhs-automation.md
 ```
 
 ## 4. 技术架构
@@ -106,7 +106,7 @@ https://dazhuanguwen.com/docs/xhs-automation.md
 ### 4.1 部署域名
 
 ```text
-dazhuanguwen.com
+laotanuwen.com
 ```
 
 ### 4.2 工具页面
@@ -286,7 +286,7 @@ assets.directory = "./public"
 - 小红书爆款结构；
 - 故事化表达；
 - 强冲突标题；
-- 大壮装修顾问语气。
+- 老谭装修顾问语气。
 
 可选：
 
@@ -438,7 +438,7 @@ b87cbc5 Disable cache for protected XHS tool
 
 ```text
 小红书自动化
-大壮小红书自动化
+老谭小红书自动化
 小红书内容工作台
 /tools/xhs/
 ```
@@ -448,14 +448,14 @@ b87cbc5 Disable cache for protected XHS tool
 优先读取路径：
 
 ```text
-/Users/tanzhimin/Desktop/大壮小红书自动化-项目原文档.md
+/Users/tanzhimin/Desktop/老谭小红书自动化-项目原文档.md
 ```
 
 以及线上源码：
 
 ```text
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页/public/tools/xhs/index.html
-/Users/tanzhimin/Desktop/大壮官网系统/03-大壮网页开发资料-不要移动/大壮独立装修网页开发/官网首页/worker.js
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页/public/tools/xhs/index.html
+/Users/tanzhimin/Desktop/老谭官网系统/03-老谭网页开发资料-不要移动/老谭独立装修网页开发/官网首页/worker.js
 ```
 
 修改规则：
