@@ -6,12 +6,13 @@
   <title>老谭AI作战指挥室｜内部入口</title>
   <meta name="theme-color" content="#f7f1e8" />
   <style>
-    :root{--ink:#111;--muted:#68615a;--line:rgba(17,17,17,.12);--soft:#f7f1e8;--paper:rgba(255,255,255,.78);--red:#b5121b;--blue:#1473e6;--gold:#9b6a2d;--shadow:0 18px 60px rgba(34,24,14,.10);--shadow2:0 8px 26px rgba(34,24,14,.08)}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#fbf7f0 0%,#efe4d4 100%);-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}.bg{position:fixed;inset:0;z-index:-1;overflow:hidden}.bg:before{content:"";position:absolute;right:-120px;top:-120px;width:430px;height:430px;border-radius:50%;background:radial-gradient(circle,rgba(181,18,27,.13),transparent 68%)}.bg:after{content:"";position:absolute;left:-160px;bottom:-180px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(20,115,230,.10),transparent 68%)}
-    .topbar{height:64px;position:sticky;top:0;z-index:20;background:rgba(255,250,244,.86);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(17,17,17,.08)}.navwrap{width:min(1180px,94vw);height:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:10px;font-weight:1000;white-space:nowrap}.mark{width:34px;height:34px;border-radius:10px;background:#b5121b;color:#fff;display:grid;place-items:center;font-weight:1000}.brand span:last-child{font-size:15px}.nav{display:flex;align-items:center;gap:2px;min-width:0}.nav a{padding:9px 13px;border-radius:999px;font-size:14px;font-weight:850;color:#2b2723;white-space:nowrap}.nav a:hover,.nav a.active{background:rgba(17,17,17,.06)}.right{display:flex;align-items:center;gap:10px}.right a{font-size:13px;font-weight:900;white-space:nowrap}.cta{background:#111;color:#fff!important;border-radius:999px;padding:10px 15px!important}.shell{width:min(1180px,94vw);margin:0 auto;padding:34px 0 52px}
-    .hero{border:1px solid var(--line);border-radius:30px;background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,250,244,.68));box-shadow:var(--shadow);padding:30px;display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-80px;bottom:-120px;width:380px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(181,18,27,.12),transparent 70%)}.eyebrow{margin:0 0 12px;color:var(--red);font-size:12px;font-weight:1000;letter-spacing:.16em}.hero h1{position:relative;z-index:1;margin:0;font-size:clamp(42px,6vw,76px);line-height:.95;letter-spacing:-.075em}.actions{position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:12px 17px;font-size:14px;font-weight:1000;box-shadow:var(--shadow2)}.btn.dark{background:#111;color:#fff}.btn.light{background:rgba(255,255,255,.72);border:1px solid var(--line)}
-    .productNav{margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.productPill{border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.66);box-shadow:var(--shadow2);padding:14px 15px;display:flex;align-items:center;gap:12px;min-height:74px;transition:.22s}.productPill:hover{transform:translateY(-2px);background:#fff}.picon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#111;color:#fff;font-weight:1000;flex:0 0 auto}.productPill:nth-child(1) .picon{background:#111}.productPill:nth-child(2) .picon{background:#b5121b}.productPill:nth-child(3) .picon{background:#1473e6}.productPill:nth-child(4) .picon{background:#8a612c}.productPill b{display:block;font-size:15px}.productPill small{display:block;margin-top:3px;color:var(--muted);font-size:12px;font-weight:750}.section{padding-top:26px}.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:14px}.sectionHead h2{margin:0;font-size:clamp(28px,3vw,40px);letter-spacing:-.055em}.sectionHead p{margin:0;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{position:relative;overflow:hidden;min-height:330px;border:1px solid var(--line);border-radius:26px;background:var(--paper);box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;transition:.28s}.card:hover{transform:translateY(-4px);box-shadow:0 24px 80px rgba(34,24,14,.14)}.card:before{content:"";position:absolute;right:-70px;top:-80px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,var(--accent),transparent 68%);opacity:.18}.meta{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}.badge{border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.62);padding:6px 10px;font-size:12px;font-weight:950}.logo{width:58px;height:58px;border-radius:16px;margin-top:34px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#111);color:#fff;font-size:24px;font-weight:1000;position:relative;z-index:1}.card h3{margin:18px 0 8px;font-size:28px;letter-spacing:-.055em;position:relative;z-index:1}.card p{margin:0;color:var(--muted);line-height:1.6;position:relative;z-index:1}.cardFooter{margin-top:auto;display:flex;gap:10px;position:relative;z-index:1}.open{flex:1;display:flex;align-items:center;justify-content:space-between;background:#111;color:#fff;border-radius:15px;padding:13px 14px;font-weight:1000}.sub{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:15px;padding:13px 14px;font-weight:950;color:#2c2722}.footer{text-align:center;color:var(--muted);font-size:13px;padding:28px 0 0}
-    @media(max-width:860px){.topbar{height:auto}.navwrap{padding:10px 0;align-items:flex-start;flex-direction:column}.nav{width:100%;overflow:auto;padding-bottom:2px}.right{display:none}.hero{grid-template-columns:1fr;padding:24px}.actions{justify-content:flex-start}.productNav,.grid{grid-template-columns:1fr}.card{min-height:285px}.shell{padding-top:18px}}@media(max-width:520px){.brand span:last-child{font-size:14px}.hero h1{font-size:44px}.btn{width:100%}.actions{display:grid}.sectionHead{display:block}.sectionHead p{display:none}.productPill{min-height:66px}.logo{margin-top:24px}}
+    :root{--ink:#111;--muted:#6f675f;--line:rgba(17,17,17,.12);--soft:#f7f1e8;--paper:rgba(255,255,255,.8);--red:#b5121b;--blue:#1473e6;--gold:#9b6a2d;--green:#16803c;--shadow:0 18px 60px rgba(34,24,14,.1);--shadow2:0 8px 26px rgba(34,24,14,.08);--radius:24px}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#fbf7f0 0%,#efe4d4 100%);-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}button{cursor:pointer}.bg{position:fixed;inset:0;z-index:-1;overflow:hidden}.bg:before{content:"";position:absolute;right:-120px;top:-120px;width:430px;height:430px;border-radius:50%;background:radial-gradient(circle,rgba(181,18,27,.13),transparent 68%)}.bg:after{content:"";position:absolute;left:-160px;bottom:-180px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(20,115,230,.1),transparent 68%)}
+    .topbar{height:64px;position:sticky;top:0;z-index:20;background:rgba(255,250,244,.88);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(17,17,17,.08)}.navwrap{width:min(1260px,94vw);height:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:10px;font-weight:1000;white-space:nowrap}.mark{width:34px;height:34px;border-radius:10px;background:#b5121b;color:#fff;display:grid;place-items:center;font-weight:1000}.brand span:last-child{font-size:15px}.nav{display:flex;align-items:center;gap:2px;min-width:0}.nav a{padding:9px 12px;border-radius:999px;font-size:14px;font-weight:850;color:#2b2723;white-space:nowrap}.nav a:hover,.nav a.active{background:rgba(17,17,17,.06)}.right{display:flex;align-items:center;gap:10px}.right a{font-size:13px;font-weight:900;white-space:nowrap}.cta{background:#111;color:#fff!important;border-radius:999px;padding:10px 15px!important}.shell{width:min(1260px,94vw);margin:0 auto;padding:26px 0 52px}
+    .hero{border:1px solid var(--line);border-radius:30px;background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(255,250,244,.68));box-shadow:var(--shadow);padding:28px;display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-80px;bottom:-120px;width:380px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(181,18,27,.12),transparent 70%)}.eyebrow{margin:0 0 12px;color:var(--red);font-size:12px;font-weight:1000;letter-spacing:.16em}.hero h1{position:relative;z-index:1;margin:0;font-size:clamp(38px,5.5vw,72px);line-height:.95;letter-spacing:-.075em}.actions{position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;padding:12px 17px;font-size:14px;font-weight:1000;box-shadow:var(--shadow2)}.btn.dark{background:#111;color:#fff}.btn.light{background:rgba(255,255,255,.74);border:1px solid var(--line)}
+    .productNav{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.productPill{border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.68);box-shadow:var(--shadow2);padding:13px 15px;display:flex;align-items:center;gap:12px;min-height:70px;transition:.22s}.productPill:hover{transform:translateY(-2px);background:#fff}.picon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#111;color:#fff;font-weight:1000;flex:0 0 auto}.productPill:nth-child(1) .picon{background:#111}.productPill:nth-child(2) .picon{background:#b5121b}.productPill:nth-child(3) .picon{background:#1473e6}.productPill:nth-child(4) .picon{background:#8a612c}.productPill b{display:block;font-size:15px}.productPill small{display:block;margin-top:3px;color:var(--muted);font-size:12px;font-weight:750}.section{padding-top:24px}.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:14px}.sectionHead h2{margin:0;font-size:clamp(27px,3vw,39px);letter-spacing:-.055em}.sectionHead p{margin:0;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.moduleGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.module{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.78);box-shadow:var(--shadow2);padding:16px;min-height:150px;display:flex;flex-direction:column;gap:10px;transition:.22s}.module:hover{transform:translateY(-3px);background:#fff}.module i{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#111);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:1000}.module b{font-size:18px;letter-spacing:-.04em}.module small{color:var(--muted);line-height:1.45}.module span{margin-top:auto;color:var(--blue);font-size:13px;font-weight:1000}
+    .card{position:relative;overflow:hidden;min-height:300px;border:1px solid var(--line);border-radius:26px;background:var(--paper);box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;transition:.28s}.card:hover{transform:translateY(-4px);box-shadow:0 24px 80px rgba(34,24,14,.14)}.card:before{content:"";position:absolute;right:-70px;top:-80px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,var(--accent),transparent 68%);opacity:.18}.meta{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}.badge{border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.62);padding:6px 10px;font-size:12px;font-weight:950}.logo{width:58px;height:58px;border-radius:16px;margin-top:28px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#111);color:#fff;font-size:24px;font-weight:1000;position:relative;z-index:1}.card h3{margin:18px 0 8px;font-size:27px;letter-spacing:-.055em;position:relative;z-index:1}.card p{margin:0;color:var(--muted);line-height:1.6;position:relative;z-index:1}.cardFooter{margin-top:auto;display:flex;gap:10px;position:relative;z-index:1}.open{flex:1;display:flex;align-items:center;justify-content:space-between;background:#111;color:#fff;border-radius:15px;padding:13px 14px;font-weight:1000}.tool{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start;margin-top:16px}.panel{border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.82);box-shadow:var(--shadow2);overflow:hidden}.panel h3{margin:0;padding:15px 16px;border-bottom:1px solid var(--line);font-size:20px;letter-spacing:-.04em}.panelBody{padding:16px;display:grid;gap:12px}.field{display:grid;gap:7px}.field label{font-size:12px;font-weight:950;color:#403a34}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:15px;background:#fff;padding:11px 12px;outline:none}.field textarea{min-height:96px;resize:vertical;line-height:1.55}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.gen{border:0;border-radius:15px;background:#111;color:#fff;padding:13px 14px;font-weight:1000}.ghost{border:1px solid var(--line);border-radius:15px;background:#fff;padding:12px 14px;font-weight:950}.result{min-height:360px;white-space:pre-wrap;line-height:1.72;color:#2b2722}.brandCards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.brandCard{border:1px solid var(--line);border-radius:20px;background:#fff;padding:15px;display:grid;gap:8px}.brandCard b{font-size:18px}.brandCard p{margin:0;color:var(--muted);line-height:1.55;font-size:13px}.metricGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{border:1px solid var(--line);border-radius:18px;background:#fff;padding:13px}.metric b{display:block;color:var(--muted);font-size:12px}.metric strong{display:block;margin-top:6px;font-size:24px}.footer{text-align:center;color:var(--muted);font-size:13px;padding:28px 0 0}
+    @media(max-width:1100px){.moduleGrid{grid-template-columns:repeat(2,1fr)}.grid,.productNav{grid-template-columns:repeat(2,1fr)}.tool{grid-template-columns:1fr}.right{display:none}}@media(max-width:760px){.topbar{height:auto}.navwrap{padding:10px 0;align-items:flex-start;flex-direction:column}.nav{width:100%;overflow:auto;padding-bottom:2px}.hero{grid-template-columns:1fr;padding:22px}.actions{justify-content:flex-start;display:grid}.btn{width:100%}.productNav,.grid,.moduleGrid,.brandCards,.metricGrid,.two{grid-template-columns:1fr}.hero h1{font-size:42px}.sectionHead{display:block}.sectionHead p{display:none}.card{min-height:270px}}
   </style>
 </head>
 <body>
@@ -20,26 +21,16 @@
     <div class="navwrap">
       <a class="brand" href="/workspace/"><span class="mark">谭</span><span>老谭AI作战指挥室</span></a>
       <nav class="nav" aria-label="项目导航">
-        <a href="/" data-key="site">官网</a>
-        <a href="/dashboard/#top" data-key="dashboard">驾驶舱</a>
-        <a href="/tools/xhs/" data-key="xhs">小红书</a>
-        <a href="/tools/scripts/" data-key="scripts">话术</a>
+        <a href="/">官网</a><a href="#modules">自动化</a><a href="/dashboard/#top">驾驶舱</a><a href="/tools/xhs/">小红书</a><a href="/tools/scripts/">话术</a>
       </nav>
-      <div class="right"><a href="/dashboard/#top">项目总览</a><a class="cta" href="/tools/scripts/">开始处理</a></div>
+      <div class="right"><a href="#data">数据</a><a class="cta" href="#client">客户收集</a></div>
     </div>
   </header>
 
   <main class="shell">
     <section class="hero">
-      <div>
-        <p class="eyebrow">LAOTAN AI COMMAND ROOM</p>
-        <h1>老谭AI作战指挥室</h1>
-      </div>
-      <div class="actions">
-        <a class="btn dark" href="/dashboard/#top">驾驶舱</a>
-        <a class="btn light" href="/tools/xhs/">小红书</a>
-        <a class="btn light" href="/tools/scripts/">话术</a>
-      </div>
+      <div><p class="eyebrow">LAOTAN AI COMMAND ROOM</p><h1>老谭AI作战指挥室</h1></div>
+      <div class="actions"><a class="btn dark" href="#client">客户收集</a><a class="btn light" href="#report">报告生成</a><a class="btn light" href="#brand">品牌作战卡</a></div>
     </section>
 
     <section class="productNav" aria-label="快速入口">
@@ -49,33 +40,84 @@
       <a class="productPill" href="/tools/scripts/"><span class="picon">术</span><span><b>话术自动化</b><small>客户沟通</small></span></a>
     </section>
 
+    <section class="section" id="modules">
+      <div class="sectionHead"><h2>自动化雏形</h2><p>先做出能检查的第一版</p></div>
+      <div class="moduleGrid">
+        <a class="module" href="#client" style="--accent:#b5121b"><i>客</i><b>客户资料收集</b><small>业主信息、预算、阶段和问题整理。</small><span>进入 →</span></a>
+        <a class="module" href="#report" style="--accent:#1473e6"><i>报</i><b>装修报告生成</b><small>99 / 199 / 399 / 498 报告草稿。</small><span>进入 →</span></a>
+        <a class="module" href="#match" style="--accent:#16803c"><i>配</i><b>客户分级匹配</b><small>客户等级、风险标签和资源方向。</small><span>进入 →</span></a>
+        <a class="module" href="#brand" style="--accent:#9b6a2d"><i>牌</i><b>品牌作战卡</b><small>老谭、宅师傅、8K、玖玖资料卡。</small><span>进入 →</span></a>
+        <a class="module" href="#data" style="--accent:#5b4bd8"><i>数</i><b>经营数据驾驶舱</b><small>内容、私信、微信、到访、成交。</small><span>进入 →</span></a>
+      </div>
+    </section>
+
     <section class="section">
       <div class="sectionHead"><h2>项目入口</h2><p>老谭项目系统</p></div>
       <div class="grid">
-        <article class="card" style="--accent:#b5121b">
-          <div class="meta"><span>01</span><span class="badge">项目总控</span></div>
-          <div class="logo">舱</div>
-          <h3>项目驾驶舱</h3>
-          <p>项目结构、品牌主线、资料入口。</p>
-          <div class="cardFooter"><a class="open" href="/dashboard/#top"><span>打开</span><span>→</span></a></div>
-        </article>
-        <article class="card" style="--accent:#1473e6">
-          <div class="meta"><span>02</span><span class="badge">内容生产</span></div>
-          <div class="logo">红</div>
-          <h3>小红书自动化</h3>
-          <p>对标拆解、素材整理、内容成稿。</p>
-          <div class="cardFooter"><a class="open" href="/tools/xhs/"><span>打开</span><span>→</span></a></div>
-        </article>
-        <article class="card" style="--accent:#9b6a2d">
-          <div class="meta"><span>03</span><span class="badge">客户沟通</span></div>
-          <div class="logo">术</div>
-          <h3>话术自动化</h3>
-          <p>客户原话、品牌边界、回复生成。</p>
-          <div class="cardFooter"><a class="open" href="/tools/scripts/"><span>打开</span><span>→</span></a></div>
-        </article>
+        <article class="card" style="--accent:#b5121b"><div class="meta"><span>01</span><span class="badge">项目总控</span></div><div class="logo">舱</div><h3>项目驾驶舱</h3><p>项目结构、品牌主线、资料入口。</p><div class="cardFooter"><a class="open" href="/dashboard/#top"><span>打开</span><span>→</span></a></div></article>
+        <article class="card" style="--accent:#1473e6"><div class="meta"><span>02</span><span class="badge">内容生产</span></div><div class="logo">红</div><h3>小红书自动化</h3><p>对标拆解、素材整理、内容成稿。</p><div class="cardFooter"><a class="open" href="/tools/xhs/"><span>打开</span><span>→</span></a></div></article>
+        <article class="card" style="--accent:#9b6a2d"><div class="meta"><span>03</span><span class="badge">客户沟通</span></div><div class="logo">术</div><h3>话术自动化</h3><p>客户原话、品牌边界、回复生成。</p><div class="cardFooter"><a class="open" href="/tools/scripts/"><span>打开</span><span>→</span></a></div></article>
       </div>
     </section>
+
+    <section class="section tool" id="client">
+      <div class="panel"><h3>客户资料收集</h3><div class="panelBody">
+        <div class="two"><div class="field"><label>称呼</label><input id="cName" placeholder="如：张姐"></div><div class="field"><label>微信 / 电话</label><input id="cPhone" placeholder="可选"></div></div>
+        <div class="two"><div class="field"><label>小区</label><input id="cArea" placeholder="如：长沙瑞府"></div><div class="field"><label>面积</label><input id="cSize" placeholder="如：128㎡"></div></div>
+        <div class="two"><div class="field"><label>装修阶段</label><select id="cStage"><option>刚准备装修</option><option>已看公司</option><option>已有报价</option><option>准备签约</option><option>已开工</option></select></div><div class="field"><label>预算</label><input id="cBudget" placeholder="如：25万"></div></div>
+        <div class="field"><label>装修方式倾向</label><select id="cType"><option>还不确定</option><option>半包</option><option>全包</option><option>整装</option><option>设计工作室</option><option>施工队</option></select></div>
+        <div class="field"><label>当前最担心的问题</label><textarea id="cProblem" placeholder="报价、合同、选公司、预算、施工、材料等"></textarea></div>
+        <button class="gen" onclick="makeClient()">生成客户摘要</button>
+      </div></div>
+      <div class="panel"><h3>客户摘要</h3><div class="panelBody"><div class="result" id="clientResult">填写左侧信息后生成。</div><button class="ghost" onclick="copyText('clientResult')">复制摘要</button></div></div>
+    </section>
+
+    <section class="section tool" id="report">
+      <div class="panel"><h3>装修报告生成</h3><div class="panelBody">
+        <div class="field"><label>报告类型</label><select id="rType"><option value="99">99 元装修需求诊断</option><option value="199">199 元报价体检</option><option value="399">399 元签约辅助</option><option value="498">498 元签约前双检包</option></select></div>
+        <div class="field"><label>客户资料 / 报价 / 合同要点</label><textarea id="rInput" placeholder="粘贴客户资料、报价重点、合同疑问"></textarea></div>
+        <button class="gen" onclick="makeReport()">生成报告草稿</button>
+      </div></div>
+      <div class="panel"><h3>报告草稿</h3><div class="panelBody"><div class="result" id="reportResult">选择报告类型后生成。</div><button class="ghost" onclick="copyText('reportResult')">复制报告</button></div></div>
+    </section>
+
+    <section class="section tool" id="match">
+      <div class="panel"><h3>客户分级与资源匹配</h3><div class="panelBody">
+        <div class="two"><div class="field"><label>预算区间</label><select id="mBudget"><option>10万以内</option><option>10-20万</option><option>20-40万</option><option>40万以上</option></select></div><div class="field"><label>客户阶段</label><select id="mStage"><option>早期了解</option><option>比选公司</option><option>已有报价</option><option>准备签约</option><option>需要看工地</option></select></div></div>
+        <div class="field"><label>核心需求</label><select id="mNeed"><option>怕被坑</option><option>预算不清</option><option>想要设计审美</option><option>找靠谱施工</option><option>精装房改造</option><option>合同报价风险</option></select></div>
+        <button class="gen" onclick="makeMatch()">生成匹配建议</button>
+      </div></div>
+      <div class="panel"><h3>匹配建议</h3><div class="panelBody"><div class="result" id="matchResult">选择客户情况后生成。</div><button class="ghost" onclick="copyText('matchResult')">复制建议</button></div></div>
+    </section>
+
+    <section class="section" id="brand">
+      <div class="sectionHead"><h2>品牌作战卡</h2><p>内部执行资料</p></div>
+      <div class="brandCards" id="brandCards"></div>
+    </section>
+
+    <section class="section tool" id="data">
+      <div class="panel"><h3>经营数据驾驶舱</h3><div class="panelBody">
+        <div class="two"><div class="field"><label>内容数</label><input id="dContent" type="number" value="0"></div><div class="field"><label>私信数</label><input id="dMsg" type="number" value="0"></div></div>
+        <div class="two"><div class="field"><label>加微信数</label><input id="dWx" type="number" value="0"></div><div class="field"><label>到访数</label><input id="dVisit" type="number" value="0"></div></div>
+        <div class="two"><div class="field"><label>成交数</label><input id="dDeal" type="number" value="0"></div><div class="field"><label>收入</label><input id="dIncome" type="number" value="0"></div></div>
+        <button class="gen" onclick="makeData()">生成数据看板</button>
+      </div></div>
+      <div class="panel"><h3>经营概览</h3><div class="panelBody"><div class="metricGrid" id="metrics"></div><div class="result" id="dataResult">录入数据后生成。</div></div></div>
+    </section>
+
     <footer class="footer">老谭AI作战指挥室</footer>
   </main>
+<script>
+const $=id=>document.getElementById(id);
+function val(id){return ($(id)?.value||'').trim()}
+function pct(a,b){a=Number(a)||0;b=Number(b)||0;return b?Math.round(a/b*100)+'%':'0%'}
+function copyText(id){navigator.clipboard&&navigator.clipboard.writeText($(id).textContent);}
+function makeClient(){const risk=[];const stage=val('cStage'), budget=val('cBudget'), problem=val('cProblem');if(stage.includes('签约'))risk.push('签约前风险');if(problem.includes('报价')||problem.includes('预算'))risk.push('报价预算风险');if(problem.includes('合同'))risk.push('合同条款风险');if(problem.includes('公司'))risk.push('装修公司筛选');$('clientResult').textContent=`客户摘要\n\n称呼：${val('cName')||'未填'}\n联系方式：${val('cPhone')||'未填'}\n小区/面积：${val('cArea')||'未填'} / ${val('cSize')||'未填'}\n阶段：${stage}\n预算：${budget||'未填'}\n装修方式：${val('cType')}\n核心问题：${problem||'未填'}\n\n初步标签：${risk.length?risk.join(' / '):'待进一步判断'}\n建议动作：先补齐户型图、报价单或合同截图，再进入对应报告生成。`;}
+function makeReport(){const t=val('rType'), input=val('rInput')||'待补充客户资料';let map={99:['客户基本情况','装修阶段判断','需求与预算匹配','装修方式建议','下一步行动'],199:['报价总体判断','漏项风险','模糊项风险','高风险费用项','沟通问题清单'],399:['合同基础判断','付款节点风险','工期与材料风险','施工边界风险','签约前问题清单'],498:['报价体检结论','合同风险结论','签约前双检问题清单','是否建议继续推进','补充材料清单']};$('reportResult').textContent=`老谭装修顾问报告草稿｜${$('rType').selectedOptions[0].text}\n\n客户资料摘要：\n${input}\n\n报告结构：\n${map[t].map((x,i)=>`${i+1}. ${x}\n- 初步判断：待老谭复核。\n- 需要补充：相关截图、报价明细、合同条款。`).join('\n')}\n\n结论草稿：当前仅为初步整理，最终判断以老谭人工复核为准。`;}
+function makeMatch(){const b=val('mBudget'), s=val('mStage'), n=val('mNeed');let level='B级｜可培育客户', res='老谭装修前判断';if(b==='40万以上'||n==='想要设计审美'||n==='精装房改造'){level='A级｜重点跟进客户';res=n==='想要设计审美'?'8K设计 / 高审美全案':'玖玖精装 / 全案改造';}if(n==='找靠谱施工'){res=b==='10-20万'||b==='10万以内'?'宅师傅半包':'玖玖精工 / 高标准半包';}if(s==='准备签约'||n==='合同报价风险'){level='A级｜高转化高风险客户';res='199/399/498 签约前检查';}$('matchResult').textContent=`客户分级：${level}\n\n预算：${b}\n阶段：${s}\n核心需求：${n}\n\n推荐资源方向：${res}\n\n风险标签：${s.includes('签约')?'签约前风险 / ':''}${n.includes('预算')?'预算不清 / ':''}${n.includes('合同')?'合同报价风险 / ':''}需人工复核\n\n推进建议：先明确客户是否愿意补充户型图、报价单、合同或当前沟通截图，再决定进入咨询服务、资源匹配或继续培育。\n\n案例价值：如客户资料完整且问题典型，可脱敏沉淀为案例。`;}
+const brands=[['老谭个人IP','长沙装修避坑顾问','装修前判断、报价合同、公司筛选','理需求 / 定预算 / 定方向 / 审报价合同','站在业主这边，先判断再推荐'],['宅师傅半包','平价高标准半包','普通家庭、预算敏感、怕被坑','438半包 / 免费量房 / 先施工后付款','低决策成本，先把预算搞清楚'],['8K设计','高审美全案设计','大平层、复式、别墅、重视审美','4K效果图 / 设计费清晰 / 能落地','好设计，不溢价'],['玖玖精装','高端精装房全案改造','高端楼盘、精装房、大平层','同楼盘案例 / 全案交付 / 完工落地','设计+改造+定制+软装一体'],['玖玖精工','高标准半包施工','已有图纸、找施工方、怕施工翻车','真实工地 / 工艺标准 / 图纸精算','附近工地和施工细节建立信任']];
+$('brandCards').innerHTML=brands.map(b=>`<article class="brandCard"><b>${b[0]}</b><p><strong>定位：</strong>${b[1]}</p><p><strong>客户：</strong>${b[2]}</p><p><strong>内容：</strong>${b[3]}</p><p><strong>承接：</strong>${b[4]}</p></article>`).join('');
+function makeData(){const c=val('dContent'),m=val('dMsg'),w=val('dWx'),v=val('dVisit'),d=val('dDeal'),inc=val('dIncome');$('metrics').innerHTML=[['加微信率',pct(w,m)],['到访率',pct(v,w)],['成交率',pct(d,v)],['内容数',c],['成交数',d],['收入','¥'+(Number(inc)||0)]].map(x=>`<div class="metric"><b>${x[0]}</b><strong>${x[1]}</strong></div>`).join('');let note='';if(Number(m)&&Number(w)/Number(m)<.2)note+='私信到微信偏低，优先检查私信钩子。\n';if(Number(w)&&Number(v)/Number(w)<.2)note+='微信到访偏低，优先检查长期跟进节奏。\n';if(Number(v)&&Number(d)/Number(v)<.25)note+='到访成交偏低，优先复盘客户质量和接待话术。\n';$('dataResult').textContent=`经营判断\n\n${note||'当前数据样本较少，继续记录后再判断。'}\n下一步：把高转化内容、典型客户问题和成交案例沉淀到案例库。`;}
+</script>
 </body>
 </html>
