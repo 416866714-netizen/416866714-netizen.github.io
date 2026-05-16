@@ -433,8 +433,22 @@
     .gate p { margin: 0 0 18px; color: var(--muted); line-height: 1.55; }
     .hide { display: none !important; }
     .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .55s ease, transform .55s ease;
+      will-change: opacity, transform;
+    }
+    .reveal.in {
       opacity: 1;
       transform: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
     }
     @media (max-width: 980px) {
       .topbar nav { display: none; }
