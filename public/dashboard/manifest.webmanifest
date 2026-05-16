@@ -1,12 +1,12 @@
 {
-  "name": "老谭项目驾驶舱",
-  "short_name": "老谭驾驶舱",
-  "description": "老谭终身品牌内部项目驾驶舱",
+  "name": "老谭 AI 工作台",
+  "short_name": "老谭工作台",
+  "description": "老谭终身品牌内部 AI 工作台",
   "start_url": "/dashboard/",
   "scope": "/dashboard/",
   "display": "standalone",
-  "background_color": "#f5f5f7",
-  "theme_color": "#e60012",
+  "background_color": "#f7f5f0",
+  "theme_color": "#d92d20",
   "icons": [
     {
       "src": "/dashboard/icon.svg",
