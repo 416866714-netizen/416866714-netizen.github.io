@@ -459,6 +459,46 @@
       .workflow { min-height: 230px; }
       .prompt-output { min-height: 280px; }
     }
+
+    :root {
+      --bg: #f3f1ec;
+      --band: #ffffff;
+      --ink: #191816;
+      --muted: #6f6a61;
+      --line: rgba(25,24,22,.12);
+      --red: #b42318;
+      --blue: #155eef;
+      --green: #14784d;
+      --amber: #a65300;
+      --violet: #5b42a9;
+      --shadow: 0 14px 44px rgba(38,31,22,.07);
+      --radius: 8px;
+    }
+    body { background: var(--bg); }
+    .topbar {
+      background: rgba(243,241,236,.94);
+      box-shadow: 0 8px 28px rgba(38,31,22,.04);
+    }
+    .brand-mark { background: var(--red); }
+    .hero { min-height: 500px; gap: 14px; }
+    .hero-main, .hero-side, .panel, .workflow, .link-card, .metric, .prompt-box {
+      border-color: rgba(25,24,22,.11);
+      box-shadow: var(--shadow);
+    }
+    .hero-main { background: #fff; }
+    .hero-side { background: #1f1b18; }
+    .primary-action, .tool-btn { background: #191816; border-color: #191816; }
+    .ghost-action, .tool-btn.secondary { background: #fff; }
+    .metric, .workflow, .panel, .prompt-box, .link-card { background: #fff; }
+    .workflow[data-tone="red"] { background: #fff8f7; }
+    .workflow[data-tone="green"] { background: #f4fbf6; }
+    .workflow[data-tone="blue"] { background: #f4f8ff; }
+    .workflow[data-tone="amber"] { background: #fff8ec; }
+    .workflow[data-tone="violet"] { background: #f8f5ff; }
+    .workflow[data-tone="white"] { background: #fff; }
+    .prompt-output { background: #fbfaf7; }
+    .check { background: #fbfaf7; }
+    .gate { box-shadow: var(--shadow); }
   </style>
 </head>
 <body class="lock">
