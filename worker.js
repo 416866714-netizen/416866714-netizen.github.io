@@ -60,10 +60,26 @@ ${userKb}`.trim(),
 }
 
 function formatXhsText(value='') {
-  return String(value).replace(/\r/g,'').split('\n').map(x=>x.trim()).filter(Boolean).flatMap(p=>{
-    if (p.length<=46) return [p];
-    return p.replace(/([。！？；])\s*/g,'$1\n').split('\n').map(x=>x.trim()).filter(Boolean);
-  }).join('\n\n');
+  let s = String(value || '')
+    .replace(/\r/g, '')
+    .replace(/[\u2028\u2029]/g, '\n')
+    .replace(/<br\s*\/?>(?!\n)/gi, '\n')
+    .replace(/\s*([|｜])\s*/g, '\n\n')
+    .replace(/([。！？；])(?=\S)/g, '$1\n\n');
+  const lines = s.split('\n').map(x => x.trim()).filter(Boolean);
+  const out = [];
+  for (const line of lines) {
+    if (/^(标题|最终正文|正文|标签|#)/.test(line) || line.length <= 34) { out.push(line); continue; }
+    const parts = line.replace(/([。！？；])\s*/g, '$1\n').split('\n').map(x=>x.trim()).filter(Boolean);
+    let buf = '';
+    for (const part of parts) {
+      if (!buf) buf = part;
+      else if ((buf + part).length <= 42) buf += part;
+      else { out.push(buf); buf = part; }
+    }
+    if (buf) out.push(buf);
+  }
+  return out.join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
 function buildSystemPrompt(input = {}) {
@@ -77,7 +93,7 @@ function buildSystemPrompt(input = {}) {
 4. 要像真实的人在分享经验：有具体场景、有判断、有克制、有口语停顿。
 5. 不要恐吓业主，不要绝对化承诺，不要贬低具体公司，不要过度广告。
 6. 老谭是装修决策顾问，不是装修公司；核心是帮助业主先判断方案、报价、合同、边界和责任。
-7. 最终正文必须已经空好格：每 1-2 句话一段，段落之间空一行，不要连续大段文字。
+7. 最终正文必须已经空好格：每 1-2 句话一段，段落之间空一行；必须使用真实换行符，不要用“|/｜/分段符号”代替换行。
 8. 小红书正文硬限制：生成的最终正文含标题、正文、标签合计不得超过1000个中文字符；优先控制在800-950字。
 
 【已启用创作技能】${skills || '去 AI 味、小红书结构、故事化表达、强冲突标题、老谭装修顾问语气'}
@@ -132,7 +148,7 @@ ${textBlock(input.myNotes, 500)}
 【模式】${input.mode || ''}
 【图片数量】对标 ${input.imageCounts?.benchmark || 0} 张；我的素材 ${input.imageCounts?.mine || 0} 张。
 
-输出：必须包含 benchmarkAnalysis、final、titles、script、check、scores。final 含标题、正文、标签合计不超过1000字；正文段落空行。`;
+输出：必须包含 benchmarkAnalysis、final、titles、script、check、scores。final 含标题、正文、标签合计不超过1000字；必须使用真实换行符分段，不要用“|/｜/分段符号”代替换行；每段之间空一行，复制到小红书后也应自然分段。`;
 }
 
 function normalizeDeepSeekJSON(content) {
@@ -390,7 +406,7 @@ async function openAIChatWithUserImages(input = {}, imageAnalysis = [], env, cur
 ${textBlock(JSON.stringify(imageAnalysis, null, 2), 1200)}
 
 【输出JSON字段】
-benchmarkAnalysis, imageMaterial, final, titles, script, check, scores。final 不超过1000字。` + current;
+benchmarkAnalysis, imageMaterial, final, titles, script, check, scores。final 不超过1000字，必须用真实换行分段，段落之间空一行。` + current;
   const content = [{ type: 'text', text }, ...imageBlocks];
   return await openAIChat([
     { role: 'system', content: '你是小红书图文编辑和图片观察员。小红书工作只允许使用 GPT-5.5。最高优先级：必须看用户上传图片，并把图片具体细节写进正文；如果看不清就明说，不能写泛泛装修文案。' },
@@ -442,7 +458,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
 【强制要求】
 如果上面有图片识别摘要，正文和图片脚本必须引用至少2个具体画面细节/文字/风格/工地信息；不能只写泛泛行业文案。
 对标文案也必须参与：先拆解，再改写成当前品牌和素材的版本。` + current;
-  const system = '你是老谭小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】和【我的图片素材识别摘要/OCR】；如果有图片摘要，正文必须关联图片里的具体细节。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。最终发布正文不得超过1000字。';
+  const system = '你是老谭小红书内容总编。小红书工作只允许使用 GPT-5.5。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】和【我的图片素材识别摘要/OCR】；如果有图片摘要，正文必须关联图片里的具体细节。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。最终发布正文不得超过1000字；final 必须已经用真实换行分段，段落之间空一行，不要用分隔符代替换行。';
   let raw;
   try {
     if ((input.images?.mine?.length || 0) > 0) {
@@ -455,7 +471,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
     }
   } catch (e) {
     try {
-      const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。对标：${textBlock(input.benchmarkTitle + '\n' + input.benchmarkText, 700)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。如果图片摘要为空或失败，要在check里说明图片识别失败。输出JSON，final不超过1000字：{"final":"标题+正文+标签","titles":"5个标题","script":"6页图片脚本","check":"发布检查","scores":{"hook":80,"real":80,"ai":"低"}}`;
+      const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。对标：${textBlock(input.benchmarkTitle + '\n' + input.benchmarkText, 700)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。如果图片摘要为空或失败，要在check里说明图片识别失败。输出JSON，final不超过1000字，final内必须用真实换行分段：{"final":"标题\n\n正文第一段\n\n正文第二段\n\n标签","titles":"5个标题","script":"6页图片脚本","check":"发布检查","scores":{"hook":80,"real":80,"ai":"低"}}`;
       raw = await openAIChat([
         { role: 'system', content: '你是老谭小红书内容总编，只用GPT-5.5。极速输出JSON，不要解释。' },
         { role: 'user', content: micro },
