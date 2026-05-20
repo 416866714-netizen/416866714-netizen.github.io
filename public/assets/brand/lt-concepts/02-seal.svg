@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="LT 02 信用印章">
+  <defs>
+    <linearGradient id="ltRed" x1="44" y1="26" x2="214" y2="224" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d92d20"/>
+      <stop offset=".58" stop-color="#b42318"/>
+      <stop offset="1" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#281812" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  
+  <rect x="24" y="24" width="208" height="208" rx="58" fill="#f3f1ec"/>
+  <circle cx="128" cy="128" r="86" fill="#191816"/>
+  <circle cx="128" cy="128" r="72" fill="url(#ltRed)"/>
+  <text x="128" y="148" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="78" font-weight="900" fill="#fffaf4">LT</text>
+  <path d="M80 78h96M80 178h96" stroke="#fffaf4" stroke-width="7" stroke-linecap="round" opacity=".28"/>
+  <path d="M90 98l20-20M166 178l20-20" stroke="#fffaf4" stroke-width="6" stroke-linecap="round" opacity=".78"/>
+</svg>
