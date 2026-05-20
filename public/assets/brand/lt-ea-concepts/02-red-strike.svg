@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="LT EA 02 红色斜击">
+  <defs>
+    <linearGradient id="red" x1="40" y1="26" x2="216" y2="224" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ef4444"/>
+      <stop offset=".54" stop-color="#b42318"/>
+      <stop offset="1" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#281812" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  
+  <rect width="256" height="256" rx="50" fill="#f3f1ec"/>
+  <path d="M58 62h34v106h64l-18 24H58z" fill="#191816"/>
+  <path d="M106 62h96l-18 24h-34v106h-34V86H88z" fill="#191816"/>
+  <path d="M62 178L190 58h32L94 178z" fill="#b42318"/>
+</svg>

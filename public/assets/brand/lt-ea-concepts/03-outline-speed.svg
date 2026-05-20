@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="LT EA 03 线框速度">
+  <defs>
+    <linearGradient id="red" x1="40" y1="26" x2="216" y2="224" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ef4444"/>
+      <stop offset=".54" stop-color="#b42318"/>
+      <stop offset="1" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#281812" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  
+  <rect x="24" y="24" width="208" height="208" rx="44" fill="#fffaf4"/>
+  <path d="M69 64h30v98h60l-18 24H69z" fill="none" stroke="#191816" stroke-width="12" stroke-linejoin="miter"/>
+  <path d="M110 64h94l-18 24h-34v98h-30V88H92z" fill="none" stroke="#191816" stroke-width="12" stroke-linejoin="miter"/>
+  <path d="M45 80h45l-14 13H31zM166 72h54l-14 13h-54zM52 174h70l-14 13H38z" fill="#b42318" opacity=".95"/>
+</svg>
