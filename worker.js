@@ -232,8 +232,8 @@ function usageState(input = {}, provider = 'deepseek') {
 
 function cleanImages(input = {}) {
   // 生成文案时只读取“我的图片素材”，不读对标图，避免文案跑到对标账号。
-  const m=(input.images?.mine||[]).slice(0,2).map((x,i)=>({...x,group:'我的素材图'+(i+1)}));
-  return m.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 900000).slice(0, 2);
+  const m=(input.images?.mine||[]).slice(0,5).map((x,i)=>({...x,group:'我的素材图'+(i+1)}));
+  return m.filter(x => x && /^data:image\//.test(x.dataUrl || '') && String(x.dataUrl).length < 900000).slice(0, 5);
 }
 
 async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
@@ -372,7 +372,7 @@ function limitXhsFinalLength(result = {}, max = 1000) {
 }
 
 async function openAIChatWithUserImages(input = {}, imageAnalysis = [], env, current = '') {
-  const imgs = cleanImages(input).slice(0, 1);
+  const imgs = cleanImages(input).slice(0, 5);
   const imageBlocks = imgs.map(img => ({ type: 'image_url', image_url: { url: img.dataUrl, detail: 'low' } }));
   const text = buildUserPrompt({...input, images:{}}, '') + `
 
@@ -407,7 +407,7 @@ async function callOpenAI(input = {}, body = {}, env) {
   const wantsDeep = String(input.mode || '').includes('深度');
   const hasImages = ((input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0)) > 0;
 
-  // 没有我的图片时才压缩掉图片；有我的图片时保留前2张给 GPT-5.5 读取。
+  // 没有我的图片时才压缩掉图片；有我的图片时保留前5张给 GPT-5.5 读取。
   const hasMineImages = (input.images?.mine?.length || 0) > 0;
   if ((!hasMineImages && !(wantsDeep && hasImages)) || body.action === 'revise') input = compactInput(input);
 
@@ -415,7 +415,7 @@ async function callOpenAI(input = {}, body = {}, env) {
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
   let imageSentForOcr = 0;
 
-  // 只读取“我的图片素材”前 1-2 张；不读对标图。读图失败不阻断生成，但会在读取状态里说明。
+  // 只读取“我的图片素材”前 5 张；不读对标图。读图失败不阻断生成，但会在读取状态里说明。
   if (body.action !== 'revise' && (input.images?.mine?.length || 0) > 0) {
     const imgsForOcr = cleanImages(input);
     imageSentForOcr = imgsForOcr.length;
@@ -483,7 +483,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   result.readState.imageReadable = Boolean(result.imageMaterial) || imageAnalysis.some(x=>!x.error);
   result.readState.directImagesAttached = (input.images?.mine?.length || 0) > 0;
   result.readState.imageMaterialReturned = Boolean(result.imageMaterial);
-  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。已把“我的图片素材”前 1-2 张直接附给 GPT-5.5 生成；OCR摘要成功则同时使用，失败则以直接看图为准；不读取对标图，避免跑偏。';
+  result.check = (result.check || '') + '\n\n系统说明：本次小红书工作强制使用 GPT-5.5。已把“我的图片素材”前 5 张直接附给 GPT-5.5 生成；OCR摘要成功则同时使用，失败则以直接看图为准；不读取对标图，避免跑偏。';
   return json(result);
 }
 
