@@ -124,7 +124,7 @@
             <div class="row"><button class="pill" id="saveKnowledge">保存当前品牌</button><button class="pill" id="loadKnowledge">读取当前品牌</button><button class="pill" id="clearKnowledge">清除当前品牌</button></div>
             <div class="knowledge-meter"><i id="knowledgeBar"></i></div><small id="knowledgeCount">0 字。已内置 4 个品牌默认资料；本机可覆盖保存。</small>
           </div>
-          <div class="drop"><input id="myImages" type="file" accept="image/*" multiple /><strong>上传我的图片素材</strong><span>上传图片后，系统会至少读取前 5 张“我的图片素材”并写进文案。</span><div class="preview" id="myPreview"></div></div>
+          <div class="drop"><input id="myImages" type="file" accept="image/*" multiple /><strong>上传我的图片素材</strong><span>上传图片后，系统最多读取前 5 张“我的图片素材”；不足 5 张就按实际上传数量读取。</span><div class="preview" id="myPreview"></div></div>
           <div class="field"><label>我的文字素材 / 案例背景</label><textarea id="myNotes" placeholder="例：长沙 120 平改善房，业主拿了三份报价，准备签合同，想判断漏项和边界……"></textarea></div>
           <div class="field"><label>核心观点</label><input id="corePoint" placeholder="例：装修前不要先问总价，要先看清方案、报价、合同边界" /></div>
           <div class="grid2"><div class="field"><label>必须出现的信息</label><textarea id="mustSay" placeholder="例：长沙、报价体检、合同审核、先判断再签约"></textarea></div><div class="field"><label>不能出现的信息</label><textarea id="avoidSay" placeholder="例：绝对承诺、贬低具体公司、夸张恐吓、保证省钱"></textarea></div></div>
@@ -144,7 +144,7 @@
           <div class="result-card active" id="resultFinal">等待生成……</div><div class="field"><label>继续改稿要求 <span>基于当前版本</span></label><textarea id="revisionInstruction" placeholder="例：标题更狠一点；更像真实业主；保留结构但减少广告感；按企业知识库重写。"></textarea></div><button class="generate" id="reviseBtn" type="button">基于当前版本继续修改</button><div class="result-card" id="resultTitles">等待生成……</div><div class="result-card" id="resultVersions">等待生成……</div><div class="result-card" id="resultScript">等待生成……</div><div class="result-card" id="resultStory">等待生成……</div><div class="result-card" id="resultCheck">等待生成……</div><div class="result-card" id="resultPrompt">等待生成……</div>
           <div class="copy-row"><button class="copy-btn blue" data-copy="resultFinal">复制最终版</button><button class="copy-btn green" data-copy="resultScript">复制图片脚本</button><button class="copy-btn" data-copy="resultPrompt">复制提示词</button><button class="copy-btn" id="formatBtn" type="button">一键空好格</button></div><div class="field"><label>GPT 聊天改稿 <span>例如：改到300字 / 空好格 / 当前模型？</span></label><textarea id="chatInput" placeholder="直接和 GPT 说你的修改要求或提问……"></textarea></div><button class="generate" id="chatBtn" type="button">发送给 GPT</button><div class="history" id="chatLog"></div>
           <div class="field"><label>历史版本 <span>当前浏览器</span></label><div class="history" id="history"></div></div>
-          <div class="hint" id="readState">读取状态会在生成后显示。GPT 会读取文字和已发送图片；图片会先逐张识别/OCR，再用摘要生成；对标最多3张，我的素材至少可读前5张。</div>
+          <div class="hint" id="readState">读取状态会在生成后显示。GPT 会读取文字和已发送图片；图片会先逐张识别/OCR，再用摘要生成；对标最多3张；我的素材最多读前5张，不足5张按实际数量读取。</div>
         </div>
       </section>
     </main>
