@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>老谭小红书内容工作台</title>
 <style>
-:root{--bg:#f5f3ef;--card:#fff;--text:#1a1a1a;--sub:#888;--border:#e0ded8;--blue:#155eef;--blue-bg:#e8f1ff;--red-bg:#fee;--green-bg:#e8f5e9;--green:#2e7d32;--orange-bg:#fff3e0;--orange:#e65100;--radius:10px}
+:root{--bg:#f0f4fb;--card:#fff;--text:#1a1a1a;--sub:#6b7fa8;--border:#d4def0;--blue:#2563eb;--blue-bg:#eef3ff;--blue-light:#f6f9ff;--red-bg:#fef0f0;--green-bg:#e8f5e9;--green:#2e7d32;--orange-bg:#fff8f0;--orange:#d97706;--radius:10px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);padding:20px;max-width:1400px;margin:0 auto}
 
@@ -28,10 +28,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .card.collapsed .card-body{display:none}
 .card.collapsed h3 .arrow{transform:rotate(-90deg)}
 .card-body{}
-label{display:block;font-size:12px;font-weight:700;color:#555;margin:8px 0 2px}
+label{display:block;font-size:12px;font-weight:700;color:#4a5e8a;margin:8px 0 2px}
 label:first-child{margin-top:0}
 label span{color:var(--sub);font-weight:400}
-input,textarea,select{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:#fafafa;outline:none;transition:border-color .2s}
+input,textarea,select{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--blue-light);outline:none;transition:border-color .2s}
 input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,94,239,.08)}
 textarea{min-height:64px;resize:vertical}
 
@@ -39,25 +39,26 @@ textarea{min-height:64px;resize:vertical}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:10px 16px;border:0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s}
 .btn:active{transform:scale(.98)}
 .btn:disabled{opacity:.45;pointer-events:none}
-.btn-primary{background:var(--text);color:#fff}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#1d4ed8}
 .btn-blue{background:var(--blue-bg);color:var(--blue)}
 .btn-outline{background:#fff;border:2px solid var(--border);color:#555}
 .btn-ghost{background:transparent;color:var(--sub);padding:6px 10px;font-size:11px}
 .btn-sm{padding:6px 12px;font-size:12px}
 .btn-lg{padding:12px 24px;font-size:15px;width:100%}
-.btn-chip{background:#f0eee9;color:#555;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;border:1px solid transparent}
-.btn-chip:hover{background:var(--blue-bg);color:var(--blue);border-color:var(--blue)}
+.btn-chip{background:var(--blue-light);color:var(--blue);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;border:1px solid var(--border)}
+.btn-chip:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 .row{display:flex;gap:6px;flex-wrap:wrap}
 
 /* 品牌区 */
-.knowledge-box{background:#f8f8f5;border-radius:8px;padding:10px;margin-top:8px}
+.knowledge-box{background:var(--blue-light);border-radius:8px;padding:10px;margin-top:8px}
 .knowledge-box textarea{min-height:90px;font-size:12px;background:#fff}
 .info{font-size:11px;color:var(--sub);margin-top:3px}
 
 /* 上传 */
-.upload-label{position:relative;display:block;width:100%;padding:12px;border:2px dashed #ccc;border-radius:8px;text-align:center;color:var(--sub);font-size:12px;cursor:pointer;background:#fafafa;transition:border-color .2s, color .2s}
+.upload-label{position:relative;display:block;width:100%;padding:12px;border:2px dashed var(--border);border-radius:8px;text-align:center;color:var(--sub);font-size:12px;cursor:pointer;background:var(--blue-light);transition:border-color .2s, color .2s}
 .upload-label:hover{border-color:var(--blue);color:var(--blue)}
-.upload-label.has-images{border-color:var(--blue);color:var(--blue);background:#eef4ff}
+.upload-label.has-images{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
 .thumb-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .thumb-row img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #eee}
 
@@ -70,28 +71,28 @@ textarea{min-height:64px;resize:vertical}
 /* 结果编辑区 */
 .result-edit{width:100%;min-height:260px;padding:14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;line-height:1.8;font-family:inherit;resize:vertical;background:#fefefe}
 .result-edit:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,94,239,.08)}
-.result-readonly{background:#fafafa;border-radius:var(--radius);padding:14px;min-height:100px;white-space:pre-wrap;font-size:13px;line-height:1.7;max-height:40vh;overflow:auto;display:none}
+.result-readonly{background:var(--blue-light);border-radius:var(--radius);padding:14px;min-height:100px;white-space:pre-wrap;font-size:13px;line-height:1.7;max-height:40vh;overflow:auto;display:none}
 .result-readonly:empty::after{content:"等待生成...";color:#bbb}
 
 /* 标签页 */
 .tabs{display:flex;gap:4px;margin:12px 0}
 .tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid var(--border);background:#fff;cursor:pointer;transition:.15s}
-.tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 .tab:hover:not(.active){border-color:var(--blue);color:var(--blue)}
 
 /* 底部工具栏 */
-.toolbar{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid #eee}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .word-count{font-size:11px;color:var(--sub)}
 
 /* 改稿区 */
 .revise-box{margin-top:12px;display:flex;gap:6px}
 .revise-box input{flex:1;font-size:13px}
-.chat-log{max-height:100px;overflow:auto;font-size:11px;background:#f8f8f5;border-radius:8px;padding:8px;margin-top:8px;line-height:1.5}
+.chat-log{max-height:100px;overflow:auto;font-size:11px;background:var(--blue-light);border-radius:8px;padding:8px;margin-top:8px;line-height:1.5}
 .chat-log .msg{margin-bottom:3px}
 .chat-log .msg b{color:var(--sub);margin-right:4px}
 
 /* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -152,7 +153,7 @@ textarea{min-height:64px;resize:vertical}
       <div style="margin-top:8px">
         <button class="btn btn-blue btn-sm" id="btnAnalyze" onclick="doAnalyze()">拆解对标文案</button>
       </div>
-      <textarea id="bAnalysis" placeholder="拆解结果会显示在这里" readonly style="min-height:70px;background:#fffdf5;margin-top:6px"></textarea>
+      <textarea id="bAnalysis" placeholder="拆解结果会显示在这里" readonly style="min-height:70px;background:var(--blue-light);margin-top:6px"></textarea>
     </div>
   </div>
 
