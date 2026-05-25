@@ -235,24 +235,29 @@ function updateKbMeter(){
 function handleFiles(files, key, labelId, thumbId){
   if(!files||!files.length) return;
   var label = $(labelId);
+  var fileInput = label.querySelector('input[type=file]');
   var arr = Array.prototype.slice.call(files);
   arr.forEach(function(file){
     if(!file.type||!file.type.match(/^image\//)) return;
     if(state[key].length >= MAX[key]) { toast('最多'+MAX[key]+'张'); return; }
     var reader = new FileReader();
+    reader.onerror = function(){
+      toast('图片读取失败，请换一张试试');
+    };
     reader.onload = function(ev){
       state[key].push({name:file.name, dataUrl:ev.target.result, size:Math.round(ev.target.result.length*0.75)});
-      showThumbs(thumbId, key);
+      showThumbs(thumbId, key, labelId);
       var n = state[key].length;
-      label.textContent = '已选 '+n+' 张，点击换图';
-      label.classList.add('has-images');
       var span = label.querySelector('span');
       if(span) span.textContent = '已选 '+n+' 张，点击换图';
+      label.classList.add('has-images');
     };
     reader.readAsDataURL(file);
   });
+  // 重置文件选择框，确保选同一张图也能再次触发 onchange
+  if(fileInput) fileInput.value = '';
 }
-function showThumbs(thumbId, key){
+function showThumbs(thumbId, key, labelId){
   var box = $(thumbId);
   box.innerHTML = '';
   state[key].forEach(function(img,i){
@@ -264,14 +269,14 @@ function showThumbs(thumbId, key){
 }
 function delImg(key, i, thumbId, lid){
   state[key].splice(i,1);
-  showThumbs(thumbId, key);
+  showThumbs(thumbId, key, lid);
   var label = $(lid);
+  var span = label.querySelector('span');
   if(state[key].length===0){
     label.classList.remove('has-images');
-    var span = label.querySelector('span');
     if(span) span.textContent = key==='bImages'?'📷 点击选择对标截图':'📷 点击选择效果图';
   } else {
-    label.textContent = '已选 '+state[key].length+' 张，点击换图';
+    if(span) span.textContent = '已选 '+state[key].length+' 张，点击换图';
   }
 }
 // handleFiles is called from onchange attribute directly
