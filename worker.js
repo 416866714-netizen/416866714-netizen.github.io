@@ -586,6 +586,22 @@ async function handleScriptsReply(request, env) {
   return json({best:formatXhsText(r.best||r.final||''),versions:r.versions||'',analysis:r.analysis||'',next:r.next||'',style:r.style||'',imageStyle});
 }
 
+async function callBenchmarkAnalysis(input = {}, env) {
+  input = hydrateXhsBrand(input);
+  const prompt = `只拆解对标文案结构，不生成完整正文。\n\n【对标文案】\n标题：${textBlock(input.benchmarkTitle, 300)}\n正文：${textBlock(input.benchmarkText, 1200)}\n我喜欢它的点：${textBlock(input.benchmarkNotes, 500)}\n\n输出JSON：{"benchmarkAnalysis":{"标题钩子":"...","开头痛点":"...","正文结构":"...","段落节奏":"...","情绪推进":"...","结尾引导":"...","可借鉴点":["..."],"禁止照抄":["..."]}}\n\n只拆解对标结构，不生成全新文案。`;
+  let raw;
+  try {
+    raw = await openAIChat([
+      { role: 'system', content: '你是老谭小红书内容总编。只做对标拆解，不生成正文。输出JSON。' },
+      { role: 'user', content: prompt }
+    ], env, 1200, { thinking: 'fast' });
+  } catch (e) {
+    return json({ error: '拆解请求失败', detail: String(e.message || e).slice(0, 500) }, 502);
+  }
+  const r = normalizeDeepSeekJSON(raw);
+  return json({ benchmarkAnalysis: r.benchmarkAnalysis || r.final || raw });
+}
+
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
@@ -601,6 +617,7 @@ async function handleXhsGenerate(request, env) {
   // 小红书工作强制只走 GPT-5.5，不允许 DeepSeek 或自动路由。
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   input.provider = 'openai';
+  if (body.action === 'benchmark-analysis') return callBenchmarkAnalysis(input, env);
   return callOpenAI(input, body, env);
 }
 
