@@ -7,7 +7,8 @@
 <title>老谭小红书内容工作台</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f3ef;color:#1a1a1a;padding:12px;max-width:600px;margin:0 auto}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f3ef;color:#1a1a1a;padding:16px;max-width:1400px;margin:0 auto}
+.workspace{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start}@media(max-width:960px){.workspace{grid-template-columns:1fr}}
 h1{font-size:20px;margin:8px 0 4px}
 .sub{color:#888;font-size:13px;margin-bottom:14px}
 .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
@@ -16,7 +17,7 @@ label{display:block;font-size:13px;font-weight:700;color:#555;margin-bottom:4px;
 label:first-of-type{margin-top:0}
 input,textarea,select{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:15px;font-family:inherit;background:#fafafa}
 textarea{min-height:80px;resize:vertical}
-.btn{display:inline-block;width:100%;padding:12px;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-align:center}
+.btn{display:inline-block;padding:12px 20px;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-align:center;width:100%}.row .btn{width:auto;flex:1}@media(min-width:961px){.btn{width:auto}}
 .btn-primary{background:#1a1a1a;color:#fff}
 .btn-blue{background:#e8f1ff;color:#155eef}
 .btn-outline{background:#fff;border:2px solid #ddd;color:#333}
@@ -45,6 +46,8 @@ input[type=file]{display:none}
 <h1>老谭小红书内容工作台</h1>
 <div class="sub">DeepSeek 生成 · Qwen-VL 识图 · 移动端优化</div>
 <div class="status" id="status"><span class="badge badge-warn">检测中...</span></div>
+
+<div class="workspace">
 
 <!-- 对标图文 -->
 <div class="card">
@@ -104,6 +107,8 @@ input[type=file]{display:none}
     <button class="btn btn-outline" onclick="copyResult()">📋 复制</button>
   </div>
 </div>
+
+</div><!-- workspace -->
 
 <div class="toast" id="toast"></div>
 
