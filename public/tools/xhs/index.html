@@ -47,10 +47,9 @@ textarea{min-height:70px;resize:vertical}
 .knowledge-box .info{font-size:11px;color:#999;margin-top:4px}
 
 /* 上传 */
-.upload-label{position:relative;display:inline-block;width:100%;padding:12px;border:2px dashed #ccc;border-radius:8px;text-align:center;color:#888;font-size:13px;cursor:pointer;background:#fafafa;overflow:hidden}
+.upload-label{position:relative;display:inline-block;width:100%;padding:12px;border:2px dashed #ccc;border-radius:8px;text-align:center;color:#888;font-size:13px;cursor:pointer;background:#fafafa}
 .upload-label:hover{border-color:#155eef;color:#155eef}
 .upload-label.has-images{border-color:#155eef;color:#155eef;background:#eef4ff}
-.upload-label input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
 .thumb-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .thumb-row img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #eee}
 
@@ -93,7 +92,7 @@ textarea{min-height:70px;resize:vertical}
   <label>对标正文 / OCR</label><textarea id="bText" placeholder="粘贴对标正文或截图OCR文字" style="min-height:100px"></textarea>
   <label>我喜欢它哪里</label><textarea id="bNotes" placeholder="例：封面冲突强、节奏好、结尾引导自然"></textarea>
   <label>上传对标截图 <span>最多3张</span></label>
-  <label class="upload-label" id="bLabel"><span>📷 点击选择对标截图</span><input type="file" id="bImages" accept="image/*" multiple onchange="handleFiles(this.files,'bImages','bLabel','bThumbs')"></label>
+  <div class="upload-label" id="bLabel" style="position:relative"><span>📷 点击选择对标截图</span><input type="file" id="bImages" accept="image/*" multiple onchange="handleFiles(this.files,'bImages','bLabel','bThumbs')" style="position:absolute;inset:0;opacity:0;z-index:10;cursor:pointer"></div>
   <div class="thumb-row" id="bThumbs"></div>
   <div class="row">
     <button class="btn btn-blue" id="btnAnalyze" onclick="doAnalyze()">🔍 拆解对标文案</button>
@@ -128,7 +127,7 @@ textarea{min-height:70px;resize:vertical}
   <label>核心观点</label><input id="core" placeholder="例：装修前不要先问总价，要先看清方案和报价边界">
   <label>我的文字素材</label><textarea id="myNotes" placeholder="例：长沙120平改善房，业主拿了三份报价准备签合同"></textarea>
   <label>上传效果图/实拍 <span>最多2张</span></label>
-  <label class="upload-label" id="mLabel"><span>📷 点击选择效果图</span><input type="file" id="myImages" accept="image/*" multiple onchange="handleFiles(this.files,'mImages','mLabel','mThumbs')"></label>
+  <div class="upload-label" id="mLabel" style="position:relative"><span>📷 点击选择效果图</span><input type="file" id="myImages" accept="image/*" multiple onchange="handleFiles(this.files,'mImages','mLabel','mThumbs')" style="position:absolute;inset:0;opacity:0;z-index:10;cursor:pointer"></div>
   <div class="thumb-row" id="mThumbs"></div>
   <div class="grid2" style="margin-top:8px">
     <div><label>目标人群</label><select id="audience"><option>长沙准备装修的业主</option><option>正在比价的业主</option><option>准备签合同的业主</option></select></div>
