@@ -7,104 +7,173 @@
 <title>老谭小红书内容工作台</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f3ef;color:#1a1a1a;padding:16px;max-width:1400px;margin:0 auto}
-.workspace{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start}@media(max-width:960px){.workspace{grid-template-columns:1fr}}
-h1{font-size:20px;margin:8px 0 4px}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f3ef;color:#1a1a1a;padding:16px}
+h1{font-size:22px;margin:0 0 2px}
 .sub{color:#888;font-size:13px;margin-bottom:14px}
-.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.card h2{font-size:16px;margin-bottom:10px}
-label{display:block;font-size:13px;font-weight:700;color:#555;margin-bottom:4px;margin-top:10px}
-label:first-of-type{margin-top:0}
-input,textarea,select{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:15px;font-family:inherit;background:#fafafa}
-textarea{min-height:80px;resize:vertical}
-.btn{display:inline-block;padding:12px 20px;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-align:center;width:100%}.row .btn{width:auto;flex:1}@media(min-width:961px){.btn{width:auto}}
-.btn-primary{background:#1a1a1a;color:#fff}
-.btn-blue{background:#e8f1ff;color:#155eef}
-.btn-outline{background:#fff;border:2px solid #ddd;color:#333}
-.btn:active{opacity:.8}
-.btn:disabled{opacity:.5}
-.row{display:flex;gap:8px;margin-top:10px}
-.row .btn{flex:1}
-.upload-label{display:inline-block;width:100%;padding:14px;border:2px dashed #ccc;border-radius:10px;text-align:center;color:#888;font-size:14px;cursor:pointer;background:#fafafa}
-.upload-label:active{background:#eee}
-.upload-label.has-images{border-color:#155eef;color:#155eef;background:#eef4ff}
-input[type=file]{display:none}
-.thumb-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.thumb-row img{width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid #eee}
-.result{background:#fafafa;border-radius:10px;padding:14px;min-height:60px;white-space:pre-wrap;font-size:14px;line-height:1.7;max-height:60vh;overflow:auto;margin-top:10px}
-.result:empty::after{content:"等待生成...";color:#bbb}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;z-index:999;opacity:0;transition:.3s}
-.toast.show{opacity:1}
+.status{margin-bottom:12px;font-size:12px}
 .badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;margin-right:4px}
 .badge-ok{background:#e8f5e9;color:#2e7d32}
 .badge-warn{background:#fff3e0;color:#e65100}
-.status{margin-bottom:10px;font-size:12px}
+
+/* 三栏 */
+.workspace{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start}
+
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:0;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden}
+.card h2{font-size:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.card h2 small{font-weight:400;font-size:12px;color:#999}
+
+label{display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:3px;margin-top:9px}
+label:first-of-type{margin-top:0}
+label span{color:#999;font-weight:400}
+
+input,textarea,select{width:100%;border:1px solid #ddd;border-radius:8px;padding:9px 10px;font-size:14px;font-family:inherit;background:#fafafa;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#155eef;box-shadow:0 0 0 3px rgba(21,94,239,.1)}
+textarea{min-height:70px;resize:vertical}
+
+.btn{display:inline-block;padding:10px 18px;border:0;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;text-align:center}
+.btn:active{opacity:.8}
+.btn:disabled{opacity:.5}
+.btn-primary{background:#1a1a1a;color:#fff}
+.btn-blue{background:#e8f1ff;color:#155eef}
+.btn-red{background:#fee;color:#c00}
+.btn-outline{background:#fff;border:2px solid #ddd;color:#333}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+.row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+
+/* 品牌资料 */
+.knowledge-box{background:#f8f8f5;border-radius:8px;padding:10px;margin-top:8px}
+.knowledge-box textarea{min-height:100px;font-size:13px;background:#fff}
+.knowledge-box .info{font-size:11px;color:#999;margin-top:4px}
+
+/* 上传 */
+.upload-label{display:inline-block;width:100%;padding:12px;border:2px dashed #ccc;border-radius:8px;text-align:center;color:#888;font-size:13px;cursor:pointer;background:#fafafa}
+.upload-label:hover{border-color:#155eef;color:#155eef}
+.upload-label.has-images{border-color:#155eef;color:#155eef;background:#eef4ff}
+input[type=file]{display:none}
+.thumb-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.thumb-row img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+
+/* 结果区 */
+.result-area{background:#fafafa;border-radius:10px;padding:14px;min-height:80px;white-space:pre-wrap;font-size:14px;line-height:1.7;max-height:50vh;overflow:auto;margin-top:8px}
+.result-area:empty::after{content:"等待生成...";color:#bbb}
+
+/* tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tab{padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid #ddd;background:#fff;cursor:pointer}
+.tab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+
+/* 聊天改稿 */
+.chat-box{border-top:1px solid #eee;margin-top:12px;padding-top:10px}
+.chat-box label{font-size:12px;color:#888}
+.chat-log{max-height:120px;overflow:auto;font-size:12px;background:#fafafa;border-radius:6px;padding:8px;margin:6px 0;line-height:1.5}
+.chat-log .msg{margin-bottom:4px}
+.chat-log .msg b{color:#999}
+.chat-row{display:flex;gap:6px}
+.chat-row input{flex:1}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;z-index:999;opacity:0;transition:.3s}
+.toast.show{opacity:1}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 </style>
 </head>
 <body>
 
 <h1>老谭小红书内容工作台</h1>
-<div class="sub">DeepSeek 生成 · Qwen-VL 识图 · 移动端优化</div>
+<div class="sub">DeepSeek 生成 · Qwen-VL 识图 · 三栏布局</div>
 <div class="status" id="status"><span class="badge badge-warn">检测中...</span></div>
 
 <div class="workspace">
 
-<!-- 对标图文 -->
+<!-- ====== 左栏：对标图文 ====== -->
 <div class="card">
   <h2>📌 对标图文</h2>
   <label>对标标题</label><input id="bTitle" placeholder="把对标笔记标题放这里">
-  <label>对标正文/OCR</label><textarea id="bText" placeholder="粘贴对标正文或截图OCR文字"></textarea>
+  <label>对标正文 / OCR</label><textarea id="bText" placeholder="粘贴对标正文或截图OCR文字" style="min-height:100px"></textarea>
   <label>我喜欢它哪里</label><textarea id="bNotes" placeholder="例：封面冲突强、节奏好、结尾引导自然"></textarea>
-  <label>上传对标截图</label>
-  <label class="upload-label" for="bImages" id="bLabel">📷 点击选择对标截图（最多3张）</label>
+  <label>上传对标截图 <span>最多3张</span></label>
+  <label class="upload-label" for="bImages" id="bLabel">📷 点击选择对标截图</label>
   <input type="file" id="bImages" accept="image/*" multiple>
   <div class="thumb-row" id="bThumbs"></div>
   <div class="row">
     <button class="btn btn-blue" id="btnAnalyze" onclick="doAnalyze()">🔍 拆解对标文案</button>
   </div>
-  <label>拆解结果</label><textarea id="bAnalysis" placeholder="拆解结果会显示在这里" readonly></textarea>
+  <label>拆解结果 <span>生成后填充</span></label>
+  <textarea id="bAnalysis" placeholder="拆解结果会显示在这里" readonly style="min-height:80px;background:#fffdf5"></textarea>
 </div>
 
-<!-- 我的素材 -->
+<!-- ====== 中栏：我的素材 + 品牌 ====== -->
 <div class="card">
   <h2>🎨 我的素材</h2>
-  <label>品牌</label>
-  <select id="brand">
-    <option value="brand1">8K设计</option>
-    <option value="brand2">玖玖精工/半包</option>
-    <option value="brand3">玖玖精装</option>
-    <option value="brand4" selected>宅师傅半包装修</option>
-  </select>
+
+  <!-- 品牌知识库 -->
+  <div class="knowledge-box">
+    <label style="margin-top:0">品牌知识库</label>
+    <div class="row" style="margin-top:4px">
+      <select id="brand" onchange="loadBrandKb()" style="flex:1">
+        <option value="brand1">8K设计</option>
+        <option value="brand2">玖玖精工/半包</option>
+        <option value="brand3">玖玖精装</option>
+        <option value="brand4" selected>宅师傅半包装修</option>
+      </select>
+      <button class="btn btn-sm btn-outline" onclick="saveBrandKb()">💾 保存</button>
+      <button class="btn btn-sm btn-outline" onclick="resetBrandKb()">🔄 恢复默认</button>
+    </div>
+    <label>品牌名称</label><input id="brandName" placeholder="品牌名称" onchange="autoSaveBrandName()">
+    <label>企业知识库 <span>当前品牌独立保存，可编辑</span></label>
+    <textarea id="knowledgeText" placeholder="粘贴品牌知识库..." oninput="updateKbMeter()"></textarea>
+    <div class="info"><span id="kbCount">0 字</span> · 内置4个品牌默认资料 · 可覆盖保存</div>
+  </div>
+
   <label>核心观点</label><input id="core" placeholder="例：装修前不要先问总价，要先看清方案和报价边界">
   <label>我的文字素材</label><textarea id="myNotes" placeholder="例：长沙120平改善房，业主拿了三份报价准备签合同"></textarea>
-  <label>上传效果图/实拍</label>
-  <label class="upload-label" for="myImages" id="mLabel">📷 点击选择效果图（最多2张）</label>
+  <label>上传效果图/实拍 <span>最多2张</span></label>
+  <label class="upload-label" for="myImages" id="mLabel">📷 点击选择效果图</label>
   <input type="file" id="myImages" accept="image/*" multiple>
   <div class="thumb-row" id="mThumbs"></div>
-  <div class="grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+  <div class="grid2" style="margin-top:8px">
     <div><label>目标人群</label><select id="audience"><option>长沙准备装修的业主</option><option>正在比价的业主</option><option>准备签合同的业主</option></select></div>
     <div><label>图片页数</label><select id="pages"><option>6</option><option>7</option><option>8</option></select></div>
   </div>
-  <label>必须出现</label><input id="must" placeholder="例：长沙、报价体检、先判断再签约">
-  <label>不能出现</label><input id="avoid" placeholder="例：绝对承诺、贬低公司、恐吓">
+  <div class="grid2">
+    <div><label>必须出现</label><input id="must" placeholder="例：长沙、报价体检"></div>
+    <div><label>不能出现</label><input id="avoid" placeholder="例：绝对承诺、恐吓"></div>
+  </div>
 </div>
 
-<!-- 生成 -->
+<!-- ====== 右栏：生成 + 改稿 ====== -->
 <div class="card">
-  <h2>✨ 生成小红书</h2>
-  <button class="btn btn-primary" id="btnGenerate" onclick="doGenerate()">🚀 生成小红书图文方案</button>
-  <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap" id="tabs">
-    <button class="btn btn-outline active" style="flex:0 0 auto;padding:8px 14px;font-size:13px" onclick="switchTab('final')">最终版</button>
-    <button class="btn btn-outline" style="flex:0 0 auto;padding:8px 14px;font-size:13px" onclick="switchTab('titles')">标题</button>
-    <button class="btn btn-outline" style="flex:0 0 auto;padding:8px 14px;font-size:13px" onclick="switchTab('script')">图片脚本</button>
-    <button class="btn btn-outline" style="flex:0 0 auto;padding:8px 14px;font-size:13px" onclick="switchTab('check')">发布检查</button>
+  <h2>✨ 成稿区</h2>
+  <button class="btn btn-primary" id="btnGenerate" onclick="doGenerate()" style="width:100%;padding:14px;font-size:16px">🚀 生成小红书图文方案</button>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="switchTab('final',this)">最终版</button>
+    <button class="tab" onclick="switchTab('titles',this)">标题</button>
+    <button class="tab" onclick="switchTab('script',this)">图片脚本</button>
+    <button class="tab" onclick="switchTab('check',this)">发布检查</button>
+    <button class="tab" onclick="switchTab('story',this)">灵感拆解</button>
   </div>
-  <div class="result" id="resultFinal"></div>
-  <div class="result" id="resultTitles" style="display:none"></div>
-  <div class="result" id="resultScript" style="display:none"></div>
-  <div class="result" id="resultCheck" style="display:none"></div>
+
+  <div class="result-area" id="resultFinal"></div>
+  <div class="result-area" id="resultTitles" style="display:none"></div>
+  <div class="result-area" id="resultScript" style="display:none"></div>
+  <div class="result-area" id="resultCheck" style="display:none"></div>
+  <div class="result-area" id="resultStory" style="display:none"></div>
+
   <div class="row">
-    <button class="btn btn-outline" onclick="copyResult()">📋 复制</button>
+    <button class="btn btn-outline btn-sm" onclick="copyCurrent()">📋 复制当前页</button>
+    <button class="btn btn-outline btn-sm" onclick="copyFinal()">📋 复制最终版</button>
+  </div>
+
+  <!-- 聊天改稿 -->
+  <div class="chat-box">
+    <label>💬 基于当前版本修改文案</label>
+    <div class="chat-log" id="chatLog"></div>
+    <div class="chat-row">
+      <input id="chatInput" placeholder="例：改到300字 / 标题更狠一点 / 更像真实业主">
+      <button class="btn btn-primary btn-sm" onclick="doChat()">发送</button>
+    </div>
   </div>
 </div>
 
@@ -112,78 +181,118 @@ input[type=file]{display:none}
 
 <div class="toast" id="toast"></div>
 
+<!-- 内置品牌资料 -->
+<script>
+var DEFAULT_BRANDS = {
+  brand1:{name:"8K设计",knowledge:"8K设计｜长沙高审美住宅全案设计品牌，用清晰设计费标准，服务想把家装得好看、专业、并且真正能落地的装修客户。\n\n核心产品是全案设计服务：平面方案、4K高清效果图、施工图、设计落地配合。设计费标准清晰。\n\n目标人群：注重审美和风格的长沙业主，大平层、改善型住宅、毛坯房客户，想找设计师但担心设计费贵、设计和施工脱节的人。\n\n内容方向：高审美、全案设计、4K效果图、同面积/同风格案例、设计费、设计落地、户型优化。\n\n转化钩子：1｜设计费和服务内容；2｜同面积/同风格案例；3｜设计到施工怎么落地。\n\n表达边界：可以强调高审美、原创设计、设计费清晰；不要承诺绝对省钱、保证效果完全一样。不要空泛说\"高端大气\"，要落到具体户型、风格、设计费。"},
+  brand2:{name:"玖玖精工/半包",knowledge:"玖玖精工｜长沙高标准半包施工品牌，核心不是低价，而是真实工地、施工工艺和高标准交付。\n\n核心产品是半包施工和施工落地服务。可以看真实工地，有设计图纸可以免费核算，拥有100+别墅、复式、大平层工地在施工。\n\n目标人群：已有设计图、正在找施工方的业主；关注施工标准、工艺和报价的人；大平层、复式、别墅客户。\n\n内容方向：真实工地、半包施工、工艺标准、图纸精算、看附近工地、施工报价、工地细节。\n\n转化钩子：1｜看附近真实工地；2｜半包报价/工价明细；3｜有设计图，免费精算。\n\n表达边界：不要说成精装房改造品牌，不要写成设计公司，不要主打低价。语气要专业、实在、施工现场感强。"},
+  brand3:{name:"玖玖精装",knowledge:"玖玖精装｜长沙高端大宅精装全案改造品牌，专注高端楼盘、精装房改造和一站式交付。\n\n核心产品：设计+改造+定制+软装一站式落地。长沙100+大平层案例落地中，近期长沙瑞府有30+套推进中。\n\n目标人群：高端楼盘业主，精装房想重新改造的客户，大平层、别墅、改善型住宅客户。\n\n内容方向：精装改造、高端楼盘、长沙瑞府、全案交付、同户型案例、完工落地、4K效果图。\n\n转化钩子：1｜相近户型/面积效果图；2｜真实现场/完工案例；3｜设计费/改造费参考。\n\n表达边界：可以强调高端精装房改造、瑞府背书、100+案例；不要承诺绝对省钱、保证零增项。语气要高级、专业、克制。"},
+  brand4:{name:"宅师傅半包装修",knowledge:"宅师傅半包装修｜长沙普通家庭透明半包装修品牌，服务预算敏感、怕被坑、想先把方案和预算搞清楚的业主。\n\n核心产品：普通家庭半包装修。基础半包438元/㎡，综合一般550-600元/㎡。可以免费量房、免费平面图、免费施工图、免费精准预算，不签约也可以带走资料参考。支持先施工后付款，验收满意后再付款；非图纸变更增项，公司负责；有27项超国标工艺。\n\n目标人群：中端偏低预算客户、普通刚需家庭、第一次装修的小白业主、价格敏感型客户，怕增项、怕先交钱、怕报价不透明的人。\n\n内容方向：438半包、普通家庭、免费量房、免费平面图、免费施工图、精准预算、先施工后付款、零增项。\n\n转化钩子：1｜看半包大概要多少钱；2｜免费量房/出图/做预算；3｜了解先装修后付款/零增项。\n\n表达边界：可以强调438元/㎡起、免费量房出图预算、先施工后付款；不要把438说成所有客户最终价，不要过度承诺绝对零增项。语气要清楚、实在、接地气。"}
+};
+</script>
+
 <script>
 // State
 var state = { bImages:[], mImages:[], currentTab:'final', lastResult:{} };
-var MAX = { bImages:3, mImages:2 };
-
-// Helpers
+var MAX = { b:3, m:2 };
 function $(id){return document.getElementById(id)}
-function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1800)}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show')},1800)}
 
-// Image upload
-function handleImages(inputId, labelId, thumbId, key){
+// ====== 品牌知识库 ======
+function kbKey(){return 'laotan-xhs-kb-'+($('brand').value||'brand1')}
+function kbNameKey(){return kbKey()+'-name'}
+function loadBrandKb(){
+  var slot = $('brand').value;
+  var def = DEFAULT_BRANDS[slot]||{};
+  var saved = localStorage.getItem(kbKey());
+  var savedName = localStorage.getItem(kbNameKey());
+  $('brandName').value = savedName || def.name || '';
+  $('knowledgeText').value = saved || def.knowledge || '';
+  updateKbMeter();
+}
+function saveBrandKb(){
+  localStorage.setItem(kbKey(), $('knowledgeText').value);
+  localStorage.setItem(kbNameKey(), $('brandName').value);
+  toast('品牌资料已保存');
+  updateKbMeter();
+}
+function resetBrandKb(){
+  if(!confirm('确认恢复当前品牌的默认资料？你的修改将被覆盖。')) return;
+  var def = DEFAULT_BRANDS[$('brand').value]||{};
+  $('knowledgeText').value = def.knowledge || '';
+  $('brandName').value = def.name || '';
+  localStorage.removeItem(kbKey());
+  localStorage.removeItem(kbNameKey());
+  toast('已恢复默认');
+  updateKbMeter();
+}
+function autoSaveBrandName(){
+  localStorage.setItem(kbNameKey(), $('brandName').value);
+}
+function updateKbMeter(){
+  var n = ($('knowledgeText').value||'').length;
+  $('kbCount').textContent = ($('brandName').value||$('brand').selectedOptions[0].text)+': '+n+' 字';
+}
+
+// ====== 图片上传 ======
+function handleUpload(inputId, labelId, thumbId, key){
   $(inputId).onchange = function(e){
     var files = Array.from(e.target.files);
     var label = $(labelId);
-    var added = 0;
     files.forEach(function(file){
       if(!file.type.startsWith('image/')) return;
       if(state[key].length >= MAX[key]) return;
       var reader = new FileReader();
       reader.onload = function(ev){
         state[key].push({name:file.name,dataUrl:ev.target.result,size:Math.round(ev.target.result.length*0.75)});
-        added++;
-        renderThumbs(thumbId, key);
-        if(state[key].length > 0){
-          label.classList.add('has-images');
-          label.textContent = '已选 '+state[key].length+' 张，点击换图';
-        }
+        showThumbs(thumbId, key);
+        var n = state[key].length;
+        label.textContent = '已选 '+n+' 张，点击换图';
+        label.classList.add('has-images');
       };
       reader.readAsDataURL(file);
     });
     e.target.value = '';
   };
 }
-function renderThumbs(thumbId, key){
+function showThumbs(thumbId, key){
   var box = $(thumbId);
   box.innerHTML = '';
   state[key].forEach(function(img,i){
-    var div = document.createElement('div');
-    div.style.cssText = 'position:relative;display:inline-block';
-    div.innerHTML = '<img src="'+img.dataUrl+'" style="width:70px;height:70px;object-fit:cover;border-radius:8px"><button style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:#e00;color:#fff;font-size:12px;cursor:pointer" onclick="removeImg(\''+key+'\','+i+',\''+thumbId+'\',\''+labelId(key)+'\')">×</button>';
-    box.appendChild(div);
+    var d = document.createElement('div');
+    d.style.cssText = 'position:relative;display:inline-block';
+    d.innerHTML = '<img src="'+img.dataUrl+'" style="width:64px;height:64px;object-fit:cover;border-radius:8px"><button style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:#e00;color:#fff;font-size:11px;cursor:pointer;line-height:20px" onclick="delImg(\''+key+'\','+i+',\''+thumbId+'\',\''+labelId+'\')">×</button>';
+    box.appendChild(d);
   });
 }
-function labelId(key){return key==='bImages'?'bLabel':'mLabel'}
-function removeImg(key,i,thumbId,lid){
+function delImg(key, i, thumbId, lid){
   state[key].splice(i,1);
-  renderThumbs(thumbId, key);
+  showThumbs(thumbId, key);
   var label = $(lid);
-  if(state[key].length === 0){
+  if(state[key].length===0){
     label.classList.remove('has-images');
-    label.textContent = key==='bImages'?'📷 点击选择对标截图（最多3张）':'📷 点击选择效果图（最多2张）';
+    label.textContent = key==='bImages'?'📷 点击选择对标截图':'📷 点击选择效果图';
   } else {
     label.textContent = '已选 '+state[key].length+' 张，点击换图';
   }
 }
+handleUpload('bImages','bLabel','bThumbs','bImages');
+handleUpload('myImages','mLabel','mThumbs','mImages');
 
-handleImages('bImages','bLabel','bThumbs','bImages');
-handleImages('myImages','mLabel','mThumbs','mImages');
-
-// Data collection
+// ====== 数据 ======
 function getData(){
   return {
-    benchmarkTitle: $('bTitle').value.slice(0,500),
-    benchmarkText: $('bText').value.slice(0,1000),
-    benchmarkNotes: $('bNotes').value.slice(0,800),
-    benchmarkAnalysis: $('bAnalysis').value.slice(0,800),
+    benchmarkTitle: ($('bTitle').value||'').slice(0,500),
+    benchmarkText: ($('bText').value||'').slice(0,1200),
+    benchmarkNotes: ($('bNotes').value||'').slice(0,800),
+    benchmarkAnalysis: ($('bAnalysis').value||'').slice(0,800),
     brandSlot: $('brand').value,
-    brandName: $('brand').selectedOptions[0].text,
-    corePoint: $('core').value.slice(0,200),
-    myNotes: $('myNotes').value.slice(0,1000),
-    mustSay: $('must').value.slice(0,300),
-    avoidSay: $('avoid').value.slice(0,300),
+    brandName: ($('brandName').value||$('brand').selectedOptions[0].text).slice(0,80),
+    knowledgeText: ($('knowledgeText').value||DEFAULT_BRANDS[$('brand').value].knowledge||'').slice(0,2000),
+    corePoint: ($('core').value||'').slice(0,200),
+    myNotes: ($('myNotes').value||'').slice(0,1000),
+    mustSay: ($('must').value||'').slice(0,300),
+    avoidSay: ($('avoid').value||'').slice(0,300),
     audience: $('audience').value,
     pageCount: $('pages').value,
     mode: '快速生成',
@@ -197,95 +306,126 @@ function getData(){
   };
 }
 
-// Tab switch
-function switchTab(tab){
-  ['final','titles','script','check'].forEach(function(t){
+// ====== 标签切换 ======
+function switchTab(tab, btn){
+  ['final','titles','script','check','story'].forEach(function(t){
     $('result'+(t.charAt(0).toUpperCase()+t.slice(1))).style.display = (t===tab)?'block':'none';
   });
-  var btns = document.querySelectorAll('#tabs .btn');
-  btns.forEach(function(b){b.classList.remove('active')});
-  event.target.classList.add('active');
+  var tabs = document.querySelectorAll('#tabs .tab');
+  tabs.forEach(function(t){t.classList.remove('active')});
+  if(btn) btn.classList.add('active');
   state.currentTab = tab;
 }
 
-// Copy
-function copyResult(){
-  var tab = state.currentTab || 'final';
-  var el = $('result'+(tab.charAt(0).toUpperCase()+tab.slice(1)));
-  var text = el.textContent;
-  if(!text || text === '等待生成...'){toast('没有内容可复制');return}
+// ====== 复制 ======
+function copyCurrent(){
+  var tab = state.currentTab||'final';
+  copyText($('result'+(tab.charAt(0).toUpperCase()+tab.slice(1))).textContent);
+}
+function copyFinal(){copyText($('resultFinal').textContent)}
+function copyText(text){
+  if(!text||text==='等待生成...'){toast('没有内容');return}
   navigator.clipboard.writeText(text).then(function(){toast('已复制')}).catch(function(){toast('复制失败')});
 }
 
-// Analyze benchmark
+// ====== API ======
+function postAPI(data){
+  return fetch('/api/xhs-generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+    .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error(t.slice(0,500))});return r.json()});
+}
+
+// ====== 拆解 ======
 function doAnalyze(){
   var btn = $('btnAnalyze');
-  btn.disabled = true;
-  btn.textContent = '拆解中...';
-  var d = getData();
-  fetch('/api/xhs-generate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'benchmark-analysis',input:d})
-  }).then(function(r){
-    if(!r.ok) return r.text().then(function(t){throw new Error(t)});
-    return r.json();
-  }).then(function(json){
-    var ba = json.benchmarkAnalysis;
-    $('bAnalysis').value = typeof ba === 'string' ? ba : JSON.stringify(ba,null,2);
-    toast('拆解完成');
-  }).catch(function(e){
-    $('bAnalysis').value = '拆解失败：'+String(e.message||e).slice(0,300);
-    toast('拆解失败');
-  }).finally(function(){
-    btn.disabled = false;
-    btn.textContent = '🔍 拆解对标文案';
-  });
+  btn.disabled = true; btn.textContent = '拆解中...';
+  postAPI({action:'benchmark-analysis',input:getData()})
+    .then(function(json){
+      var ba = json.benchmarkAnalysis;
+      $('bAnalysis').value = typeof ba==='string'?ba:JSON.stringify(ba,null,2);
+      toast('拆解完成');
+    }).catch(function(e){
+      $('bAnalysis').value = '失败：'+String(e.message||e).slice(0,300);
+      toast('拆解失败');
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = '🔍 拆解对标文案';
+    });
 }
 
-// Generate
+// ====== 生成 ======
 function doGenerate(){
   var btn = $('btnGenerate');
-  btn.disabled = true;
-  btn.textContent = '生成中（约15-30秒）...';
+  btn.disabled = true; btn.textContent = '生成中（15-30秒）...';
   $('resultFinal').textContent = '⏳ DeepSeek 正在生成...';
-  var d = getData();
-  fetch('/api/xhs-generate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'generate',input:d})
-  }).then(function(r){
-    if(!r.ok) return r.text().then(function(t){throw new Error(t)});
-    return r.json();
-  }).then(function(json){
-    state.lastResult = json;
-    var final = json.final || '';
-    if(typeof final === 'object') final = JSON.stringify(final,null,2);
-    $('resultFinal').textContent = final || '（无内容）';
-    $('resultTitles').textContent = typeof json.titles === 'string' ? json.titles : JSON.stringify(json.titles||{},null,2);
-    $('resultScript').textContent = typeof json.script === 'string' ? json.script : JSON.stringify(json.script||{},null,2);
-    $('resultCheck').textContent = typeof json.check === 'string' ? json.check : JSON.stringify(json.check||{},null,2);
-    switchTab('final');
-    // Update status
-    if(json.readState) $('status').innerHTML = '<span class="badge badge-ok">DeepSeek</span><span class="badge badge-ok">识图:'+(json.readState.imageReadable?'✅':'文字')+'</span>';
-    toast('生成完成');
-  }).catch(function(e){
-    $('resultFinal').textContent = '生成失败：'+String(e.message||e).slice(0,500);
-    toast('生成失败');
-  }).finally(function(){
-    btn.disabled = false;
-    btn.textContent = '🚀 生成小红书图文方案';
-  });
+  postAPI({action:'generate',input:getData()})
+    .then(function(json){
+      state.lastResult = json;
+      showResult(json);
+      switchTab('final', document.querySelector('#tabs .tab'));
+      if(json.readState) $('status').innerHTML = '<span class="badge badge-ok">DeepSeek</span><span class="badge badge-ok">识图:'+(json.readState.imageReadable?'✅':'文字')+'</span>';
+      toast('生成完成');
+    }).catch(function(e){
+      $('resultFinal').textContent = '生成失败：'+String(e.message||e).slice(0,500);
+      toast('生成失败');
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = '🚀 生成小红书图文方案';
+    });
 }
 
-// Init
-(function(){
-  fetch('/api/xhs-generate',{method:'GET'}).then(function(r){return r.json()}).then(function(j){
-    $('status').innerHTML = '<span class="badge badge-ok">✅ DeepSeek</span><span class="badge badge-ok">识图:'+(j.vision==='qwen-vl'?'Qwen-VL':'GPT')+'</span>';
-  }).catch(function(){
-    $('status').innerHTML = '<span class="badge badge-warn">⚠️ 接口检测失败</span>';
+function showResult(json){
+  var f = json.final||'';
+  if(typeof f==='object') f = JSON.stringify(f,null,2);
+  $('resultFinal').textContent = f||'（无内容）';
+  $('resultTitles').textContent = typeof json.titles==='string'?json.titles:(json.titles?JSON.stringify(json.titles,null,2):'');
+  $('resultScript').textContent = typeof json.script==='string'?json.script:(json.script?JSON.stringify(json.script,null,2):'');
+  $('resultCheck').textContent = typeof json.check==='string'?json.check:(json.check?JSON.stringify(json.check,null,2):'');
+  $('resultStory').textContent = typeof json.story==='string'?json.story:(json.story?JSON.stringify(json.story,null,2):'');
+}
+
+// ====== 聊天改稿 ======
+function doChat(){
+  var msg = $('chatInput').value.trim();
+  if(!msg){toast('请输入修改要求');return}
+  if(!state.lastResult||!state.lastResult.final){toast('请先生成一篇文案');return}
+  $('chatInput').value = '';
+  addChatMsg('你', msg);
+
+  var btn = $('btnGenerate');
+  btn.disabled = true; btn.textContent = '改稿中...';
+  postAPI({
+    action:'revise',
+    input: getData(),
+    currentVersion: typeof state.lastResult.final==='string'?state.lastResult.final:JSON.stringify(state.lastResult.final),
+    revisionInstruction: msg
+  }).then(function(json){
+    state.lastResult = json;
+    showResult(json);
+    addChatMsg('AI', '已修改：'+((json.final||'')+'').slice(0,80)+'...');
+    toast('改稿完成');
+  }).catch(function(e){
+    addChatMsg('AI', '改稿失败：'+String(e.message||e).slice(0,200));
+    toast('改稿失败');
+  }).finally(function(){
+    btn.disabled = false; btn.textContent = '🚀 生成小红书图文方案';
   });
-})();
+}
+function addChatMsg(role, text){
+  var log = $('chatLog');
+  var div = document.createElement('div');
+  div.className = 'msg';
+  div.innerHTML = '<b>'+role+'：</b>'+text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+// 回车发送
+$('chatInput').onkeydown = function(e){if(e.key==='Enter')doChat()};
+
+// ====== 初始化 ======
+loadBrandKb();
+fetch('/api/xhs-generate',{method:'GET'}).then(function(r){return r.json()}).then(function(j){
+  $('status').innerHTML = '<span class="badge badge-ok">✅ DeepSeek</span><span class="badge badge-ok">识图:'+(j.vision==='qwen-vl'?'Qwen-VL':'GPT')+'</span>';
+}).catch(function(){
+  $('status').innerHTML = '<span class="badge badge-warn">⚠️ 接口检测失败</span>';
+});
 </script>
 </body>
 </html>
