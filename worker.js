@@ -148,7 +148,28 @@ ${textBlock(input.myNotes, 500)}
 【模式】${input.mode || ''}
 【图片数量】对标 ${input.imageCounts?.benchmark || 0} 张；我的素材 ${input.imageCounts?.mine || 0} 张。
 
-输出：必须包含 benchmarkAnalysis、final、titles、script、check、scores。final 含标题、正文、标签合计不超过1000字；必须使用真实换行符分段，不要用“|/｜/分段符号”代替换行；每段之间空一行，复制到小红书后也应自然分段。`;
+输出：必须包含 benchmarkAnalysis、final、titles、script、check、scores。final 含标题、正文、标签合计不超过1000字；必须使用真实换行符分段，不要用”|/｜/分段符号”代替换行；每段之间空一行，复制到小红书后也应自然分段。`;
+}
+
+function buildReviseUserPrompt(input = {}, prompt = '') {
+  return `请修改已有小红书文案。必须围绕当前选择品牌，保持品牌调性不变。
+
+【品牌/企业知识库，修改时保持品牌边界】
+${textBlock(input.knowledgeText, 1500)}
+
+【我的文字素材（如有新增信息可融入）】
+${textBlock(input.myNotes, 400)}
+
+【核心观点】${textBlock(input.corePoint, 150)}
+【必须出现】${textBlock(input.mustSay, 200)}
+【不能出现】${textBlock(input.avoidSay, 200)}
+【当前品牌名称】${input.brandName || ''}
+
+修改时注意：
+1. 保持品牌知识库中的定位、卖点、表达边界
+2. 不新增品牌知识库中没有的承诺或服务
+3. 保持原有的对标拆解结构（benchmarkAnalysis），如需调整注明原因
+4. 保留原有的标题库、图片脚本，只按需微调`;
 }
 
 function normalizeDeepSeekJSON(content) {
@@ -303,14 +324,36 @@ async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
   return data.choices?.[0]?.message?.content || '';
 }
 
+function buildReviseSystemPrompt(input = {}) {
+  return `你是"老谭小红书内容总编"，当前任务是**修改已有文案**，不是重新创作。
+
+【核心任务】
+根据用户的修改要求，对当前版本进行精准修改。只改用户要求改的部分，保留其他内容不变。
+
+【修改规则】
+1. 保持品牌调性、核心观点、已有案例不变
+2. 只调整用户明确要求修改的方面（字数、语气、结构、冲突感等）
+3. 如果用户要求"改短"，删减冗余而不是砍掉核心观点
+4. 如果用户要求"更冲突/更狠"，强化标题和开头的痛点冲突，不是加感叹号
+5. 如果用户要求"去AI味"，删掉套话空话，换成口语短句
+6. 如果用户要求"更像真实业主"，增加犹豫、对比、具体场景，减少推销感
+7. final 正文必须空好格：每1-2句话一段，段间空一行，用真实换行符
+8. 输出格式保持不变，必须是同样的JSON结构
+
+【输出要求】
+必须只输出 JSON，字段与原始生成保持一致：benchmarkAnalysis, final, titles, versions, script, check, scores。
+final 不超过1000字，final 必须用真实换行分段。`;
+}
+
 async function callDeepSeek(input = {}, body = {}, env) {
   input = compactInput(input);
   if (!env.DEEPSEEK_API_KEY) return json({ error: 'DEEPSEEK_API_KEY is not configured on server.' }, 500);
-  const reviseContext = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 6000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 2000)}` : '';
+  const isRevise = body.action === 'revise';
+  const reviseContext = isRevise ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 6000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 2000)}` : '';
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort('timeout'), 60000);
-  const system = buildSystemPrompt(input);
-  const user = buildUserPrompt({...input, images:{}}, '') + reviseContext;
+  const system = isRevise ? buildReviseSystemPrompt(input) : buildSystemPrompt(input);
+  const user = (isRevise ? buildReviseUserPrompt({...input, images:{}}, '') : buildUserPrompt({...input, images:{}}, '')) + reviseContext;
   const payload = {
     model: env.DEEPSEEK_MODEL || 'deepseek-chat',
     messages: [
