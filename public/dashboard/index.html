@@ -4,28 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
-  <meta name="theme-color" content="#f7f5f0" />
+  <meta name="theme-color" content="#f8fafc" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <title>老谭 AI 工作台</title>
   <style>
     :root {
-      --bg: #f7f5f0;
+      --bg: #f8fafc;
       --band: #ffffff;
-      --ink: #171717;
-      --muted: #66615a;
-      --line: rgba(24, 24, 24, 0.12);
-      --red: #d92d20;
-      --blue: #0969da;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: rgba(15, 23, 42, 0.12);
+      --red: #2563eb;
+      --blue: #2563eb;
       --green: #1b7f45;
-      --amber: #b35c00;
-      --violet: #6f42c1;
-      --soft-red: #fff1ef;
-      --soft-blue: #edf5ff;
+      --amber: #3b82f6;
+      --violet: #6366f1;
+      --soft-red: #eff6ff;
+      --soft-blue: #eff6ff;
       --soft-green: #edf8f1;
-      --soft-amber: #fff5e6;
-      --soft-violet: #f4efff;
-      --shadow: 0 18px 60px rgba(35, 29, 20, 0.08);
+      --soft-amber: #eff6ff;
+      --soft-violet: #eef2ff;
+      --shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
       --radius: 8px;
     }
     * { box-sizing: border-box; }
@@ -49,7 +49,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 max(18px, calc((100vw - 1180px) / 2));
-      background: rgba(247, 245, 240, 0.9);
+      background: rgba(248, 250, 252, 0.9);
       border-bottom: 1px solid var(--line);
       backdrop-filter: blur(18px);
     }
@@ -140,7 +140,7 @@
     .lead {
       max-width: 720px;
       margin: 24px 0 0;
-      color: #3f3a35;
+      color: #334155;
       font-size: 22px;
       line-height: 1.5;
       font-weight: 700;
@@ -266,7 +266,7 @@
     }
     .workflow p {
       margin: 0;
-      color: #4e4942;
+      color: #475569;
       line-height: 1.58;
       font-weight: 620;
     }
@@ -276,7 +276,7 @@
       list-style: none;
       display: grid;
       gap: 8px;
-      color: #3f3a35;
+      color: #334155;
       font-size: 14px;
       font-weight: 700;
     }
@@ -306,7 +306,7 @@
     label {
       display: grid;
       gap: 7px;
-      color: #342f2a;
+      color: #1e293b;
       font-size: 13px;
       font-weight: 850;
     }
@@ -357,10 +357,10 @@
       min-height: 360px;
       white-space: pre-wrap;
       line-height: 1.7;
-      background: #fbfaf7;
+      background: #f8fafc;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      color: #2f2a25;
+      color: #1e293b;
       overflow: auto;
     }
     .asset-grid {
@@ -400,7 +400,7 @@
     }
     .link-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 24px 70px rgba(35, 29, 20, 0.12);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
     }
     .link-card b { font-size: 18px; line-height: 1.25; }
     .link-card span { color: var(--muted); line-height: 1.45; font-size: 13px; font-weight: 700; }
@@ -418,7 +418,7 @@
       display: grid;
       place-items: center;
       padding: 18px;
-      background: rgba(247,245,240,0.94);
+      background: rgba(248,250,252,0.94);
       backdrop-filter: blur(18px);
     }
     .gate {
@@ -427,7 +427,7 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: #fff;
-      box-shadow: 0 24px 90px rgba(35,29,20,0.16);
+      box-shadow: 0 24px 90px rgba(15,23,42,0.16);
     }
     .gate h2 { margin: 0 0 10px; font-size: 30px; }
     .gate p { margin: 0 0 18px; color: var(--muted); line-height: 1.55; }
@@ -475,23 +475,23 @@
     }
 
     :root {
-      --bg: #f3f1ec;
+      --bg: #f8fafc;
       --band: #ffffff;
-      --ink: #191816;
-      --muted: #6f6a61;
-      --line: rgba(25,24,22,.12);
-      --red: #b42318;
-      --blue: #155eef;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: rgba(15,23,42,.12);
+      --red: #2563eb;
+      --blue: #2563eb;
       --green: #14784d;
-      --amber: #a65300;
-      --violet: #5b42a9;
-      --shadow: 0 14px 44px rgba(38,31,22,.07);
+      --amber: #3b82f6;
+      --violet: #6366f1;
+      --shadow: 0 14px 44px rgba(15,23,42,.07);
       --radius: 8px;
     }
     body { background: var(--bg); }
     .topbar {
-      background: rgba(243,241,236,.94);
-      box-shadow: 0 8px 28px rgba(38,31,22,.04);
+      background: rgba(248,250,252,.94);
+      box-shadow: 0 8px 28px rgba(15,23,42,.04);
     }
     .brand-mark { background: var(--red); }
     .hero { min-height: 500px; gap: 14px; }
@@ -500,18 +500,18 @@
       box-shadow: var(--shadow);
     }
     .hero-main { background: #fff; }
-    .hero-side { background: #1f1b18; }
+    .hero-side { background: #0f172a; }
     .primary-action, .tool-btn { background: #191816; border-color: #191816; }
     .ghost-action, .tool-btn.secondary { background: #fff; }
     .metric, .workflow, .panel, .prompt-box, .link-card { background: #fff; }
-    .workflow[data-tone="red"] { background: #fff8f7; }
+    .workflow[data-tone="red"] { background: #eff6ff; }
     .workflow[data-tone="green"] { background: #f4fbf6; }
-    .workflow[data-tone="blue"] { background: #f4f8ff; }
-    .workflow[data-tone="amber"] { background: #fff8ec; }
-    .workflow[data-tone="violet"] { background: #f8f5ff; }
+    .workflow[data-tone="blue"] { background: #eff6ff; }
+    .workflow[data-tone="amber"] { background: #eff6ff; }
+    .workflow[data-tone="violet"] { background: #eef2ff; }
     .workflow[data-tone="white"] { background: #fff; }
-    .prompt-output { background: #fbfaf7; }
-    .check { background: #fbfaf7; }
+    .prompt-output { background: #f8fafc; }
+    .check { background: #f8fafc; }
     .gate { box-shadow: var(--shadow); }
   </style>
 </head>

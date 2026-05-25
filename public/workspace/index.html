@@ -7,13 +7,13 @@
 <title>老谭工作台</title>
 <style>
 :root {
-  --ink: #1a1a1a;
-  --muted: #8e8e8e;
+  --ink: #0f172a;
+  --muted: #64748b;
   --line: rgba(0,0,0,0.06);
-  --bg: #f5f5f7;
+  --bg: #f8fafc;
   --card: #fff;
-  --accent: #bf3b3b;
-  --blue: #3b6ebf;
+  --accent: #2563eb;
+  --blue: #2563eb;
   --radius: 10px;
   --radius-lg: 14px;
 }
@@ -32,13 +32,13 @@ body {
 }
 
 body.dark {
-  --ink: #ededed;
-  --muted: #6e6e6e;
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
   --line: rgba(255,255,255,0.06);
-  --bg: #0d0d0d;
-  --card: #141414;
-  --accent: #cf5c5c;
-  --blue: #5b9ef0;
+  --bg: #0f172a;
+  --card: #1e293b;
+  --accent: #3b82f6;
+  --blue: #3b82f6;
 }
 
 body.lock { overflow: hidden; }
@@ -47,14 +47,14 @@ body.lock { overflow: hidden; }
 .topbar {
   position: sticky; top: 0; z-index: 20;
   height: 48px;
-  background: rgba(245,245,247,0.8);
+  background: rgba(248,250,252,0.8);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--line);
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 24px;
 }
-body.dark .topbar { background: rgba(13,13,13,0.8); }
+body.dark .topbar { background: rgba(15,23,42,0.8); }
 
 .brand { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
 .brand i {
