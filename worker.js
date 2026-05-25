@@ -704,25 +704,52 @@ async function callAnthropic(input = {}, body = {}, env) {
     + '\n\n你必须只输出纯 JSON，不要包含任何 Markdown 代码块标记（如 ```json），直接输出 JSON 对象。';
   const user = (isRevise ? buildReviseUserPrompt({...input, images:{}}, '') : buildUserPrompt({...input, images:{}}, '')) + reviseContext;
 
-  const payload = {
-    model: env.ANTHROPIC_MODEL || 'claude-opus-4-7-20250514',
-    system,
-    messages: [{ role: 'user', content: user }],
-    max_tokens: 2400,
-    temperature: 0.62,
-  };
+  const model = env.ANTHROPIC_MODEL || 'claude-opus-4-7';
+  const baseUrl = env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com/v1';
+  const isProxy = !!env.ANTHROPIC_BASE_URL;
+
+  let endpoint, headers, payload;
+  if (isProxy) {
+    // 中转站：OpenAI 兼容格式
+    endpoint = baseUrl.replace(/\/+$/, '') + '/chat/completions';
+    headers = {
+      'Authorization': `Bearer ${env.ANTHROPIC_API_KEY}`,
+      'Content-Type': 'application/json',
+    };
+    payload = {
+      model,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ],
+      max_tokens: 2400,
+      temperature: 0.62,
+      response_format: { type: 'json_object' },
+    };
+  } else {
+    // 官方 Anthropic：原生格式
+    endpoint = 'https://api.anthropic.com/v1/messages';
+    headers = {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'Content-Type': 'application/json',
+    };
+    payload = {
+      model,
+      system,
+      messages: [{ role: 'user', content: user }],
+      max_tokens: 2400,
+      temperature: 0.62,
+    };
+  }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort('timeout'), 90000);
   let resp, text;
   try {
-    resp = await fetch('https://api.anthropic.com/v1/messages', {
+    resp = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'x-api-key': env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(payload),
       signal: controller.signal,
     });
@@ -737,14 +764,15 @@ async function callAnthropic(input = {}, body = {}, env) {
   let data;
   try { data = JSON.parse(text); } catch (_) { return json({ error: 'Anthropic 返回非 JSON', detail: text.slice(0, 500) }, 502); }
 
-  let content = data.content?.[0]?.text || '';
+  // 中转站返回 OpenAI 格式 (choices[0].message.content)；官方返回 data.content[0].text
+  let content = isProxy ? (data.choices?.[0]?.message?.content || '') : (data.content?.[0]?.text || '');
   let result = normalizeDeepSeekJSON(content);
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result = limitXhsFinalLength(result, 1000);
   result = enforceXhsBrandMention(result, input);
   result.readState = usageState(input, 'anthropic');
-  result.readState.model = env.ANTHROPIC_MODEL || 'claude-opus-4-7-20250514';
+  result.readState.model = model;
   result.readState.imageReadable = false;
   result.check = (result.check || '') + '\n\n系统说明：本次使用 Anthropic Claude Opus 4.7 文本模式生成。若有图片，已先通过识图模型提取文字后传入 Opus。';
   return json(result);
@@ -814,26 +842,48 @@ async function callBenchmarkAnalysis(input = {}, env) {
 
   const prompt = `只拆解对标文案结构，不生成完整正文。\n\n【对标文案】\n标题：${textBlock(input.benchmarkTitle, 300)}\n正文：${textBlock(input.benchmarkText, 1200)}\n我喜欢它的点：${textBlock(input.benchmarkNotes, 500)}\n\n输出JSON：{"benchmarkAnalysis":{"标题钩子":"...","开头痛点":"...","正文结构":"...","段落节奏":"...","情绪推进":"...","结尾引导":"...","可借鉴点":["..."],"禁止照抄":["..."]}}`;
 
+  const model = env.ANTHROPIC_MODEL || 'claude-opus-4-7';
+  const baseUrl = env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com/v1';
+  const isProxy = !!env.ANTHROPIC_BASE_URL;
+
+  let endpoint, headers, payload;
+  if (isProxy) {
+    endpoint = baseUrl.replace(/\/+$/, '') + '/chat/completions';
+    headers = {
+      'Authorization': `Bearer ${env.ANTHROPIC_API_KEY}`,
+      'Content-Type': 'application/json',
+    };
+    payload = {
+      model,
+      messages: [
+        { role: 'system', content: '你是老谭小红书内容总编。只做对标拆解，不生成正文。必须只输出纯 JSON，不要 Markdown 代码块。' },
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 1200,
+      temperature: 0.5,
+      response_format: { type: 'json_object' },
+    };
+  } else {
+    endpoint = 'https://api.anthropic.com/v1/messages';
+    headers = {
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'Content-Type': 'application/json',
+    };
+    payload = {
+      model,
+      system: '你是老谭小红书内容总编。只做对标拆解，不生成正文。必须只输出纯 JSON，不要 Markdown 代码块。',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 1200,
+      temperature: 0.5,
+    };
+  }
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort('timeout'), 45000);
   let resp, text;
   try {
-    resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: env.ANTHROPIC_MODEL || 'claude-opus-4-7-20250514',
-        system: '你是老谭小红书内容总编。只做对标拆解，不生成正文。必须只输出纯 JSON，不要 Markdown 代码块。',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1200,
-        temperature: 0.5,
-      }),
-      signal: controller.signal,
-    });
+    resp = await fetch(endpoint, { method: 'POST', headers, body: JSON.stringify(payload), signal: controller.signal });
     text = await resp.text();
   } catch (e) {
     clearTimeout(timer);
@@ -844,7 +894,7 @@ async function callBenchmarkAnalysis(input = {}, env) {
 
   let data;
   try { data = JSON.parse(text); } catch (_) { return json({ error: '拆解返回非 JSON', detail: text.slice(0, 300) }, 502); }
-  const content = data.content?.[0]?.text || '';
+  const content = isProxy ? (data.choices?.[0]?.message?.content || '') : (data.content?.[0]?.text || '');
   const r = normalizeDeepSeekJSON(content);
   return json({ benchmarkAnalysis: typeof r.benchmarkAnalysis === 'object' ? JSON.stringify(r.benchmarkAnalysis, null, 2) : (r.benchmarkAnalysis || r.final || content.slice(0, 500)) });
 }
@@ -854,7 +904,7 @@ async function handleXhsGenerate(request, env) {
   if (request.method === 'GET') {
     const visionProvider = env.QWEN_API_KEY ? 'qwen-vl' : (env.OPENAI_API_KEY ? 'openai' : 'none');
     const primaryModel = env.ANTHROPIC_API_KEY ? 'anthropic' : (env.DEEPSEEK_API_KEY ? 'deepseek' : 'none');
-    const modelName = env.ANTHROPIC_API_KEY ? (env.ANTHROPIC_MODEL || 'claude-opus-4-7-20250514') : (env.DEEPSEEK_MODEL || 'deepseek-chat');
+    const modelName = env.ANTHROPIC_API_KEY ? (env.ANTHROPIC_MODEL || 'claude-opus-4-7') : (env.DEEPSEEK_MODEL || 'deepseek-chat');
     return json({ ok: true, provider: primaryModel, vision: visionProvider, endpoint: '/api/xhs-generate', model: modelName, note: `默认 ${primaryModel === 'anthropic' ? 'Claude Opus 4.7' : 'DeepSeek'} 生成；识图: ${visionProvider === 'qwen-vl' ? 'Qwen-VL' : visionProvider === 'openai' ? 'GPT-5.5' : '未配置'}` });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
