@@ -744,7 +744,7 @@ async function callAnthropic(input = {}, body = {}, env) {
   }
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort('timeout'), 90000);
+  const timer = setTimeout(() => controller.abort('timeout'), 120000);
   let resp, text;
   try {
     resp = await fetch(endpoint, {
@@ -756,7 +756,7 @@ async function callAnthropic(input = {}, body = {}, env) {
     text = await resp.text();
   } catch (e) {
     clearTimeout(timer);
-    return json({ error: 'Anthropic 请求超时', detail: String(e.message || e).slice(0, 300) }, 502);
+    return json({ error: 'Anthropic 请求超时（120秒）', detail: String(e.message || e).slice(0, 300) }, 502);
   }
   clearTimeout(timer);
   if (!resp.ok) return json({ error: 'Anthropic API 错误', status: resp.status, detail: text.slice(0, 800) }, 502);
@@ -880,7 +880,7 @@ async function callBenchmarkAnalysis(input = {}, env) {
   }
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort('timeout'), 45000);
+  const timer = setTimeout(() => controller.abort('timeout'), 60000);
   let resp, text;
   try {
     resp = await fetch(endpoint, { method: 'POST', headers, body: JSON.stringify(payload), signal: controller.signal });
