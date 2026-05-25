@@ -349,8 +349,41 @@ async function callDeepSeek(input = {}, body = {}, env) {
   return json(result);
 }
 
+async function callVisionModel(messages, env, maxTokens = 520) {
+  // 优先 Qwen-VL（国产最强识图），否则用 GPT
+  if (env.QWEN_API_KEY) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort('timeout'), 40000);
+    try {
+      const resp = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.QWEN_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: env.QWEN_MODEL || 'qwen-vl-max', messages, max_tokens: maxTokens, temperature: 0.15 }),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      const text = await resp.text();
+      if (resp.ok) {
+        const data = JSON.parse(text);
+        return data.choices?.[0]?.message?.content || '';
+      }
+      console.log('Qwen-VL failed, falling back to GPT:', resp.status);
+    } catch (e) {
+      clearTimeout(timer);
+      console.log('Qwen-VL error, falling back to GPT:', String(e).slice(0, 80));
+    }
+  }
+  // Fallback to GPT
+  if (env.OPENAI_API_KEY) {
+    return await openAIChat(messages, env, maxTokens, { timeoutMs: 40000, maxTokensCap: 700, temperature: 0.2 });
+  }
+  throw new Error('No vision model configured. Set QWEN_API_KEY or OPENAI_API_KEY.');
+}
+
 async function analyzeImages(input = {}, env) {
   const imgs = cleanImages(input);
+  if (!env.QWEN_API_KEY && !env.OPENAI_API_KEY) return imgs.map(img => ({ group: img.group, error: '未配置识图模型 Key' }));
+  const provider = env.QWEN_API_KEY ? 'qwen-vl' : 'openai';
   const out = [];
   for (let i = 0; i < imgs.length; i++) {
     const img = imgs[i];
@@ -359,13 +392,13 @@ async function analyzeImages(input = {}, env) {
       { type: 'image_url', image_url: { url: img.dataUrl, detail: 'low' } },
     ];
     try {
-      const raw = await openAIChat([
-        { role: 'system', content: '你是图片OCR和小红书图文拆解助手。只输出JSON。重点提取可写进小红书正文的具体画面细节。' },
+      const raw = await callVisionModel([
+        { role: 'system', content: '你是图片识别和装修风格分析助手。只输出JSON。重点提取装修风格、颜色、材料、空间布局、可写进小红书正文的具体画面细节。' },
         { role: 'user', content },
-      ], env, 520, { timeoutMs: 45000, maxTokensCap: 700, temperature: 0.2, reasoningEffort: 'low', json: false });
+      ], env, 700);
       out.push(normalizeDeepSeekJSON(raw));
     } catch (e) {
-      out.push({ group: img.group, error: String(e.message || e).slice(0, 500) });
+      out.push({ group: img.group, error: provider + ' 识图失败: ' + String(e.message || e).slice(0, 300) });
     }
   }
   return out;
@@ -613,7 +646,7 @@ async function callDeepSeekWithOcr(input = {}, body = {}, env) {
   parsed.readState.imageReadable = true;
   parsed.readState.imageAnalysisCount = imageAnalysis.filter(x => !x.error).length;
   parsed.readState.imageOcrErrors = imageAnalysis.filter(x => x.error).length;
-  parsed.check = (parsed.check || '') + '\n\n系统说明：已通过 GPT OCR 提取图片文字，再交由 DeepSeek 生成正文。';
+  parsed.check = (parsed.check || '') + '\n\n系统说明：已通过识图模型提取图片风格/颜色/材料信息，再交由 DeepSeek 生成正文。';
   return json(parsed);
 }
 
@@ -655,7 +688,8 @@ async function callBenchmarkAnalysis(input = {}, env) {
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
-    return json({ ok: true, provider: 'deepseek', endpoint: '/api/xhs-generate', model: env.DEEPSEEK_MODEL || 'deepseek-chat', note: '小红书工作默认使用 DeepSeek；有图片时先用 GPT OCR 再传给 DeepSeek。' });
+    const visionProvider = env.QWEN_API_KEY ? 'qwen-vl' : (env.OPENAI_API_KEY ? 'openai' : 'none');
+    return json({ ok: true, provider: 'deepseek', vision: visionProvider, endpoint: '/api/xhs-generate', model: env.DEEPSEEK_MODEL || 'deepseek-chat', note: `默认 DeepSeek 生成；识图: ${visionProvider === 'qwen-vl' ? 'Qwen-VL(国产最强)' : visionProvider === 'openai' ? 'GPT-5.5' : '未配置'}` });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
@@ -666,11 +700,11 @@ async function handleXhsGenerate(request, env) {
   // 拆解对标 → DeepSeek（无图片）
   if (body.action === 'benchmark-analysis') return callBenchmarkAnalysis(input, env);
 
-  // 有我的图片 → GPT OCR 提取文字 → DeepSeek 生成
-  if (hasMineImages && env.OPENAI_API_KEY) return callDeepSeekWithOcr(input, body, env);
+  // 有我的图片 → 识图模型提取文字 → DeepSeek 生成（Qwen-VL 优先，GPT 备用）
+  if (hasMineImages && (env.QWEN_API_KEY || env.OPENAI_API_KEY)) return callDeepSeekWithOcr(input, body, env);
 
-  // 有图但无 GPT Key → 降级纯文本 DeepSeek
-  if (hasMineImages && !env.OPENAI_API_KEY) {
+  // 有图但无识图 Key → 降级纯文本 DeepSeek
+  if (hasMineImages && !env.QWEN_API_KEY && !env.OPENAI_API_KEY) {
     input = compactInput(input);
     return callDeepSeek(input, body, env);
   }
