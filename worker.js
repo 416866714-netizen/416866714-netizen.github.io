@@ -306,17 +306,19 @@ async function openAIChat(messages, env, maxTokens = 1800, options = {}) {
 async function callDeepSeek(input = {}, body = {}, env) {
   input = compactInput(input);
   if (!env.DEEPSEEK_API_KEY) return json({ error: 'DEEPSEEK_API_KEY is not configured on server.' }, 500);
-  const reviseContext = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 9000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 2500)}\n\n【历史版本摘要】\n${textBlock(JSON.stringify(body.history || []), 3000)}` : '';
+  const reviseContext = body.action === 'revise' ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 6000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 2000)}` : '';
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort('timeout'), 18000);
+  const timer = setTimeout(() => controller.abort('timeout'), 60000);
+  const system = buildSystemPrompt(input);
+  const user = buildUserPrompt({...input, images:{}}, '') + reviseContext;
   const payload = {
     model: env.DEEPSEEK_MODEL || 'deepseek-chat',
     messages: [
-      { role: 'system', content: '你是老谭小红书内容编辑。只输出JSON，字段：final,titles,versions,script,story,check,scores。要求：真实、短句、去AI味、可直接发布。' },
-      { role: 'user', content: buildUserPrompt({...input, images:{}}, '') + reviseContext },
+      { role: 'system', content: system },
+      { role: 'user', content: user },
     ],
     temperature: 0.62,
-    max_tokens: 1400,
+    max_tokens: 2400,
     response_format: { type: 'json_object' },
   };
   let resp, text;
@@ -330,20 +332,20 @@ async function callDeepSeek(input = {}, body = {}, env) {
     text = await resp.text();
   } catch (e) {
     clearTimeout(timer);
-    return json({ error: 'DeepSeek request timeout/network failed', detail: String(e.message || e).slice(0, 500) }, 502);
+    return json({ error: 'DeepSeek 请求超时', detail: String(e.message || e).slice(0, 300) }, 502);
   }
   clearTimeout(timer);
-  if (!resp.ok) return json({ error: 'DeepSeek request failed', status: resp.status, detail: text.slice(0, 1000) }, 502);
+  if (!resp.ok) return json({ error: 'DeepSeek API 错误', status: resp.status, detail: text.slice(0, 800) }, 502);
   let data;
-  try { data = JSON.parse(text); } catch (_) { return json({ error: 'DeepSeek returned non-json', detail: text.slice(0, 1000) }, 502); }
+  try { data = JSON.parse(text); } catch (_) { return json({ error: 'DeepSeek 返回非 JSON', detail: text.slice(0, 500) }, 502); }
   let result = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
   if (typeof result.final === 'string') result.final = formatXhsText(result.final);
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   result = limitXhsFinalLength(result, 1000);
-  result.readState = usageState(input, 'deepseek-fast');
+  result.readState = usageState(input, 'deepseek');
   result.readState.model = env.DEEPSEEK_MODEL || 'deepseek-chat';
   result.readState.imageReadable = false;
-  result.check = (result.check || '') + '\n\n系统说明：本次使用极速文本模式，优先保证生成成功；图片仅统计数量，未做视觉识别。需要精读图片时再走深度视觉模式。';
+  result.check = (result.check || '') + '\n\n系统说明：本次使用 DeepSeek 文本模式生成。若有图片，已先通过 GPT OCR 提取文字后传入 DeepSeek。';
   return json(result);
 }
 
@@ -586,39 +588,95 @@ async function handleScriptsReply(request, env) {
   return json({best:formatXhsText(r.best||r.final||''),versions:r.versions||'',analysis:r.analysis||'',next:r.next||'',style:r.style||'',imageStyle});
 }
 
-async function callBenchmarkAnalysis(input = {}, env) {
+async function callDeepSeekWithOcr(input = {}, body = {}, env) {
+  // 第一步：用 GPT 做图片 OCR
   input = hydrateXhsBrand(input);
-  const prompt = `只拆解对标文案结构，不生成完整正文。\n\n【对标文案】\n标题：${textBlock(input.benchmarkTitle, 300)}\n正文：${textBlock(input.benchmarkText, 1200)}\n我喜欢它的点：${textBlock(input.benchmarkNotes, 500)}\n\n输出JSON：{"benchmarkAnalysis":{"标题钩子":"...","开头痛点":"...","正文结构":"...","段落节奏":"...","情绪推进":"...","结尾引导":"...","可借鉴点":["..."],"禁止照抄":["..."]}}\n\n只拆解对标结构，不生成全新文案。`;
-  let raw;
-  try {
-    raw = await openAIChat([
-      { role: 'system', content: '你是老谭小红书内容总编。只做对标拆解，不生成正文。输出JSON。' },
-      { role: 'user', content: prompt }
-    ], env, 1200, { thinking: 'fast' });
-  } catch (e) {
-    return json({ error: '拆解请求失败', detail: String(e.message || e).slice(0, 500) }, 502);
+  const mineImgs = (input.images?.mine || []).filter(x => x && x.dataUrl).slice(0, 2);
+  let imageAnalysis = [];
+  if (mineImgs.length > 0) {
+    imageAnalysis = await analyzeImages({...input, images:{benchmark:[], mine: mineImgs}}, env);
   }
-  const r = normalizeDeepSeekJSON(raw);
-  return json({ benchmarkAnalysis: r.benchmarkAnalysis || r.final || raw });
+  // 第二步：把 OCR 结果注入到文本中，传给 DeepSeek
+  const ocrLines = imageAnalysis.filter(x => !x.error).map(img =>
+    `[图片OCR] ${img.group||''}: 文字=${img.ocr||''} 画面=${img.visual||''} 要点=${(img.content_points||[]).join('、')}`
+  );
+  const enrichedInput = {
+    ...input,
+    images: { benchmark: [], mine: [] },
+    myNotes: (input.myNotes || '') + (ocrLines.length ? '\n\n【以下为上传图片的 OCR 识别结果，请在正文中引用这些具体细节】\n' + ocrLines.join('\n') : ''),
+  };
+  // 第三步：DeepSeek 文本生成
+  const result = await callDeepSeek(compactInput(enrichedInput), body, env);
+  // 注入 OCR 状态
+  const parsed = await result.json();
+  parsed.readState = parsed.readState || {};
+  parsed.readState.imageReadable = true;
+  parsed.readState.imageAnalysisCount = imageAnalysis.filter(x => !x.error).length;
+  parsed.readState.imageOcrErrors = imageAnalysis.filter(x => x.error).length;
+  parsed.check = (parsed.check || '') + '\n\n系统说明：已通过 GPT OCR 提取图片文字，再交由 DeepSeek 生成正文。';
+  return json(parsed);
+}
+
+async function callBenchmarkAnalysis(input = {}, env) {
+  if (!env.DEEPSEEK_API_KEY) return json({ error: 'DEEPSEEK_API_KEY is not configured.' }, 500);
+  const prompt = `只拆解对标文案结构，不生成完整正文。\n\n【对标文案】\n标题：${textBlock(input.benchmarkTitle, 300)}\n正文：${textBlock(input.benchmarkText, 1200)}\n我喜欢它的点：${textBlock(input.benchmarkNotes, 500)}\n\n输出JSON：{"benchmarkAnalysis":{"标题钩子":"...","开头痛点":"...","正文结构":"...","段落节奏":"...","情绪推进":"...","结尾引导":"...","可借鉴点":["..."],"禁止照抄":["..."]}}`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort('timeout'), 30000);
+  let resp, text;
+  try {
+    resp = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: env.DEEPSEEK_MODEL || 'deepseek-chat',
+        messages: [
+          { role: 'system', content: '你是老谭小红书内容总编。只做对标拆解，不生成正文。输出JSON。' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.5,
+        max_tokens: 1200,
+        response_format: { type: 'json_object' },
+      }),
+      signal: controller.signal,
+    });
+    text = await resp.text();
+  } catch (e) {
+    clearTimeout(timer);
+    return json({ error: '拆解请求超时', detail: String(e.message || e).slice(0, 300) }, 502);
+  }
+  clearTimeout(timer);
+  if (!resp.ok) return json({ error: '拆解 API 错误', status: resp.status, detail: text.slice(0, 500) }, 502);
+  let data;
+  try { data = JSON.parse(text); } catch (_) { return json({ error: '拆解返回非 JSON', detail: text.slice(0, 300) }, 502); }
+  const r = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
+  return json({ benchmarkAnalysis: r.benchmarkAnalysis || r.final || text.slice(0, 500) });
 }
 
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
-    return json({ ok: Boolean(env.OPENAI_API_KEY), openai: Boolean(env.OPENAI_API_KEY), provider: 'openai-only', endpoint: '/api/xhs-generate', model: env.OPENAI_MODEL || 'gpt-5.5', reasoning: 'fast', note: '小红书工作只允许使用 GPT-5.5' });
+    return json({ ok: true, provider: 'deepseek', endpoint: '/api/xhs-generate', model: env.DEEPSEEK_MODEL || 'deepseek-chat', note: '小红书工作默认使用 DeepSeek；有图片时先用 GPT OCR 再传给 DeepSeek。' });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
   const body = await request.json().catch(() => ({}));
   const input = body.input || {};
-  const imgCount = (input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0);
-  const mode = String(input.mode || '');
+  const hasMineImages = (input.images?.mine?.length || 0) > 0;
 
-  // 小红书工作强制只走 GPT-5.5，不允许 DeepSeek 或自动路由。
-  if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
-  input.provider = 'openai';
+  // 拆解对标 → DeepSeek（无图片）
   if (body.action === 'benchmark-analysis') return callBenchmarkAnalysis(input, env);
-  return callOpenAI(input, body, env);
+
+  // 有我的图片 → GPT OCR 提取文字 → DeepSeek 生成
+  if (hasMineImages && env.OPENAI_API_KEY) return callDeepSeekWithOcr(input, body, env);
+
+  // 有图但无 GPT Key → 降级纯文本 DeepSeek
+  if (hasMineImages && !env.OPENAI_API_KEY) {
+    input = compactInput(input);
+    return callDeepSeek(input, body, env);
+  }
+
+  // 纯文本 → DeepSeek 直接生成
+  return callDeepSeek(input, body, env);
 }
 
 export default {
