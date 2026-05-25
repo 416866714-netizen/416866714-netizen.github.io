@@ -355,7 +355,7 @@ async function analyzeImages(input = {}, env) {
   for (let i = 0; i < imgs.length; i++) {
     const img = imgs[i];
     const content = [
-      { type: 'text', text: `请仔细识别这张${img.group}，这是用户自己的图片素材，后续文案必须关联它。输出JSON：{"group":"我的素材图","ocr":"图中文字/招牌/价格/楼盘/品牌/工地文字","visual":"画面里具体有什么，空间/工地/户型/材料/人物/颜色/风格","content_points":["可写进正文的具体素材点"],"xhs_use":"这张图适合承担封面/痛点/证据/案例/收尾中的哪个作用","must_mention":["正文必须关联的画面细节"],"risk":"可能误读/看不清的地方"}` },
+      { type: 'text', text: `请仔细识别这张${img.group}，这是用户的装修实拍/效果图素材。请重点分析装修风格，后续文案必须引用这些细节。输出JSON：{"group":"我的素材图","style":"装修风格（现代简约/法式奶油/侘寂/新中式/轻奢/极简/原木等）+风格特征描述","colors":"主色调、辅色、材质颜色","materials":"可见材料（木地板/微水泥/岩板/艺术漆等）","space":"这是什么空间（客厅/厨房/卧室/卫生间），空间特征","ocr":"图中文字/品牌/logo","content_points":["这张图最值得写进正文的3个亮点"],"xhs_use":"封面/痛点/证据/案例/收尾","must_mention":["正文必须提到的画面细节"],"risk":"可能误读的地方"}` },
       { type: 'image_url', image_url: { url: img.dataUrl, detail: 'low' } },
     ];
     try {
@@ -598,12 +598,12 @@ async function callDeepSeekWithOcr(input = {}, body = {}, env) {
   }
   // 第二步：把 OCR 结果注入到文本中，传给 DeepSeek
   const ocrLines = imageAnalysis.filter(x => !x.error).map(img =>
-    `[图片OCR] ${img.group||''}: 文字=${img.ocr||''} 画面=${img.visual||''} 要点=${(img.content_points||[]).join('、')}`
+    `[图片分析] ${img.group||''}:\n装修风格: ${img.style||img.visual||'未知'}\n色调材质: ${img.colors||''} / ${img.materials||''}\n空间: ${img.space||''}\n图中文字: ${img.ocr||''}\n可写进正文的亮点: ${(img.content_points||[]).join('、')}`
   );
   const enrichedInput = {
     ...input,
     images: { benchmark: [], mine: [] },
-    myNotes: (input.myNotes || '') + (ocrLines.length ? '\n\n【以下为上传图片的 OCR 识别结果，请在正文中引用这些具体细节】\n' + ocrLines.join('\n') : ''),
+    myNotes: (input.myNotes || '') + (ocrLines.length ? '\n\n【以下为上传图片的 GPT 视觉分析结果，请在正文中引用装修风格、颜色、材料等具体细节】\n' + ocrLines.join('\n') : ''),
   };
   // 第三步：DeepSeek 文本生成
   const result = await callDeepSeek(compactInput(enrichedInput), body, env);
