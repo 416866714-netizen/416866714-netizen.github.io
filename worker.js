@@ -693,25 +693,144 @@ async function callDeepSeekWithOcr(input = {}, body = {}, env) {
   return json(parsed);
 }
 
-async function callBenchmarkAnalysis(input = {}, env) {
-  if (!env.DEEPSEEK_API_KEY) return json({ error: 'DEEPSEEK_API_KEY is not configured.' }, 500);
-  const prompt = `只拆解对标文案结构，不生成完整正文。\n\n【对标文案】\n标题：${textBlock(input.benchmarkTitle, 300)}\n正文：${textBlock(input.benchmarkText, 1200)}\n我喜欢它的点：${textBlock(input.benchmarkNotes, 500)}\n\n输出JSON：{"benchmarkAnalysis":{"标题钩子":"...","开头痛点":"...","正文结构":"...","段落节奏":"...","情绪推进":"...","结尾引导":"...","可借鉴点":["..."],"禁止照抄":["..."]}}`;
+async function callAnthropic(input = {}, body = {}, env) {
+  input = compactInput(input);
+  if (!env.ANTHROPIC_API_KEY) return json({ error: 'ANTHROPIC_API_KEY is not configured on server.', tip: '请在 Cloudflare Worker 中设置 ANTHROPIC_API_KEY 密钥' }, 500);
+
+  const isRevise = body.action === 'revise';
+  const reviseContext = isRevise ? `\n\n【当前版本】\n${textBlock(body.currentVersion, 6000)}\n\n【修改要求】\n${textBlock(body.revisionInstruction, 2000)}` : '';
+
+  const system = (isRevise ? buildReviseSystemPrompt(input) : buildSystemPrompt(input))
+    + '\n\n你必须只输出纯 JSON，不要包含任何 Markdown 代码块标记（如 ```json），直接输出 JSON 对象。';
+  const user = (isRevise ? buildReviseUserPrompt({...input, images:{}}, '') : buildUserPrompt({...input, images:{}}, '')) + reviseContext;
+
+  const payload = {
+    model: env.ANTHROPIC_MODEL || 'claude-opus-4-7-20250514',
+    system,
+    messages: [{ role: 'user', content: user }],
+    max_tokens: 2400,
+    temperature: 0.62,
+  };
+
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort('timeout'), 30000);
+  const timer = setTimeout(() => controller.abort('timeout'), 90000);
   let resp, text;
   try {
-    resp = await fetch('https://api.deepseek.com/chat/completions', {
+    resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${env.DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' },
+      headers: {
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    text = await resp.text();
+  } catch (e) {
+    clearTimeout(timer);
+    return json({ error: 'Anthropic 请求超时', detail: String(e.message || e).slice(0, 300) }, 502);
+  }
+  clearTimeout(timer);
+  if (!resp.ok) return json({ error: 'Anthropic API 错误', status: resp.status, detail: text.slice(0, 800) }, 502);
+
+  let data;
+  try { data = JSON.parse(text); } catch (_) { return json({ error: 'Anthropic 返回非 JSON', detail: text.slice(0, 500) }, 502); }
+
+  let content = data.content?.[0]?.text || '';
+  let result = normalizeDeepSeekJSON(content);
+  if (typeof result.final === 'string') result.final = formatXhsText(result.final);
+  if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
+  result = limitXhsFinalLength(result, 1000);
+  result = enforceXhsBrandMention(result, input);
+  result.readState = usageState(input, 'anthropic');
+  result.readState.model = env.ANTHROPIC_MODEL || 'claude-opus-4-7-20250514';
+  result.readState.imageReadable = false;
+  result.check = (result.check || '') + '\n\n系统说明：本次使用 Anthropic Claude Opus 4.7 文本模式生成。若有图片，已先通过识图模型提取文字后传入 Opus。';
+  return json(result);
+}
+
+async function callAnthropicWithOcr(input = {}, body = {}, env) {
+  input = hydrateXhsBrand(input);
+  const mineImgs = (input.images?.mine || []).filter(x => x && x.dataUrl).slice(0, 2);
+  let imageAnalysis = [];
+  if (mineImgs.length > 0) {
+    imageAnalysis = await analyzeImages({...input, images:{benchmark:[], mine: mineImgs}}, env);
+  }
+  const ocrLines = imageAnalysis.filter(x => !x.error).map(img =>
+    `[图片分析] ${img.group||''}:\n装修风格: ${img.style||img.visual||'未知'}\n色调材质: ${img.colors||''} / ${img.materials||''}\n空间: ${img.space||''}\n图中文字: ${img.ocr||''}\n可写进正文的亮点: ${(img.content_points||[]).join('、')}`
+  );
+  const enrichedInput = {
+    ...input,
+    images: { benchmark: [], mine: [] },
+    myNotes: (input.myNotes || '') + (ocrLines.length ? '\n\n【以下为上传图片的视觉分析结果，请在正文中引用装修风格、颜色、材料等具体细节】\n' + ocrLines.join('\n') : ''),
+  };
+  const result = await callAnthropic(compactInput(enrichedInput), body, env);
+  const parsed = await result.json();
+  parsed.readState = parsed.readState || {};
+  parsed.readState.imageReadable = true;
+  parsed.readState.imageAnalysisCount = imageAnalysis.filter(x => !x.error).length;
+  parsed.readState.imageOcrErrors = imageAnalysis.filter(x => x.error).length;
+  parsed.check = (parsed.check || '') + '\n\n系统说明：已通过识图模型提取图片风格/颜色/材料信息，再交由 Claude Opus 4.7 生成正文。';
+  return json(parsed);
+}
+
+async function callBenchmarkAnalysis(input = {}, env) {
+  if (!env.ANTHROPIC_API_KEY) {
+    if (env.DEEPSEEK_API_KEY) {
+      const prompt = `只拆解对标文案结构，不生成完整正文。\n\n【对标文案】\n标题：${textBlock(input.benchmarkTitle, 300)}\n正文：${textBlock(input.benchmarkText, 1200)}\n我喜欢它的点：${textBlock(input.benchmarkNotes, 500)}\n\n输出JSON：{"benchmarkAnalysis":{"标题钩子":"...","开头痛点":"...","正文结构":"...","段落节奏":"...","情绪推进":"...","结尾引导":"...","可借鉴点":["..."],"禁止照抄":["..."]}}`;
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort('timeout'), 30000);
+      let resp, text;
+      try {
+        resp = await fetch('https://api.deepseek.com/chat/completions', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${env.DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: env.DEEPSEEK_MODEL || 'deepseek-chat',
+            messages: [
+              { role: 'system', content: '你是老谭小红书内容总编。只做对标拆解，不生成正文。输出JSON。' },
+              { role: 'user', content: prompt }
+            ],
+            temperature: 0.5, max_tokens: 1200,
+            response_format: { type: 'json_object' },
+          }),
+          signal: controller.signal,
+        });
+        text = await resp.text();
+      } catch (e) {
+        clearTimeout(timer);
+        return json({ error: '拆解请求超时', detail: String(e.message || e).slice(0, 300) }, 502);
+      }
+      clearTimeout(timer);
+      if (!resp.ok) return json({ error: '拆解 API 错误', status: resp.status, detail: text.slice(0, 500) }, 502);
+      let data;
+      try { data = JSON.parse(text); } catch (_) { return json({ error: '拆解返回非 JSON', detail: text.slice(0, 300) }, 502); }
+      const r = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
+      return json({ benchmarkAnalysis: r.benchmarkAnalysis || r.final || text.slice(0, 500) });
+    }
+    return json({ error: 'ANTHROPIC_API_KEY is not configured.', tip: '请在 Cloudflare Worker 中设置 ANTHROPIC_API_KEY 密钥' }, 500);
+  }
+
+  const prompt = `只拆解对标文案结构，不生成完整正文。\n\n【对标文案】\n标题：${textBlock(input.benchmarkTitle, 300)}\n正文：${textBlock(input.benchmarkText, 1200)}\n我喜欢它的点：${textBlock(input.benchmarkNotes, 500)}\n\n输出JSON：{"benchmarkAnalysis":{"标题钩子":"...","开头痛点":"...","正文结构":"...","段落节奏":"...","情绪推进":"...","结尾引导":"...","可借鉴点":["..."],"禁止照抄":["..."]}}`;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort('timeout'), 45000);
+  let resp, text;
+  try {
+    resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        model: env.DEEPSEEK_MODEL || 'deepseek-chat',
-        messages: [
-          { role: 'system', content: '你是老谭小红书内容总编。只做对标拆解，不生成正文。输出JSON。' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.5,
+        model: env.ANTHROPIC_MODEL || 'claude-opus-4-7-20250514',
+        system: '你是老谭小红书内容总编。只做对标拆解，不生成正文。必须只输出纯 JSON，不要 Markdown 代码块。',
+        messages: [{ role: 'user', content: prompt }],
         max_tokens: 1200,
-        response_format: { type: 'json_object' },
+        temperature: 0.5,
       }),
       signal: controller.signal,
     });
@@ -722,17 +841,21 @@ async function callBenchmarkAnalysis(input = {}, env) {
   }
   clearTimeout(timer);
   if (!resp.ok) return json({ error: '拆解 API 错误', status: resp.status, detail: text.slice(0, 500) }, 502);
+
   let data;
   try { data = JSON.parse(text); } catch (_) { return json({ error: '拆解返回非 JSON', detail: text.slice(0, 300) }, 502); }
-  const r = normalizeDeepSeekJSON(data.choices?.[0]?.message?.content || '');
-  return json({ benchmarkAnalysis: r.benchmarkAnalysis || r.final || text.slice(0, 500) });
+  const content = data.content?.[0]?.text || '';
+  const r = normalizeDeepSeekJSON(content);
+  return json({ benchmarkAnalysis: typeof r.benchmarkAnalysis === 'object' ? JSON.stringify(r.benchmarkAnalysis, null, 2) : (r.benchmarkAnalysis || r.final || content.slice(0, 500)) });
 }
 
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
     const visionProvider = env.QWEN_API_KEY ? 'qwen-vl' : (env.OPENAI_API_KEY ? 'openai' : 'none');
-    return json({ ok: true, provider: 'deepseek', vision: visionProvider, endpoint: '/api/xhs-generate', model: env.DEEPSEEK_MODEL || 'deepseek-chat', note: `默认 DeepSeek 生成；识图: ${visionProvider === 'qwen-vl' ? 'Qwen-VL(国产最强)' : visionProvider === 'openai' ? 'GPT-5.5' : '未配置'}` });
+    const primaryModel = env.ANTHROPIC_API_KEY ? 'anthropic' : (env.DEEPSEEK_API_KEY ? 'deepseek' : 'none');
+    const modelName = env.ANTHROPIC_API_KEY ? (env.ANTHROPIC_MODEL || 'claude-opus-4-7-20250514') : (env.DEEPSEEK_MODEL || 'deepseek-chat');
+    return json({ ok: true, provider: primaryModel, vision: visionProvider, endpoint: '/api/xhs-generate', model: modelName, note: `默认 ${primaryModel === 'anthropic' ? 'Claude Opus 4.7' : 'DeepSeek'} 生成；识图: ${visionProvider === 'qwen-vl' ? 'Qwen-VL' : visionProvider === 'openai' ? 'GPT-5.5' : '未配置'}` });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
@@ -740,20 +863,26 @@ async function handleXhsGenerate(request, env) {
   let input = body.input || {};
   const hasMineImages = (input.images?.mine?.length || 0) > 0;
 
-  // 拆解对标 → DeepSeek（无图片）
+  // 拆解对标 → Anthropic 优先，DeepSeek 备用
   if (body.action === 'benchmark-analysis') return callBenchmarkAnalysis(input, env);
 
-  // 有我的图片 → 识图模型提取文字 → DeepSeek 生成（Qwen-VL 优先，GPT 备用）
-  if (hasMineImages && (env.QWEN_API_KEY || env.OPENAI_API_KEY)) return callDeepSeekWithOcr(input, body, env);
+  // 主模型：Anthropic Claude Opus 4.7；DeepSeek 作为降级备用
+  if (env.ANTHROPIC_API_KEY) {
+    if (hasMineImages && (env.QWEN_API_KEY || env.OPENAI_API_KEY)) return callAnthropicWithOcr(input, body, env);
+    return callAnthropic(input, body, env);
+  }
 
-  // 有图但无识图 Key → 降级纯文本 DeepSeek
-  if (hasMineImages && !env.QWEN_API_KEY && !env.OPENAI_API_KEY) {
-    input = compactInput(input);
+  // 降级到 DeepSeek
+  if (env.DEEPSEEK_API_KEY) {
+    if (hasMineImages && (env.QWEN_API_KEY || env.OPENAI_API_KEY)) return callDeepSeekWithOcr(input, body, env);
+    if (hasMineImages && !env.QWEN_API_KEY && !env.OPENAI_API_KEY) {
+      input = compactInput(input);
+      return callDeepSeek(input, body, env);
+    }
     return callDeepSeek(input, body, env);
   }
 
-  // 纯文本 → DeepSeek 直接生成
-  return callDeepSeek(input, body, env);
+  return json({ error: 'No AI model configured.', tip: '请在 Cloudflare Worker 中设置 ANTHROPIC_API_KEY 或 DEEPSEEK_API_KEY 密钥' }, 500);
 }
 
 export default {

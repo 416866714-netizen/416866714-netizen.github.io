@@ -6,123 +6,316 @@
 <meta name="robots" content="noindex,nofollow">
 <title>老谭小红书内容工作台</title>
 <style>
-:root{--bg:#f0f4fb;--card:#fff;--text:#1a1a1a;--sub:#6b7fa8;--border:#d4def0;--blue:#2563eb;--blue-bg:#eef3ff;--blue-light:#f6f9ff;--red-bg:#fef0f0;--green-bg:#e8f5e9;--green:#2e7d32;--orange-bg:#fff8f0;--orange:#d97706;--radius:10px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);padding:20px;max-width:1400px;margin:0 auto}
+:root {
+  --bg: #f8fafc;
+  --surface: #fff;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --muted-light: #94a3b8;
+  --blue: #2563eb;
+  --blue-hover: #1d4ed8;
+  --blue-light: #eff6ff;
+  --blue-bg: #f0f4ff;
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --amber: #d97706;
+  --amber-bg: #fffbeb;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 6px rgba(0,0,0,.04), 0 2px 4px rgba(0,0,0,.04);
+  --shadow-md: 0 10px 15px rgba(0,0,0,.06), 0 4px 6px rgba(0,0,0,.04);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,.08);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --transition: .2s cubic-bezier(.4,0,.2,1);
+}
 
-/* 顶部 */
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.topbar h1{font-size:22px}
-.topbar .status-line{font-size:12px;display:flex;gap:6px}
-.badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700}
-.badge-ok{background:var(--green-bg);color:var(--green)}
-.badge-warn{background:var(--orange-bg);color:var(--orange)}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  font-size: 14px;
+  min-height: 100vh;
+}
 
-/* 双栏 */
-.main{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+/* ── Topbar ── */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  height: 56px;
+  background: rgba(248,250,252,.82);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 15px; font-weight: 700; letter-spacing: -.02em;
+  color: var(--ink); text-decoration: none;
+}
+.brand i {
+  font-style: normal;
+  display: grid; place-items: center;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff; font-size: 13px; font-weight: 800;
+}
+.status-line { display: flex; gap: 8px; align-items: center; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; letter-spacing: .01em;
+}
+.badge-ok { background: var(--green-bg); color: var(--green); }
+.badge-warn { background: var(--amber-bg); color: var(--amber); }
+.badge-blue { background: var(--blue-light); color: var(--blue); }
 
-/* 左栏卡片 */
-.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
-.card h3{font-size:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
-.card h3 .arrow{font-size:11px;color:var(--sub);transition:.2s}
-.card.collapsed .card-body{display:none}
-.card.collapsed h3 .arrow{transform:rotate(-90deg)}
-.card-body{}
-label{display:block;font-size:12px;font-weight:700;color:#4a5e8a;margin:8px 0 2px}
-label:first-child{margin-top:0}
-label span{color:var(--sub);font-weight:400}
-input,textarea,select{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--blue-light);outline:none;transition:border-color .2s}
-input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,94,239,.08)}
-textarea{min-height:64px;resize:vertical}
+/* ── Shell ── */
+.shell { max-width: 1320px; margin: 0 auto; padding: 24px; }
 
-/* 按钮 */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:10px 16px;border:0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s}
-.btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.45;pointer-events:none}
-.btn-primary{background:var(--blue);color:#fff}
-.btn-primary:hover{background:#1d4ed8}
-.btn-blue{background:var(--blue-bg);color:var(--blue)}
-.btn-outline{background:#fff;border:2px solid var(--border);color:#555}
-.btn-ghost{background:transparent;color:var(--sub);padding:6px 10px;font-size:11px}
-.btn-sm{padding:6px 12px;font-size:12px}
-.btn-lg{padding:12px 24px;font-size:15px;width:100%}
-.btn-chip{background:var(--blue-light);color:var(--blue);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;border:1px solid var(--border)}
-.btn-chip:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
-.row{display:flex;gap:6px;flex-wrap:wrap}
+/* ── Main Grid ── */
+.main { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
 
-/* 品牌区 */
-.knowledge-box{background:var(--blue-light);border-radius:8px;padding:10px;margin-top:8px}
-.knowledge-box textarea{min-height:90px;font-size:12px;background:#fff}
-.info{font-size:11px;color:var(--sub);margin-top:3px}
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.card:hover { border-color: #cbd5e1; box-shadow: var(--shadow-sm); }
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; user-select: none;
+  margin-bottom: 16px;
+}
+.card-head h3 {
+  font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: -.01em;
+}
+.card-head .arrow {
+  font-size: 11px; color: var(--muted-light);
+  transition: transform var(--transition);
+}
+.card.collapsed .card-body { display: none; }
+.card.collapsed .card-head { margin-bottom: 0; }
+.card.collapsed .arrow { transform: rotate(-90deg); }
 
-/* 上传 */
-.upload-label{position:relative;display:block;width:100%;padding:12px;border:2px dashed var(--border);border-radius:8px;text-align:center;color:var(--sub);font-size:12px;cursor:pointer;background:var(--blue-light);transition:border-color .2s, color .2s}
-.upload-label:hover{border-color:var(--blue);color:var(--blue)}
-.upload-label.has-images{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
-.thumb-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.thumb-row img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+/* ── Form ── */
+label {
+  display: block; font-size: 12px; font-weight: 700; color: var(--muted);
+  margin: 12px 0 4px; letter-spacing: .02em;
+}
+label:first-child { margin-top: 0; }
+label span { font-weight: 400; color: var(--muted-light); }
+input, textarea, select {
+  width: 100%; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 9px 12px;
+  font-size: 13px; font-family: var(--font); color: var(--ink);
+  background: var(--bg); outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+textarea { min-height: 72px; resize: vertical; line-height: 1.6; }
+select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
 
-/* 右栏 */
-.output-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+/* ── Knowledge Box ── */
+.kb-box { background: var(--blue-light); border-radius: var(--radius); padding: 12px; }
+.kb-box textarea { min-height: 90px; font-size: 12px; background: #fff; }
+.kb-meta { font-size: 11px; color: var(--muted-light); margin-top: 6px; }
 
-/* 快捷操作 */
-.quick-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+/* ── Upload ── */
+.upload-zone {
+  position: relative; display: block; width: 100%;
+  padding: 16px; border: 2px dashed var(--border);
+  border-radius: var(--radius); text-align: center;
+  color: var(--muted-light); font-size: 12px; cursor: pointer;
+  background: var(--bg); transition: all var(--transition);
+}
+.upload-zone:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+.upload-zone.has-img { border-color: var(--blue); color: var(--blue); background: var(--blue-light); border-style: solid; }
+.thumb-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.thumb-row img { width: 52px; height: 52px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+.thumb-wrap { position: relative; display: inline-block; }
+.thumb-wrap .del {
+  position: absolute; top: -7px; right: -7px;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 0; background: var(--red); color: #fff;
+  font-size: 12px; cursor: pointer; line-height: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
 
-/* 结果编辑区 */
-.result-edit{width:100%;min-height:260px;padding:14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;line-height:1.8;font-family:inherit;resize:vertical;background:#fefefe}
-.result-edit:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,94,239,.08)}
-.result-readonly{background:var(--blue-light);border-radius:var(--radius);padding:14px;min-height:100px;white-space:pre-wrap;font-size:13px;line-height:1.7;max-height:40vh;overflow:auto;display:none}
-.result-readonly:empty::after{content:"等待生成...";color:#bbb}
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 9px 16px; border: 0; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 700; font-family: var(--font);
+  cursor: pointer; transition: all var(--transition);
+  white-space: nowrap;
+}
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .45; pointer-events: none; }
+.btn-primary { background: var(--blue); color: #fff; box-shadow: 0 1px 3px rgba(37,99,235,.3); }
+.btn-primary:hover { background: var(--blue-hover); box-shadow: 0 4px 12px rgba(37,99,235,.35); }
+.btn-blue { background: var(--blue-light); color: var(--blue); }
+.btn-blue:hover { background: #dbeafe; }
+.btn-outline { background: #fff; border: 1px solid var(--border); color: var(--ink); }
+.btn-outline:hover { border-color: #cbd5e1; background: #fafbfc; }
+.btn-ghost { background: transparent; color: var(--muted); padding: 6px 10px; font-size: 12px; }
+.btn-ghost:hover { color: var(--ink); background: rgba(0,0,0,.04); border-radius: 6px; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-lg { padding: 14px 28px; font-size: 15px; width: 100%; border-radius: var(--radius); }
 
-/* 标签页 */
-.tabs{display:flex;gap:4px;margin:12px 0}
-.tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid var(--border);background:#fff;cursor:pointer;transition:.15s}
-.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-.tab:hover:not(.active){border-color:var(--blue);color:var(--blue)}
+/* ── Chips ── */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; font-family: var(--font);
+  border: 1px solid var(--border);
+  background: #fff; color: var(--muted);
+  cursor: pointer; transition: all var(--transition);
+}
+.chip:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+.row { display: flex; gap: 6px; flex-wrap: wrap; }
 
-/* 底部工具栏 */
-.toolbar{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
-.word-count{font-size:11px;color:var(--sub)}
+/* ── Output Card ── */
+.output-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  box-shadow: var(--shadow-xs);
+  position: sticky; top: 80px;
+}
 
-/* 改稿区 */
-.revise-box{margin-top:12px;display:flex;gap:6px}
-.revise-box input{flex:1;font-size:13px}
-.chat-log{max-height:100px;overflow:auto;font-size:11px;background:var(--blue-light);border-radius:8px;padding:8px;margin-top:8px;line-height:1.5}
-.chat-log .msg{margin-bottom:3px}
-.chat-log .msg b{color:var(--sub);margin-right:4px}
+/* ── Tabs ── */
+.tabs {
+  display: flex; gap: 4px; margin: 16px 0;
+  background: var(--border-light); border-radius: var(--radius);
+  padding: 4px;
+}
+.tab {
+  flex: 1; padding: 8px 12px; border-radius: 8px;
+  font-size: 12px; font-weight: 700; font-family: var(--font);
+  border: 0; background: transparent; color: var(--muted);
+  cursor: pointer; transition: all var(--transition);
+  text-align: center;
+}
+.tab.active { background: #fff; color: var(--ink); box-shadow: var(--shadow-xs); }
+.tab:hover:not(.active) { color: var(--ink); }
 
-/* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
-.toast.show{opacity:1}
+/* ── Editor Area ── */
+.editor {
+  width: 100%; min-height: 280px; padding: 16px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 14px; line-height: 1.8; font-family: var(--font);
+  resize: vertical; background: #fafbfc;
+  outline: none; transition: border-color var(--transition), box-shadow var(--transition);
+}
+.editor:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); background: #fff; }
+.readonly-panel {
+  display: none; background: #fafbfc;
+  border-radius: var(--radius); padding: 16px;
+  min-height: 120px; white-space: pre-wrap;
+  font-size: 13px; line-height: 1.7;
+  max-height: 45vh; overflow: auto;
+  border: 1px solid var(--border);
+}
+.readonly-panel:empty::after { content: "等待生成..."; color: var(--muted-light); }
 
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* ── Toolbar ── */
+.toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-light);
+}
+.word-count { font-size: 12px; color: var(--muted-light); font-weight: 600; }
 
-/* 手机 */
-@media(max-width:768px){
-  body{padding:10px}
-  .main{grid-template-columns:1fr}
-  .topbar{flex-direction:column;align-items:flex-start;gap:6px}
-  .result-edit{min-height:200px}
+/* ── Chat Area ── */
+.chat-log {
+  max-height: 120px; overflow: auto; font-size: 12px;
+  background: var(--border-light); border-radius: var(--radius);
+  padding: 10px 12px; margin-top: 10px; line-height: 1.6;
+}
+.chat-log .msg { margin-bottom: 2px; }
+.chat-log .msg b { color: var(--muted); margin-right: 4px; }
+.revise-box { display: flex; gap: 8px; margin-top: 10px; }
+.revise-box input { flex: 1; font-size: 13px; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: #fff; padding: 10px 24px;
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+  z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none;
+  box-shadow: var(--shadow-lg);
+}
+.toast.show { opacity: 1; }
+
+/* ── Grid helpers ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ── Quick Actions Section ── */
+.quick-section { margin: 14px 0 6px; }
+.quick-section .label { font-size: 11px; font-weight: 700; color: var(--muted-light); margin-bottom: 8px; letter-spacing: .04em; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; }
+  .output-card { position: static; }
+  .shell { padding: 16px; }
+  .topbar { padding: 0 16px; }
+  .brand b { display: none; }
+}
+@media (max-width: 600px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .topbar { height: 50px; }
+  .shell { padding: 12px; }
+  .card { padding: 16px; }
+  .output-card { padding: 18px; }
+  .editor { min-height: 220px; }
 }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <h1>老谭小红书内容工作台</h1>
+  <a class="brand" href="/workspace/"><i>谭</i><b>老谭</b>小红书内容工作台</a>
   <div class="status-line" id="status"><span class="badge badge-warn">检测中...</span></div>
 </div>
 
+<div class="shell">
 <div class="main">
 
-<!-- ========== 左栏：素材输入 ========== -->
+<!-- ========== 左栏 ========== -->
 <div class="left-col">
 
   <!-- 品牌知识库 -->
   <div class="card" id="cardBrand">
-    <h3 onclick="toggleCard('cardBrand')">🎯 品牌知识库 <span class="arrow">▼</span></h3>
+    <div class="card-head" onclick="toggleCard('cardBrand')">
+      <h3>🎯 品牌知识库</h3>
+      <span class="arrow">▼</span>
+    </div>
     <div class="card-body">
-      <div class="knowledge-box">
+      <div class="kb-box">
         <div class="row" style="margin-bottom:8px">
           <select id="brand" onchange="loadBrandKb()" style="flex:1">
             <option value="brand1">8K设计</option>
@@ -131,42 +324,59 @@ textarea{min-height:64px;resize:vertical}
             <option value="brand4" selected>宅师傅半包装修</option>
           </select>
           <button class="btn btn-sm btn-outline" onclick="saveBrandKb()">保存</button>
-          <button class="btn btn-sm btn-ghost" onclick="resetBrandKb()">恢复默认</button>
+          <button class="btn btn-sm btn-ghost" onclick="resetBrandKb()">恢复</button>
         </div>
         <input id="brandName" placeholder="品牌名称" onchange="autoSaveBrandName()" style="margin-bottom:6px">
         <textarea id="knowledgeText" placeholder="品牌知识库内容..." oninput="updateKbMeter()"></textarea>
-        <div class="info"><span id="kbCount">0 字</span></div>
+        <div class="kb-meta"><span id="kbCount">0 字</span></div>
       </div>
     </div>
   </div>
 
   <!-- 对标图文 -->
   <div class="card" id="cardBenchmark">
-    <h3 onclick="toggleCard('cardBenchmark')">📌 对标图文 <span class="arrow">▼</span></h3>
+    <div class="card-head" onclick="toggleCard('cardBenchmark')">
+      <h3>📌 对标图文</h3>
+      <span class="arrow">▼</span>
+    </div>
     <div class="card-body">
-      <label>对标标题</label><input id="bTitle" placeholder="把对标笔记标题放这里">
-      <label>对标正文 / OCR</label><textarea id="bText" placeholder="粘贴对标正文或截图OCR文字" style="min-height:80px"></textarea>
-      <label>我喜欢它哪里</label><textarea id="bNotes" placeholder="例：封面冲突强、节奏好、结尾引导自然" style="min-height:50px"></textarea>
+      <label>对标标题</label>
+      <input id="bTitle" placeholder="把对标笔记标题放这里">
+      <label>对标正文 / OCR</label>
+      <textarea id="bText" placeholder="粘贴对标正文或截图OCR文字" style="min-height:80px"></textarea>
+      <label>我喜欢它哪里</label>
+      <textarea id="bNotes" placeholder="例：封面冲突强、节奏好、结尾引导自然" style="min-height:50px"></textarea>
       <label>对标截图 <span>最多3张</span></label>
-      <div class="upload-label" id="bLabel"><span>点击选择对标截图</span><input type="file" accept="image/*" multiple onchange="handleFiles(this.files,'bImages','bLabel','bThumbs')" style="position:absolute;inset:0;opacity:0;z-index:10;cursor:pointer"></div>
+      <div class="upload-zone" id="bLabel">
+        <span>点击选择对标截图</span>
+        <input type="file" accept="image/*" multiple onchange="handleFiles(this.files,'bImages','bLabel','bThumbs')" style="position:absolute;inset:0;opacity:0;z-index:10;cursor:pointer">
+      </div>
       <div class="thumb-row" id="bThumbs"></div>
-      <div style="margin-top:8px">
+      <div style="margin-top:10px">
         <button class="btn btn-blue btn-sm" id="btnAnalyze" onclick="doAnalyze()">拆解对标文案</button>
       </div>
-      <textarea id="bAnalysis" placeholder="拆解结果会显示在这里" readonly style="min-height:70px;background:var(--blue-light);margin-top:6px"></textarea>
+      <textarea id="bAnalysis" placeholder="拆解结果会显示在这里" readonly style="min-height:70px;background:var(--border-light);margin-top:8px;font-size:12px"></textarea>
     </div>
   </div>
 
   <!-- 我的素材 -->
   <div class="card" id="cardMine">
-    <h3 onclick="toggleCard('cardMine')">🎨 我的素材 <span class="arrow">▼</span></h3>
+    <div class="card-head" onclick="toggleCard('cardMine')">
+      <h3>🎨 我的素材</h3>
+      <span class="arrow">▼</span>
+    </div>
     <div class="card-body">
-      <label>核心观点</label><input id="core" placeholder="例：装修前不要先问总价，要先看清方案和报价边界">
-      <label>文字素材</label><textarea id="myNotes" placeholder="例：长沙120平改善房，业主拿了三份报价准备签合同" style="min-height:60px"></textarea>
+      <label>核心观点</label>
+      <input id="core" placeholder="例：装修前不要先问总价，要先看清方案和报价边界">
+      <label>文字素材</label>
+      <textarea id="myNotes" placeholder="例：长沙120平改善房，业主拿了三份报价准备签合同" style="min-height:60px"></textarea>
       <label>效果图/实拍 <span>最多2张</span></label>
-      <div class="upload-label" id="mLabel"><span>点击选择效果图</span><input type="file" accept="image/*" multiple onchange="handleFiles(this.files,'mImages','mLabel','mThumbs')" style="position:absolute;inset:0;opacity:0;z-index:10;cursor:pointer"></div>
+      <div class="upload-zone" id="mLabel">
+        <span>点击选择效果图</span>
+        <input type="file" accept="image/*" multiple onchange="handleFiles(this.files,'mImages','mLabel','mThumbs')" style="position:absolute;inset:0;opacity:0;z-index:10;cursor:pointer">
+      </div>
       <div class="thumb-row" id="mThumbs"></div>
-      <div class="grid2" style="margin-top:8px">
+      <div class="grid2" style="margin-top:10px">
         <div><label>目标人群</label><select id="audience"><option>长沙准备装修的业主</option><option>正在比价的业主</option><option>准备签合同的业主</option></select></div>
         <div><label>图片页数</label><select id="pages"><option>6</option><option>7</option><option>8</option></select></div>
       </div>
@@ -178,18 +388,21 @@ textarea{min-height:64px;resize:vertical}
   </div>
 </div>
 
-<!-- ========== 右栏：创作区 ========== -->
+<!-- ========== 右栏 ========== -->
 <div class="output-card">
   <button class="btn btn-primary btn-lg" id="btnGenerate" onclick="doGenerate()">生成小红书图文方案</button>
 
   <!-- 快捷改稿 -->
-  <div class="quick-actions" style="margin-top:12px">
-    <button class="btn btn-chip" onclick="quickRevise('把正文改短到500字左右，保留核心观点和钩子')">改短一点</button>
-    <button class="btn btn-chip" onclick="quickRevise('增强冲突感和痛点，让标题和开头更有冲击力')">更有冲突</button>
-    <button class="btn btn-chip" onclick="quickRevise('去掉AI味和套话，改成真实业主分享的语气，口语化短句')">去AI味</button>
-    <button class="btn btn-chip" onclick="quickRevise('改成更像真实业主在分享装修经历，增加犹豫、对比、具体场景')">更像业主</button>
-    <button class="btn btn-chip" onclick="quickRevise('把开头钩子改得更吸引人，让前3秒能留住读者')">加强钩子</button>
-    <button class="btn btn-chip" onclick="quickRevise('改成更口语化、更像微信聊天的语气，不要书面语')">更口语</button>
+  <div class="quick-section">
+    <div class="label">快捷改稿</div>
+    <div class="row">
+      <button class="chip" onclick="quickRevise('把正文改短到500字左右，保留核心观点和钩子')">改短一点</button>
+      <button class="chip" onclick="quickRevise('增强冲突感和痛点，让标题和开头更有冲击力')">更有冲突</button>
+      <button class="chip" onclick="quickRevise('去掉AI味和套话，改成真实业主分享的语气，口语化短句')">去AI味</button>
+      <button class="chip" onclick="quickRevise('改成更像真实业主在分享装修经历，增加犹豫、对比、具体场景')">更像业主</button>
+      <button class="chip" onclick="quickRevise('把开头钩子改得更吸引人，让前3秒能留住读者')">加强钩子</button>
+      <button class="chip" onclick="quickRevise('改成更口语化、更像微信聊天的语气，不要书面语')">更口语</button>
+    </div>
   </div>
 
   <!-- 标签页 -->
@@ -202,13 +415,13 @@ textarea{min-height:64px;resize:vertical}
   </div>
 
   <!-- 正文编辑区 -->
-  <textarea class="result-edit" id="resultFinal" placeholder="点击上方「生成小红书图文方案」开始创作..." oninput="updateWordCount()"></textarea>
+  <textarea class="editor" id="resultFinal" placeholder="点击上方「生成小红书图文方案」开始创作..." oninput="updateWordCount()"></textarea>
 
   <!-- 只读面板 -->
-  <div class="result-readonly" id="resultTitles"></div>
-  <div class="result-readonly" id="resultScript"></div>
-  <div class="result-readonly" id="resultCheck"></div>
-  <div class="result-readonly" id="resultStory"></div>
+  <div class="readonly-panel" id="resultTitles"></div>
+  <div class="readonly-panel" id="resultScript"></div>
+  <div class="readonly-panel" id="resultCheck"></div>
+  <div class="readonly-panel" id="resultStory"></div>
 
   <!-- 底部工具栏 -->
   <div class="toolbar">
@@ -228,6 +441,7 @@ textarea{min-height:64px;resize:vertical}
 </div>
 
 </div><!-- main -->
+</div><!-- shell -->
 
 <div class="toast" id="toast"></div>
 
@@ -293,7 +507,7 @@ function handleFiles(files, key, labelId, thumbId){
       showThumbs(thumbId, key, labelId);
       var span=label.querySelector('span');
       if(span) span.textContent='已选 '+state[key].length+' 张，点击换图';
-      label.classList.add('has-images');
+      label.classList.add('has-img');
     };
     reader.readAsDataURL(file);
   });
@@ -303,8 +517,8 @@ function showThumbs(thumbId, key, labelId){
   var box=$(thumbId); box.innerHTML='';
   state[key].forEach(function(img,i){
     var d=document.createElement('div');
-    d.style.cssText='position:relative;display:inline-block';
-    d.innerHTML='<img src="'+img.dataUrl+'" style="width:56px;height:56px;object-fit:cover;border-radius:8px"><button style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:#e00;color:#fff;font-size:11px;cursor:pointer;line-height:20px" onclick="delImg(\''+key+'\','+i+',\''+thumbId+'\',\''+labelId+'\')">×</button>';
+    d.className='thumb-wrap';
+    d.innerHTML='<img src="'+img.dataUrl+'" alt="缩略图"><button class="del" onclick="delImg(\''+key+'\','+i+',\''+thumbId+'\',\''+labelId+'\')">×</button>';
     box.appendChild(d);
   });
 }
@@ -312,7 +526,7 @@ function delImg(key, i, thumbId, lid){
   state[key].splice(i,1); showThumbs(thumbId, key, lid);
   var label=$(lid), span=label.querySelector('span');
   if(state[key].length===0){
-    label.classList.remove('has-images');
+    label.classList.remove('has-img');
     if(span) span.textContent=key==='bImages'?'点击选择对标截图':'点击选择效果图';
   } else {
     if(span) span.textContent='已选 '+state[key].length+' 张，点击换图';
@@ -349,7 +563,6 @@ function getData(){
 // ====== 标签页 ======
 function switchTab(tab, btn){
   state.currentTab=tab;
-  // 正文 textarea 始终显示在 result-readonly 之前
   $('resultFinal').style.display = (tab==='final')?'block':'none';
   ['titles','script','check','story'].forEach(function(t){
     var el=$('result'+t.charAt(0).toUpperCase()+t.slice(1));
@@ -408,15 +621,16 @@ function doAnalyze(){
 
 // ====== 生成 ======
 function doGenerate(){
-  var btn=$('btnGenerate'); btn.disabled=true; btn.textContent='生成中（15-30秒）...';
-  $('resultFinal').value='⏳ DeepSeek 正在生成...';
+  var btn=$('btnGenerate'); btn.disabled=true; btn.textContent='生成中（20-40秒）...';
+  $('resultFinal').value='⏳ Claude Opus 正在生成...';
   postAPI({action:'generate',input:getData()})
     .then(function(json){
       state.lastResult=json;
       showResult(json);
       switchTab('final', document.querySelector('#tabs .tab'));
       updateWordCount();
-      if(json.readState) $('status').innerHTML='<span class="badge badge-ok">DeepSeek</span><span class="badge badge-ok">识图:'+(json.readState.imageReadable?'正常':'文字')+'</span>';
+      var rs=json.readState||{};
+      $('status').innerHTML='<span class="badge badge-blue">Opus 4.7</span>'+(rs.imageReadable?'<span class="badge badge-ok">识图:正常</span>':'');
       toast('生成完成');
     }).catch(function(e){
       $('resultFinal').value='生成失败：'+String(e.message||e).slice(0,500);
@@ -427,11 +641,9 @@ function doGenerate(){
 }
 
 function showResult(json){
-  // 正文放 textarea
   var f=json.final||'';
   if(typeof f==='object') f=JSON.stringify(f,null,2);
   $('resultFinal').value=f||'（无内容）';
-  // 其他放只读区
   $('resultTitles').textContent=json.titles||'';
   $('resultScript').textContent=json.script||'';
   $('resultCheck').textContent=json.check||'';
@@ -479,7 +691,6 @@ function addChatMsg(role, text){
   div.className='msg';
   div.innerHTML='<b>'+role+'：</b>'+text;
   log.appendChild(div); log.scrollTop=log.scrollHeight;
-  // 保留最近 20 条
   while(log.children.length>20) log.removeChild(log.firstChild);
 }
 $('chatInput').onkeydown=function(e){if(e.key==='Enter')doChat()};
@@ -487,7 +698,9 @@ $('chatInput').onkeydown=function(e){if(e.key==='Enter')doChat()};
 // ====== 初始化 ======
 loadBrandKb();
 fetch('/api/xhs-generate',{method:'GET'}).then(function(r){return r.json()}).then(function(j){
-  $('status').innerHTML='<span class="badge badge-ok">DeepSeek</span><span class="badge badge-ok">识图:'+(j.vision==='qwen-vl'?'Qwen-VL':'GPT')+'</span>';
+  var provider=j.provider==='anthropic'?'Opus 4.7':(j.provider==='deepseek'?'DeepSeek':'未知');
+  var vision=j.vision==='qwen-vl'?'Qwen-VL':(j.vision==='openai'?'GPT':'未配置');
+  $('status').innerHTML='<span class="badge badge-blue">'+provider+'</span><span class="badge badge-ok">识图:'+vision+'</span>';
 }).catch(function(){
   $('status').innerHTML='<span class="badge badge-warn">接口检测失败</span>';
 });
