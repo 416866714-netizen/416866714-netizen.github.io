@@ -660,7 +660,7 @@ async function handleXhsGenerate(request, env) {
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
   const body = await request.json().catch(() => ({}));
-  const input = body.input || {};
+  let input = body.input || {};
   const hasMineImages = (input.images?.mine?.length || 0) > 0;
 
   // 拆解对标 → DeepSeek（无图片）
