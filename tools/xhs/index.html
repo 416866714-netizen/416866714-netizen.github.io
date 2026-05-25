@@ -194,7 +194,7 @@ var DEFAULT_BRANDS = {
 <script>
 // State
 var state = { bImages:[], mImages:[], currentTab:'final', lastResult:{} };
-var MAX = { b:3, m:2 };
+var MAX = { bImages:3, mImages:2 };
 function $(id){return document.getElementById(id)}
 function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show')},1800)}
 
