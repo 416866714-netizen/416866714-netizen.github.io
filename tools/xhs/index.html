@@ -93,8 +93,8 @@ input[type=file]{display:none}
   <label>对标正文 / OCR</label><textarea id="bText" placeholder="粘贴对标正文或截图OCR文字" style="min-height:100px"></textarea>
   <label>我喜欢它哪里</label><textarea id="bNotes" placeholder="例：封面冲突强、节奏好、结尾引导自然"></textarea>
   <label>上传对标截图 <span>最多3张</span></label>
-  <label class="upload-label" for="bImages" id="bLabel">📷 点击选择对标截图</label>
-  <input type="file" id="bImages" accept="image/*" multiple>
+  <button class="upload-label" id="bLabel" onclick="$('bImages').click()">📷 点击选择对标截图</button>
+  <input type="file" id="bImages" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files,'bImages','bLabel','bThumbs')">
   <div class="thumb-row" id="bThumbs"></div>
   <div class="row">
     <button class="btn btn-blue" id="btnAnalyze" onclick="doAnalyze()">🔍 拆解对标文案</button>
@@ -129,8 +129,8 @@ input[type=file]{display:none}
   <label>核心观点</label><input id="core" placeholder="例：装修前不要先问总价，要先看清方案和报价边界">
   <label>我的文字素材</label><textarea id="myNotes" placeholder="例：长沙120平改善房，业主拿了三份报价准备签合同"></textarea>
   <label>上传效果图/实拍 <span>最多2张</span></label>
-  <label class="upload-label" for="myImages" id="mLabel">📷 点击选择效果图</label>
-  <input type="file" id="myImages" accept="image/*" multiple>
+  <button class="upload-label" id="mLabel" onclick="$('myImages').click()">📷 点击选择效果图</button>
+  <input type="file" id="myImages" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files,'mImages','mLabel','mThumbs')">
   <div class="thumb-row" id="mThumbs"></div>
   <div class="grid2" style="margin-top:8px">
     <div><label>目标人群</label><select id="audience"><option>长沙准备装修的业主</option><option>正在比价的业主</option><option>准备签合同的业主</option></select></div>
@@ -235,25 +235,23 @@ function updateKbMeter(){
 }
 
 // ====== 图片上传 ======
-function handleUpload(inputId, labelId, thumbId, key){
-  $(inputId).onchange = function(e){
-    var files = Array.from(e.target.files);
-    var label = $(labelId);
-    files.forEach(function(file){
-      if(!file.type.startsWith('image/')) return;
-      if(state[key].length >= MAX[key]) return;
-      var reader = new FileReader();
-      reader.onload = function(ev){
-        state[key].push({name:file.name,dataUrl:ev.target.result,size:Math.round(ev.target.result.length*0.75)});
-        showThumbs(thumbId, key);
-        var n = state[key].length;
-        label.textContent = '已选 '+n+' 张，点击换图';
-        label.classList.add('has-images');
-      };
-      reader.readAsDataURL(file);
-    });
-    e.target.value = '';
-  };
+function handleFiles(files, key, labelId, thumbId){
+  if(!files||!files.length) return;
+  var label = $(labelId);
+  var arr = Array.prototype.slice.call(files);
+  arr.forEach(function(file){
+    if(!file.type||!file.type.match(/^image\//)) return;
+    if(state[key].length >= MAX[key]) { toast('最多'+MAX[key]+'张'); return; }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      state[key].push({name:file.name, dataUrl:ev.target.result, size:Math.round(ev.target.result.length*0.75)});
+      showThumbs(thumbId, key);
+      var n = state[key].length;
+      label.textContent = '已选 '+n+' 张，点击换图';
+      label.classList.add('has-images');
+    };
+    reader.readAsDataURL(file);
+  });
 }
 function showThumbs(thumbId, key){
   var box = $(thumbId);
@@ -276,8 +274,7 @@ function delImg(key, i, thumbId, lid){
     label.textContent = '已选 '+state[key].length+' 张，点击换图';
   }
 }
-handleUpload('bImages','bLabel','bThumbs','bImages');
-handleUpload('myImages','mLabel','mThumbs','mImages');
+// handleFiles is called from onchange attribute directly
 
 // ====== 数据 ======
 function getData(){
