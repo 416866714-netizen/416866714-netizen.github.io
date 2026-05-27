@@ -258,11 +258,23 @@ body {
   gap: 12px;
   align-items: start;
 }
-.left-col { display: contents; }
-#cardBenchmark { grid-column: 1; grid-row: 1 / span 2; order: 1; }
-#cardBrand { grid-column: 2; grid-row: 1; order: 2; }
-#cardMine { grid-column: 2; grid-row: 2; order: 3; }
-.output-card { grid-column: 3; grid-row: 1 / span 2; order: 4; align-self: start; }
+.left-col,
+.middle-col {
+  min-height: 0;
+}
+.left-col {
+  display: flex;
+  flex-direction: column;
+}
+#cardBenchmark { grid-column: 1; order: 1; }
+.middle-col {
+  grid-column: 2;
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.output-card { grid-column: 3; order: 3; align-self: start; }
 
 /* ── Cards ── */
 .card {
@@ -320,9 +332,70 @@ textarea { min-height: 62px; resize: vertical; line-height: 1.55; }
 select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
 
 /* ── Knowledge Box ── */
-.kb-box { background: var(--blue-light); border-radius: var(--radius); padding: 12px; }
-.kb-box textarea { min-height: 112px; font-size: 12px; background: #fff; }
-.kb-meta { font-size: 11px; color: var(--muted-light); margin-top: 6px; }
+.kb-box { background: var(--blue-light); border-radius: var(--radius); padding: 10px; }
+.brand-control-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.brand-name-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  align-items: center;
+}
+.kb-box textarea {
+  min-height: 96px;
+  font-size: 12px;
+  background: #fff;
+}
+.kb-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  color: var(--muted-light);
+  font-size: 11px;
+}
+.kb-edit-toggle {
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+}
+.kb-box.compact textarea {
+  display: none;
+}
+.kb-box.compact .brand-name-row {
+  margin-bottom: 0;
+}
+.kb-summary {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  border: 1px solid rgba(37,99,235,.12);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,.66);
+}
+.kb-summary b {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kb-summary span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* ── Local Libraries ── */
 .mini-library {
@@ -573,6 +646,8 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
     overflow: hidden;
   }
   #cardBenchmark,
+  .left-col,
+  .middle-col,
   .output-card {
     height: 100%;
     min-height: 0;
@@ -590,13 +665,32 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
     display: flex;
     flex-direction: column;
   }
+  .middle-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .left-col {
+    display: flex;
+    flex-direction: column;
+  }
   .card-body {
     min-height: 0;
     overflow: auto;
     padding-right: 2px;
   }
-  #cardBrand { height: 36%; }
-  #cardMine { height: calc(64% - 10px); }
+  #cardBrand {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+  #cardBrand .card-body {
+    overflow: visible;
+  }
+  #cardMine {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-bottom: 0;
+  }
   .output-card {
     align-self: stretch;
   }
@@ -614,7 +708,8 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   }
   #bText { min-height: 112px !important; }
   #myNotes { min-height: 78px !important; }
-  .kb-box textarea { height: 112px; min-height: 0; }
+  .kb-box textarea { height: 104px; min-height: 0; }
+  .kb-box.compact textarea { display: none; }
   .quick-section .row {
     max-height: 68px;
     overflow: auto;
@@ -644,10 +739,12 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   .help-text { max-width: none; white-space: normal; width: 100%; }
   .step-rail { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .main { grid-template-columns: 1fr; }
+  .middle-col,
   #cardBenchmark,
   #cardBrand,
   #cardMine,
   .output-card { grid-column: auto; grid-row: auto; }
+  .middle-col { display: contents; }
   .output-card { position: static; }
   .shell { padding: 16px; }
   .topbar { padding: 0 16px; }
@@ -722,33 +819,6 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 
 <!-- ========== 左栏 ========== -->
 <div class="left-col">
-
-  <!-- 品牌知识库 -->
-  <div class="card active-stage" id="cardBrand" data-stage="brand">
-    <div class="card-head" onclick="toggleCard('cardBrand')">
-      <h3>🎯 品牌知识库</h3>
-      <span class="arrow">▼</span>
-    </div>
-    <div class="card-body">
-      <div class="kb-box">
-        <div class="row" style="margin-bottom:8px">
-          <select id="brand" onchange="loadBrandKb()" style="flex:1">
-            <option value="brand1">8K设计</option>
-            <option value="brand2">玖玖精工/半包</option>
-            <option value="brand3">玖玖精装</option>
-            <option value="brand4" selected>宅师傅半包装修</option>
-            <option value="brand5">老谭装修避坑</option>
-          </select>
-          <button class="btn btn-sm btn-outline" onclick="saveBrandKb()">保存</button>
-          <button class="btn btn-sm btn-ghost" onclick="resetBrandKb()">恢复</button>
-        </div>
-        <input id="brandName" placeholder="品牌名称" onchange="autoSaveBrandName()" style="margin-bottom:6px">
-        <textarea id="knowledgeText" placeholder="品牌知识库内容..." oninput="updateKbMeter()"></textarea>
-        <div class="kb-meta"><span id="kbCount">0 字</span></div>
-      </div>
-    </div>
-  </div>
-
   <!-- 对标图文 -->
   <div class="card" id="cardBenchmark" data-stage="benchmark">
     <div class="card-head" onclick="toggleCard('cardBenchmark')">
@@ -756,9 +826,6 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
       <span class="arrow">▼</span>
     </div>
     <div class="card-body">
-      <label>小红书链接 <span>可选</span></label>
-      <input id="bUrl" placeholder="粘贴小红书笔记链接，仅作来源记录；正文仍建议复制进下方">
-      <div class="help-text">可粘链接作来源；如果不放链接，直接上传小红书笔记截图也能OCR拆解。</div>
       <label>对标标题</label>
       <input id="bTitle" placeholder="可不填：正文第一行会自动识别为标题">
       <label>对标正文 / OCR</label>
@@ -779,6 +846,42 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
           <button class="btn btn-sm btn-outline" type="button" onclick="saveBenchmark()">保存当前对标</button>
         </div>
         <div class="mini-library-list" id="benchmarkLibrary"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 中栏 ========== -->
+<div class="middle-col">
+  <!-- 品牌知识库 -->
+  <div class="card active-stage" id="cardBrand" data-stage="brand">
+    <div class="card-head" onclick="toggleCard('cardBrand')">
+      <h3>🎯 品牌知识库</h3>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="kb-box compact" id="kbBox">
+        <div class="brand-control-row">
+          <select id="brand" onchange="loadBrandKb()">
+            <option value="brand1">8K设计</option>
+            <option value="brand2">玖玖精工/半包</option>
+            <option value="brand3">玖玖精装</option>
+            <option value="brand4" selected>宅师傅半包装修</option>
+            <option value="brand5">老谭装修避坑</option>
+          </select>
+          <button class="btn btn-sm btn-outline" onclick="saveBrandKb()">保存</button>
+          <button class="btn btn-sm btn-ghost" onclick="resetBrandKb()">恢复</button>
+        </div>
+        <div class="brand-name-row">
+          <input id="brandName" placeholder="品牌名称" onchange="autoSaveBrandName()">
+          <button class="kb-edit-toggle" type="button" onclick="toggleKbEdit(event)">展开编辑</button>
+        </div>
+        <div class="kb-summary" id="kbSummary">
+          <b>当前品牌口径</b>
+          <span>选择品牌后自动加载定位、客户、禁用表达和转化入口。</span>
+        </div>
+        <textarea id="knowledgeText" placeholder="品牌知识库内容..." oninput="updateKbMeter()"></textarea>
+        <div class="kb-meta"><span id="kbCount">0 字</span><span>生成时会自动引用</span></div>
       </div>
     </div>
   </div>
@@ -916,6 +1019,14 @@ function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');c
 
 // ====== 折叠卡片 ======
 function toggleCard(id){$(id).classList.toggle('collapsed')}
+function toggleKbEdit(event){
+  if (event) event.stopPropagation();
+  var box = $('kbBox');
+  if (!box) return;
+  box.classList.toggle('compact');
+  var btn = box.querySelector('.kb-edit-toggle');
+  if (btn) btn.textContent = box.classList.contains('compact') ? '展开编辑' : '收起';
+}
 
 // ====== 工作流控制 ======
 var MODE_LABELS = {
@@ -1023,7 +1134,7 @@ function fillStarter(){
 }
 
 function formIds(){
-  return ['bUrl','bTitle','bText','bAnalysis','brand','brandName','knowledgeText','core','myNotes','must','avoid','resultFinal','chatInput'];
+  return ['bTitle','bText','bAnalysis','brand','brandName','knowledgeText','core','myNotes','must','avoid','resultFinal','chatInput'];
 }
 
 function collectDraft(){
@@ -1096,7 +1207,7 @@ function restoreDraft(){
 function clearDraft(){
   if (!confirm('确认清空小红书当前草稿？品牌知识库不会删除。')) return;
   localStorage.removeItem(DRAFT_KEY);
-  ['bUrl','bTitle','bText','bAnalysis','core','myNotes','must','avoid','resultFinal','chatInput'].forEach(function(id){
+  ['bTitle','bText','bAnalysis','core','myNotes','must','avoid','resultFinal','chatInput'].forEach(function(id){
     if ($(id)) $(id).value = '';
   });
   ['resultTitles','resultScript','resultCheck','resultStory'].forEach(function(id){
@@ -1139,18 +1250,17 @@ function loadCloudBenchmarks(){
 }
 
 function saveBenchmark(){
-  var url = ($('bUrl').value || '').trim();
   var title = ($('bTitle').value || '').trim();
   var text = ($('bText').value || '').trim();
   var analysis = ($('bAnalysis').value || '').trim();
-  if (!url && !title && !text && !analysis) {
+  if (!title && !text && !analysis) {
     toast('先放一点对标内容再保存');
     return;
   }
   var item = {
     id: Date.now(),
     brand: $('brandName').value || $('brand').selectedOptions[0].text,
-    url: url,
+    url: '',
     title: title || '未命名对标',
     text: text,
     notes: '',
@@ -1173,7 +1283,6 @@ function saveBenchmark(){
 function loadBenchmark(id){
   var item = getBenchmarks().find(function(x){ return String(x.id) === String(id); });
   if (!item) return;
-  $('bUrl').value = item.url || '';
   $('bTitle').value = item.title || '';
   $('bText').value = item.text || '';
   $('bAnalysis').value = item.analysis || '';
@@ -1323,6 +1432,11 @@ function autoSaveBrandName(){localStorage.setItem(kbNameKey(),$('brandName').val
 function updateKbMeter(){
   var n=($('knowledgeText').value||'').length;
   $('kbCount').textContent = ($('brandName').value||$('brand').selectedOptions[0].text)+': '+n+' 字';
+  if ($('kbSummary')) {
+    var raw = $('knowledgeText').value || '';
+    var first = raw.split('\n').map(function(x){ return x.trim(); }).filter(function(x){ return x && !/^【品牌名称】$/.test(x); })[0] || '已加载当前品牌知识库';
+    $('kbSummary').innerHTML = '<b>'+escapeHtml(($('brandName').value||$('brand').selectedOptions[0].text) + ' · ' + n + ' 字')+'</b><span>'+escapeHtml(first.slice(0, 70))+'</span>';
+  }
 }
 
 // ====== 图片上传 ======
@@ -1403,7 +1517,7 @@ function normalizeBenchmarkPaste(force){
 function getData(){
   normalizeBenchmarkPaste(false);
   return {
-    benchmarkUrl: ($('bUrl').value||'').slice(0,500),
+    benchmarkUrl: '',
     benchmarkTitle: ($('bTitle').value||'').slice(0,500),
     benchmarkText: ($('bText').value||'').slice(0,1200),
     benchmarkNotes: '',
