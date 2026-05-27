@@ -671,6 +671,95 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   border: 1px solid var(--border);
 }
 .readonly-panel:empty::after { content: "等待生成..."; color: var(--muted-light); }
+.title-cover-grid {
+  display: grid;
+  gap: 10px;
+  white-space: normal;
+}
+.title-cover-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(148,163,184,.28);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(248,250,252,.9)),
+    linear-gradient(120deg, rgba(31,111,235,.08), rgba(15,159,110,.06));
+  box-shadow: 0 10px 24px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.9);
+  padding: 11px 12px 12px;
+}
+.title-cover-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--blue), var(--green));
+}
+.title-cover-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.title-cover-title {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+.title-cover-index {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--blue-light);
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 900;
+}
+.cover-preview {
+  border-radius: var(--radius);
+  border: 1px solid rgba(31,111,235,.18);
+  background:
+    radial-gradient(circle at 92% 10%, rgba(15,159,110,.16), transparent 34%),
+    linear-gradient(135deg, #111827 0%, #1f6feb 54%, #0f9f6e 100%);
+  color: #fff;
+  padding: 12px;
+  min-height: 74px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+}
+.cover-preview b {
+  display: block;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+.cover-preview span {
+  margin-top: 5px;
+  color: rgba(255,255,255,.78);
+  font-size: 12px;
+  font-weight: 700;
+}
+.title-cover-meta {
+  display: grid;
+  gap: 6px;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.title-cover-meta p { margin: 0; }
+.title-cover-meta strong {
+  color: var(--ink);
+  font-weight: 800;
+}
 
 /* ── Toolbar ── */
 .toolbar {
@@ -1227,12 +1316,13 @@ function collectDraft(){
   formIds().forEach(function(id){
     if ($(id)) values[id] = $(id).value || '';
   });
+  var titlePanel = $('resultTitles');
   return {
     savedAt: Date.now(),
     values: values,
     mode: state.entryMode,
     tab: state.currentTab,
-    resultTitles: $('resultTitles') ? $('resultTitles').textContent : '',
+    resultTitles: titlePanel ? (titlePanel.dataset.copyText || titlePanel.textContent) : '',
     resultScript: $('resultScript') ? $('resultScript').textContent : '',
     resultCheck: $('resultCheck') ? $('resultCheck').textContent : '',
     resultStory: $('resultStory') ? $('resultStory').textContent : '',
@@ -1265,7 +1355,10 @@ function restoreDraft(){
       loadBrandKb();
     }
     if (draft.values && draft.values.knowledgeText) $('knowledgeText').value = draft.values.knowledgeText;
-    if ($('resultTitles')) $('resultTitles').textContent = draft.resultTitles || '';
+    if ($('resultTitles')) {
+      $('resultTitles').dataset.copyText = draft.resultTitles || '';
+      $('resultTitles').innerHTML = renderTitleCoverCards(draft.resultTitles || '', '') || escapeHtml(draft.resultTitles || '');
+    }
     if ($('resultScript')) $('resultScript').textContent = draft.resultScript || '';
     if ($('resultCheck')) $('resultCheck').textContent = draft.resultCheck || '';
     if ($('resultStory')) $('resultStory').textContent = draft.resultStory || '';
@@ -1649,7 +1742,7 @@ function updateWordCount(){
   $('wordCount').textContent=text.replace(/\s/g,'').length+' 字';
 }
 
-function formatTitleCoverPairs(value, fallbackScript){
+function normalizeTitleCoverPairs(value, fallbackScript){
   if (!value && !fallbackScript) return '';
   var pairs = [];
   if (Array.isArray(value)) {
@@ -1667,9 +1760,21 @@ function formatTitleCoverPairs(value, fallbackScript){
     });
   } else if (value && typeof value === 'object') {
     pairs = Object.keys(value).map(function(k){ return value[k]; }).slice(0, 5);
-    return formatTitleCoverPairs(pairs, fallbackScript);
+    return normalizeTitleCoverPairs(pairs, fallbackScript);
   } else if (typeof value === 'string' && /封面|画面|匹配|用图/.test(value)) {
-    return value.trim();
+    var chunks = value.split(/\n{2,}/).map(function(x){return x.trim();}).filter(Boolean).slice(0,5);
+    pairs = chunks.map(function(chunk){
+      var lines = chunk.split('\n').map(function(x){return x.trim();}).filter(Boolean);
+      var title = (lines[0] || '').replace(/^\s*\d+[\.、]\s*/, '');
+      return {
+        title: title,
+        coverText: ((chunk.match(/封面大字[：:]\s*([^\n]+)/) || [])[1] || title).trim(),
+        coverSubtext: ((chunk.match(/封面小字[：:]\s*([^\n]+)/) || [])[1] || '').trim(),
+        coverVisual: ((chunk.match(/画面建议[：:]\s*([^\n]+)/) || [])[1] || '').trim(),
+        imageUse: ((chunk.match(/用图建议[：:]\s*([^\n]+)/) || [])[1] || '').trim(),
+        reason: ((chunk.match(/匹配逻辑[：:]\s*([^\n]+)/) || [])[1] || '').trim()
+      };
+    });
   } else {
     var titles = String(value || '').split('\n').map(function(x){return x.replace(/^\s*\d+[\.、]\s*/,'').trim();}).filter(Boolean).slice(0,5);
     var scripts = String(fallbackScript || '').split('\n').map(function(x){return x.trim();}).filter(Boolean);
@@ -1684,7 +1789,13 @@ function formatTitleCoverPairs(value, fallbackScript){
       };
     });
   }
-  return pairs.filter(function(item){ return item && (item.title || item.coverText); }).slice(0,5).map(function(item, i){
+  return pairs.filter(function(item){ return item && (item.title || item.coverText); }).slice(0,5);
+}
+
+function formatTitleCoverPairs(value, fallbackScript){
+  var pairs = normalizeTitleCoverPairs(value, fallbackScript);
+  if (!pairs || !pairs.length) return '';
+  return pairs.map(function(item, i){
     return [
       (i + 1) + '. ' + (item.title || '未命名标题'),
       '封面大字：' + (item.coverText || item.title || ''),
@@ -1696,6 +1807,24 @@ function formatTitleCoverPairs(value, fallbackScript){
   }).join('\n\n');
 }
 
+function renderTitleCoverCards(value, fallbackScript){
+  var pairs = normalizeTitleCoverPairs(value, fallbackScript);
+  if (!pairs || !pairs.length) return '';
+  return '<div class="title-cover-grid">' + pairs.map(function(item, i){
+    var title = item.title || '未命名标题';
+    var cover = item.coverText || title;
+    return '<article class="title-cover-card">'
+      + '<div class="title-cover-top"><div class="title-cover-title">'+escapeHtml(title)+'</div><span class="title-cover-index">'+(i+1)+'</span></div>'
+      + '<div class="cover-preview"><b>'+escapeHtml(cover)+'</b>'+(item.coverSubtext?'<span>'+escapeHtml(item.coverSubtext)+'</span>':'')+'</div>'
+      + '<div class="title-cover-meta">'
+      + (item.coverVisual?'<p><strong>画面：</strong>'+escapeHtml(item.coverVisual)+'</p>':'')
+      + (item.imageUse?'<p><strong>用图：</strong>'+escapeHtml(item.imageUse)+'</p>':'')
+      + (item.reason?'<p><strong>逻辑：</strong>'+escapeHtml(item.reason)+'</p>':'')
+      + '</div>'
+      + '</article>';
+  }).join('') + '</div>';
+}
+
 // ====== 复制 ======
 function copyCurrent(){
   var text;
@@ -1703,7 +1832,7 @@ function copyCurrent(){
     text=formatXhsDisplayText($('resultFinal').value);
   } else {
     var el=$('result'+state.currentTab.charAt(0).toUpperCase()+state.currentTab.slice(1));
-    text=el.textContent;
+    text=el.dataset.copyText || el.textContent;
   }
   copyText(text);
 }
@@ -1943,7 +2072,10 @@ function showResult(json){
   var f=json.final||'';
   if(typeof f==='object') f=JSON.stringify(f,null,2);
   $('resultFinal').value=f ? formatXhsDisplayText(f) : '（无内容）';
-  $('resultTitles').textContent=formatTitleCoverPairs(json.titleCoverPairs || json.titleCoverPairsText || json.titles, json.script) || json.titles || '';
+  var titleCoverSource = json.titleCoverPairs || json.titleCoverPairsText || json.titles;
+  var titleCoverText = formatTitleCoverPairs(titleCoverSource, json.script) || json.titles || '';
+  $('resultTitles').dataset.copyText = titleCoverText;
+  $('resultTitles').innerHTML = renderTitleCoverCards(titleCoverSource, json.script) || escapeHtml(titleCoverText);
   $('resultScript').textContent=json.script||'';
   $('resultCheck').textContent=json.check||'';
   $('resultStory').textContent=json.story||'';
