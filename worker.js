@@ -19,6 +19,17 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function classifyUpstreamError(reason = '') {
+  const text = String(reason || '');
+  if (/timeout|超时|aborted|network/i.test(text)) return 'upstream_timeout';
+  if (/Concurrency limit|Too Many Requests|429|rate_limit/i.test(text)) return 'upstream_rate_limit';
+  if (/413|too large|payload|request entity|content length/i.test(text)) return 'payload_too_large';
+  if (/401|403|invalid api key|unauthorized|forbidden/i.test(text)) return 'auth_or_permission';
+  if (/unsupported|Unknown parameter|Unrecognized|max_completion_tokens|reasoning_effort/i.test(text)) return 'proxy_param_unsupported';
+  if (/JSON|parse|Unexpected token|返回非 JSON/i.test(text)) return 'model_format_error';
+  return 'upstream_error';
+}
+
 const XHS_BRAND5_FULL_KB = `【品牌名称】
 
 老谭
@@ -731,20 +742,16 @@ async function callOpenAI(input = {}, body = {}, env) {
     benchmark: input.imageCounts?.benchmark || input.images?.benchmark?.length || 0,
     mine: input.imageCounts?.mine || input.images?.mine?.length || 0,
   };
-  const wantsDeep = String(input.mode || '').includes('深度');
-  const hasImages = ((input.images?.benchmark?.length || 0) + (input.images?.mine?.length || 0)) > 0;
-
-  // 没有我的图片时才压缩掉图片；有我的图片时保留前5张给 GPT-5.5 读取。
   const hasMineImages = (input.images?.mine?.length || 0) > 0;
-  if ((!hasMineImages && !(wantsDeep && hasImages)) || body.action === 'revise') input = compactInput(input);
+  const imgsForOcr = hasMineImages ? cleanImages(input) : [];
+  input = compactInput(input);
 
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
   let imageSentForOcr = 0;
 
   // 兼容旧草稿图片：只读用户自己的图片，不读对标图，避免文案跑偏。
-  if (body.action !== 'revise' && (input.images?.mine?.length || 0) > 0) {
-    const imgsForOcr = cleanImages(input);
+  if (body.action !== 'revise' && imgsForOcr.length > 0) {
     imageSentForOcr = imgsForOcr.length;
     imageAnalysis = await analyzeImages({...input, images:{benchmark:[], mine: imgsForOcr}}, env);
   } else {
@@ -772,14 +779,10 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   const system = '你是老谭小红书内容总编。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】、【对标文案】和【我的文字素材】。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。最终发布正文不得超过1000字；final 必须已经用真实换行分段，段落之间空一行，不要用分隔符代替换行。';
   let raw;
   try {
-    if ((input.images?.mine?.length || 0) > 0) {
-      raw = await openAIChatWithUserImages(input, imageAnalysis, env, current);
-    } else {
-      raw = await openAIChat([
-        { role: 'system', content: system },
-        { role: 'user', content: userText },
-      ], env, 1200, { timeoutMs: 160000, maxTokensCap: 1200, temperature: 0.35, reasoningEffort: reasoning, model, json: false });
-    }
+    raw = await openAIChat([
+      { role: 'system', content: system },
+      { role: 'user', content: userText },
+    ], env, 1200, { timeoutMs: 120000, maxTokensCap: 1200, temperature: 0.35, reasoningEffort: reasoning, model, json: false });
   } catch (e) {
     try {
       const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。对标：${textBlock(input.benchmarkTitle + '\n' + input.benchmarkText, 700)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。如果图片摘要为空或失败，要在check里说明图片识别失败。输出JSON，final不超过1000字，final内必须用真实换行分段：{"final":"标题\n\n正文第一段\n\n正文第二段\n\n标签","titles":"5个标题","script":"6页图片脚本","check":"发布检查","scores":{"hook":80,"real":80,"ai":"低"}}`;
@@ -810,9 +813,9 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   result.readState.benchmarkImages = originalCounts.benchmark;
   result.readState.myImages = originalCounts.mine;
   result.readState.imageReadable = Boolean(result.imageMaterial) || imageAnalysis.some(x=>!x.error);
-  result.readState.directImagesAttached = (input.images?.mine?.length || 0) > 0;
+  result.readState.directImagesAttached = false;
   result.readState.imageMaterialReturned = Boolean(result.imageMaterial);
-  result.check = (result.check || '') + `\n\n系统说明：本次小红书工作使用 ${model}，推理强度 ${reasoning}。对标图只用于拆解辅助；我的素材图会进入生成逻辑，并要求正文引用画面细节。`;
+  result.check = (result.check || '') + `\n\n系统说明：本次小红书工作使用 ${model}，推理强度 ${reasoning}。对标图只用于拆解辅助；我的素材图先走 OCR/识图，生成阶段只使用图片摘要，避免大图二次传输导致接口超时。`;
   result.check = ensureParagraphSpacing(result.check || '');
   return json(result);
 }
@@ -871,7 +874,7 @@ function buildFallbackGenerateResult(input = {}, imageAnalysis = [], reason = ''
       '第5页：责任边界：谁确认、谁负责、怎么留证据',
       '第6页：收尾：签约前先做初步判断'
     ].join('\n'),
-    check: '服务器兜底生成：GPT-5.5 上游临时并发/超时，已先返回可编辑初稿；稍后可重新点生成获取精修版。\n\n已规避：' + avoid + '\n\n上游原因：' + textBlock(reason, 300),
+    check: '服务器兜底生成：GPT-5.5 上游未稳定返回，已先返回可编辑初稿；稍后可重新点生成获取精修版。\n\n错误分类：' + classifyUpstreamError(reason) + '\n\n已规避：' + avoid + '\n\n上游原因：' + textBlock(reason, 300),
     scores: { hook: 78, real: 76, ai: '中' },
     imageAnalysis,
     readState: {
@@ -887,11 +890,13 @@ function buildFallbackGenerateResult(input = {}, imageAnalysis = [], reason = ''
       imageAnalysisCount: imageAnalysis.filter(x=>!x.error).length,
       imageOcrAttempted: imageSentForOcr,
       imageOcrErrors: imageAnalysis.filter(x=>x.error).length,
-      directImagesAttached: (input.images?.mine?.length || 0) > 0,
+      directImagesAttached: false,
       imageMaterialReturned: imageAnalysis.some(x=>!x.error),
+      upstreamErrorType: classifyUpstreamError(reason),
+      upstreamError: textBlock(reason, 500),
     }
   }, 1000);
-  result.check = (result.check || '') + `\n\n系统说明：本次为服务器兜底结果，模型目标仍为 ${model}，推理强度 ${reasoning}。`;
+  result.check = (result.check || '') + `\n\n系统说明：本次为服务器兜底结果，模型目标仍为 ${model}，推理强度 ${reasoning}。错误分类：${classifyUpstreamError(reason)}。`;
   return result;
 }
 

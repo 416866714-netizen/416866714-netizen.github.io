@@ -1622,6 +1622,16 @@ function parseApiError(e){
     return raw;
   }
 }
+function classifyClientError(reason){
+  var text = String(reason || '');
+  if (/timeout|超时|aborted|network/i.test(text)) return '上游超时';
+  if (/Concurrency limit|Too Many Requests|429|rate_limit/i.test(text)) return '上游限流';
+  if (/413|too large|payload|request entity|content length/i.test(text)) return '请求内容过大';
+  if (/401|403|invalid api key|unauthorized|forbidden/i.test(text)) return '密钥或权限异常';
+  if (/unsupported|Unknown parameter|Unrecognized|max_completion_tokens|reasoning_effort/i.test(text)) return '模型参数不兼容';
+  if (/JSON|parse|Unexpected token|返回非 JSON/i.test(text)) return '模型格式异常';
+  return '接口未稳定返回';
+}
 
 function localBenchmarkAnalysis(){
   normalizeBenchmarkPaste(false);
@@ -1741,12 +1751,13 @@ function doGenerate(){
     }).catch(function(e){
       var reason = parseApiError(e);
       var local = localGenerateResult(reason);
+      local.check = (local.check || '') + '\n\n系统诊断：' + classifyClientError(reason) + '\n详细原因：' + reason.slice(0, 600);
       state.lastResult=local;
       showResult(local);
       switchTab('final', document.querySelector('#tabs .tab'));
       updateWordCount();
-      $('status').innerHTML='<span class="badge badge-warn">接口异常</span><span class="badge badge-ok">本地可用</span>';
-      toast('接口异常，已生成本地初稿');
+      $('status').innerHTML='<span class="badge badge-warn">'+escapeHtml(classifyClientError(reason))+'</span><span class="badge badge-ok">本地可用</span>';
+      toast(classifyClientError(reason)+'，已生成本地初稿');
     }).finally(function(){
       btn.disabled=false; btn.textContent='生成小红书图文方案';
     });
