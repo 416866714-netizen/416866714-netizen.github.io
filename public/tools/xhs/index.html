@@ -1012,6 +1012,7 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
       <div class="thumb-row" id="bThumbs"></div>
       <div style="margin-top:10px">
         <button class="btn btn-blue btn-sm" id="btnAnalyze" onclick="doAnalyze()">拆解对标文案</button>
+        <button class="btn btn-outline btn-sm" type="button" onclick="clearBenchmark()">清空对标</button>
       </div>
       <textarea id="bAnalysis" class="analysis-editor" placeholder="拆解结果会显示在这里" readonly style="background:var(--border-light);margin-top:8px"></textarea>
       <div class="mini-library">
@@ -1691,15 +1692,35 @@ function normalizeBenchmarkPaste(force){
   }
 }
 
+function hasBenchmarkInput(){
+  return Boolean(
+    ($('bTitle').value || '').trim() ||
+    ($('bText').value || '').trim() ||
+    state.bImages.length
+  );
+}
+
+function clearBenchmark(){
+  $('bTitle').value = '';
+  $('bText').value = '';
+  $('bAnalysis').value = '';
+  state.bImages = [];
+  showThumbs('bThumbs','bImages','bLabel');
+  updateUploadLabel('bLabel','bImages');
+  saveDraft(true);
+  toast('已清空对标内容');
+}
+
 // ====== 数据收集 ======
 function getData(){
   normalizeBenchmarkPaste(false);
+  var useBenchmark = hasBenchmarkInput();
   return {
     benchmarkUrl: '',
-    benchmarkTitle: ($('bTitle').value||'').slice(0,500),
-    benchmarkText: ($('bText').value||'').slice(0,1200),
+    benchmarkTitle: useBenchmark ? ($('bTitle').value||'').slice(0,500) : '',
+    benchmarkText: useBenchmark ? ($('bText').value||'').slice(0,1200) : '',
     benchmarkNotes: '',
-    benchmarkAnalysis: ($('bAnalysis').value||'').slice(0,800),
+    benchmarkAnalysis: useBenchmark ? ($('bAnalysis').value||'').slice(0,800) : '',
     brandSlot: $('brand').value,
     brandName: ($('brandName').value||$('brand').selectedOptions[0].text).slice(0,80),
     knowledgeText: ($('knowledgeText').value||DEFAULT_BRANDS[$('brand').value].knowledge||'').slice(0,2000),
@@ -1714,9 +1735,9 @@ function getData(){
     aiModel: $('modelSelect') ? $('modelSelect').value : 'gpt-5.5',
     reasoningEffort: $('reasoningSelect') ? $('reasoningSelect').value : 'medium',
     skills: ['去 AI 味','小红书爆款结构','故事化表达','强冲突标题','老谭装修顾问语气'],
-    imageCounts: {benchmark:state.bImages.length, mine:state.mImages.length},
+    imageCounts: {benchmark:useBenchmark ? state.bImages.length : 0, mine:state.mImages.length},
     images: {
-      benchmark: state.bImages.map(function(x){return {name:x.name,dataUrl:x.dataUrl,size:x.size}}),
+      benchmark: useBenchmark ? state.bImages.map(function(x){return {name:x.name,dataUrl:x.dataUrl,size:x.size}}) : [],
       mine: state.mImages.map(function(x){return {name:x.name,dataUrl:x.dataUrl,size:x.size}})
     }
   };
