@@ -7,367 +7,250 @@
 <title>老谭工作台</title>
 <style>
 :root {
-  --ink: #0f172a;
+  --bg: #f4f7fb;
+  --surface: rgba(255,255,255,.9);
+  --surface-strong: #fff;
+  --line: rgba(148,163,184,.28);
+  --line-soft: rgba(226,232,240,.72);
+  --ink: #111827;
   --muted: #64748b;
-  --line: rgba(15, 23, 42, 0.1);
-  --bg: #f8fafc;
-  --card: #fff;
-  --soft: #f1f5f9;
-  --accent: #2563eb;
-  --accent-ink: #1d4ed8;
+  --muted-light: #94a3b8;
+  --blue: #1f6feb;
+  --green: #0f9f6e;
+  --gold: #c48a2c;
+  --cyan: #0e9ccf;
   --radius: 8px;
+  --shadow: 0 18px 44px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.82);
+  --shadow-strong: 0 28px 64px rgba(15,23,42,.12);
 }
 
 * { box-sizing: border-box; margin: 0; }
 html { scroll-behavior: smooth; }
-a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
-
 body {
   min-height: 100vh;
-  background: var(--bg);
+  background:
+    linear-gradient(135deg, rgba(31,111,235,.1), transparent 32%),
+    linear-gradient(225deg, rgba(15,159,110,.08), transparent 34%),
+    linear-gradient(180deg, #fbfdff 0%, var(--bg) 46%, #edf4f8 100%);
   color: var(--ink);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
-
-body.dark {
-  --ink: #e2e8f0;
-  --muted: #94a3b8;
-  --line: rgba(226, 232, 240, 0.12);
-  --bg: #0f172a;
-  --card: #172033;
-  --soft: #111c2f;
-  --accent: #60a5fa;
-  --accent-ink: #93c5fd;
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.7), rgba(255,255,255,0) 20%, rgba(255,255,255,.38) 76%, rgba(255,255,255,0)),
+    repeating-linear-gradient(90deg, rgba(17,24,39,.032) 0 1px, transparent 1px 80px),
+    repeating-linear-gradient(0deg, rgba(17,24,39,.024) 0 1px, transparent 1px 80px);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.66), rgba(0,0,0,.12));
 }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
 
 .topbar {
   position: sticky;
   top: 0;
   z-index: 20;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  height: 54px;
   padding: 0 24px;
-  border-bottom: 1px solid var(--line);
-  background: rgba(248, 250, 252, 0.86);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(148,163,184,.2);
+  background: rgba(250,252,255,.86);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 1px 0 rgba(255,255,255,.72), 0 10px 26px rgba(15,23,42,.045);
 }
-body.dark .topbar { background: rgba(15, 23, 42, 0.86); }
-
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 850;
 }
 .brand i {
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  background: var(--accent);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #111827, var(--blue) 58%, var(--green));
   color: #fff;
   font-style: normal;
-  font-size: 12px;
-  flex: 0 0 auto;
+  font-size: 13px;
+  box-shadow: 0 10px 24px rgba(31,111,235,.24);
 }
-.topbar nav { display: flex; align-items: center; gap: 4px; }
-.topbar nav a,
-.theme-btn {
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 6px 10px;
-  background: transparent;
+.top-actions { display: flex; align-items: center; gap: 8px; }
+.top-actions a {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 7px 11px;
+  background: rgba(255,255,255,.78);
   color: var(--muted);
   font-size: 13px;
-  cursor: pointer;
+  font-weight: 800;
 }
-.topbar nav a:hover,
-.theme-btn:hover {
-  border-color: var(--line);
-  color: var(--ink);
-  background: var(--card);
-}
+.top-actions a:hover { border-color: rgba(31,111,235,.32); color: var(--blue); background: #fff; }
 
 .shell {
-  width: min(1100px, 100%);
+  width: min(1180px, 100%);
   margin: 0 auto;
   padding: 38px 24px 72px;
 }
-
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
-  gap: 24px;
-  padding-bottom: 22px;
+  gap: 22px;
+  margin-bottom: 18px;
+}
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border: 1px solid rgba(31,111,235,.14);
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: rgba(255,255,255,.72);
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 850;
 }
 .hero h1 {
-  font-size: clamp(30px, 4vw, 48px);
-  line-height: 1.08;
-  font-weight: 850;
+  margin-top: 12px;
+  font-size: clamp(34px, 4.8vw, 62px);
+  line-height: 1.02;
+  font-weight: 900;
   letter-spacing: 0;
 }
-.hero .sub {
-  max-width: 620px;
-  margin-top: 10px;
+.hero p {
+  max-width: 680px;
+  margin-top: 12px;
   color: var(--muted);
   font-size: 16px;
 }
+.system-note {
+  min-width: 220px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px;
+  background: rgba(255,255,255,.78);
+  box-shadow: 0 12px 28px rgba(15,23,42,.05);
+}
+.system-note b { display: block; font-size: 13px; }
+.system-note span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
 
-.status-row {
+.entry-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 8px 0 18px;
+  gap: 16px;
 }
-.status {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 44px;
+.entry-card,
+.library-panel,
+.collapse-toggle,
+.tool-card {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 10px 12px;
-  background: var(--card);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.88)),
+    linear-gradient(135deg, rgba(31,111,235,.052), rgba(15,159,110,.036));
+  box-shadow: var(--shadow);
 }
-.status b { font-size: 13px; white-space: nowrap; }
-.status span { color: var(--muted); font-size: 13px; text-align: right; }
-
-.main-grid {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.9fr) minmax(360px, 1.65fr) minmax(260px, 1fr);
-  gap: 14px;
-  align-items: stretch;
-}
-
-.main-card,
-.card {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--card);
-}
-.main-card {
+.entry-card {
+  position: relative;
+  min-height: 330px;
   display: flex;
   flex-direction: column;
-  min-height: 320px;
-  padding: 20px;
+  overflow: hidden;
+  padding: 22px;
 }
-.main-card h2 {
-  font-size: 22px;
-  line-height: 1.2;
-  font-weight: 850;
-  letter-spacing: 0;
+.entry-card::before,
+.library-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
 }
-.main-card p {
-  margin-top: 8px;
+.entry-card.xhs::before { background: linear-gradient(90deg, #111827, var(--blue), var(--green)); }
+.entry-card.library::before,
+.library-panel::before { background: linear-gradient(90deg, var(--gold), var(--blue)); }
+.entry-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+.entry-head h2 {
+  font-size: 25px;
+  line-height: 1.18;
+  font-weight: 900;
+}
+.entry-head p {
+  max-width: 280px;
+  margin-top: 9px;
   color: var(--muted);
   font-size: 14px;
-}
-.main-card .topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 18px;
 }
 .mark {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius);
-  background: var(--soft);
-  color: var(--accent-ink);
-  font-weight: 850;
+  background: rgba(248,250,252,.84);
+  color: var(--blue);
+  font-weight: 900;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.86);
   flex: 0 0 auto;
 }
-.card-actions,
-.brand-actions,
-.library-list {
+.entry-card.xhs .mark { color: var(--green); }
+.entry-card.library .mark { color: var(--gold); }
+.entry-meta {
   display: grid;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: auto;
+  padding-top: 30px;
 }
-
-.xhs-card {
-  min-height: 460px;
-  border-color: rgba(37, 99, 235, 0.2);
-}
-.xhs-primary {
+.entry-meta span {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  background: var(--ink);
-  color: var(--bg);
-  font-weight: 850;
-}
-.xhs-primary small {
-  display: block;
-  margin-top: 2px;
-  color: inherit;
-  opacity: 0.66;
-  font-size: 12px;
-  font-weight: 500;
-}
-.xhs-primary span { color: inherit; opacity: 0.75; white-space: nowrap; }
-.xhs-block { margin-top: 16px; }
-.mini-label {
-  margin-bottom: 8px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
-}
-.account-list { display: grid; gap: 8px; }
-.account-link {
-  display: grid;
-  grid-template-columns: minmax(98px, auto) minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  min-height: 42px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 9px 10px;
-  background: var(--soft);
-}
-.account-link b {
-  font-size: 13px;
-  font-weight: 850;
-  white-space: nowrap;
-}
-.account-link em {
-  overflow: hidden;
-  color: var(--muted);
-  font-style: normal;
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.account-link span {
-  color: var(--accent-ink);
-  font-size: 12px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-.action-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-}
-.action-link {
-  display: grid;
-  place-items: center;
-  min-height: 38px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--card);
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 800;
-  text-align: center;
-}
-.flow-strip {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 6px;
-}
-.flow-step {
-  position: relative;
-  min-height: 54px;
-  border-radius: var(--radius);
-  padding: 8px 8px 7px;
-  background: var(--soft);
-}
-.flow-step:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: -5px;
-  width: 6px;
-  height: 1px;
-  background: var(--line);
-}
-.flow-step b {
-  display: block;
-  color: var(--accent-ink);
-  font-size: 11px;
-  line-height: 1.2;
-}
-.flow-step span {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.2;
-}
-.xhs-shortcuts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.xhs-shortcuts a {
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 7px 10px;
-  background: var(--card);
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
-}
-.primary-link,
-.brand-link,
-.library-link {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 42px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.entry-meta b { color: var(--ink); }
+.entry-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 48px;
+  margin-top: 18px;
   border-radius: var(--radius);
-  padding: 10px 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #111827, var(--blue));
+  color: #fff;
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 900;
+  box-shadow: 0 14px 30px rgba(31,111,235,.22);
 }
-.primary-link {
-  background: var(--ink);
-  color: var(--bg);
-}
-.brand-link,
-.library-link {
-  border: 1px solid var(--line);
-  background: var(--soft);
-}
-.primary-link:hover,
-.brand-link:hover,
-.library-link:hover,
-.xhs-primary:hover,
-.account-link:hover,
-.action-link:hover,
-.xhs-shortcuts a:hover {
-  outline: 2px solid rgba(37, 99, 235, 0.18);
-}
-.library-link span,
-.brand-link span,
-.primary-link span {
-  color: inherit;
-  opacity: 0.72;
-  white-space: nowrap;
-}
+.entry-card.xhs .entry-button { background: linear-gradient(135deg, var(--blue), var(--cyan), var(--green)); }
+.entry-card.library .entry-button { background: linear-gradient(135deg, #111827, var(--gold)); }
+.entry-button small { color: inherit; opacity: .72; font-size: 12px; font-weight: 700; }
+.entry-button:hover { transform: translateY(-1px); box-shadow: var(--shadow-strong); }
 
-.section { margin-top: 34px; }
+.section { margin-top: 28px; }
 .section-head {
   display: flex;
   align-items: baseline;
@@ -375,278 +258,232 @@ body.dark .topbar { background: rgba(15, 23, 42, 0.86); }
   gap: 12px;
   margin-bottom: 12px;
 }
-.section-head h2 {
-  font-size: 16px;
-  font-weight: 850;
-  letter-spacing: 0;
+.section-head h2 { font-size: 17px; font-weight: 900; }
+.section-head p { color: var(--muted); font-size: 13px; }
+.library-panel {
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
 }
-.section-head p {
-  color: var(--muted);
-  font-size: 13px;
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
 }
+.library-link {
+  min-height: 74px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 12px;
+  background: rgba(248,250,252,.72);
+}
+.library-link b { font-size: 14px; }
+.library-link span { color: var(--muted); font-size: 12px; }
+.library-link:hover { border-color: rgba(31,111,235,.32); background: #fff; }
 
 .collapse-toggle {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  gap: 12px;
+  min-height: 54px;
   padding: 14px 16px;
-  background: var(--card);
   color: var(--ink);
   cursor: pointer;
-  font-weight: 800;
+  font-weight: 900;
 }
-.collapse-toggle span { color: var(--muted); font-size: 13px; font-weight: 500; }
+.collapse-toggle span { color: var(--muted); font-size: 13px; font-weight: 700; }
 .collapse-toggle::after {
   content: "+";
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background: var(--soft);
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius);
+  background: rgba(248,250,252,.84);
   color: var(--muted);
-  transition: transform 0.18s ease;
+  transition: transform .18s ease;
 }
 .collapse-toggle.open::after { transform: rotate(45deg); }
 .collapse-body { display: none; }
 .collapse-body.open { display: block; padding-top: 12px; }
-
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
-.card {
+.tool-card {
   display: grid;
-  gap: 6px;
+  gap: 7px;
   min-height: 118px;
-  padding: 16px;
+  padding: 15px;
 }
-.card:hover { border-color: rgba(37, 99, 235, 0.35); }
-.card .icon {
+.tool-card .icon {
   display: grid;
   place-items: center;
   width: 30px;
   height: 30px;
-  border-radius: 7px;
-  background: var(--soft);
-  color: var(--accent-ink);
+  border-radius: var(--radius);
+  background: rgba(248,250,252,.84);
+  color: var(--blue);
   font-style: normal;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 900;
 }
-.card h3 {
-  font-size: 14px;
-  line-height: 1.3;
-  font-weight: 800;
-  letter-spacing: 0;
-}
-.card p {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.45;
-}
-
+.tool-card h3 { font-size: 14px; line-height: 1.3; }
+.tool-card p { color: var(--muted); font-size: 12px; line-height: 1.45; }
+.tool-card:hover { border-color: rgba(31,111,235,.32); background: #fff; }
 .footer {
-  margin-top: 44px;
+  margin-top: 38px;
   padding-top: 18px;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 12px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 920px) {
   .hero,
-  .main-grid { grid-template-columns: 1fr; }
-  .main-card { min-height: auto; }
+  .entry-grid { grid-template-columns: 1fr; }
+  .system-note { min-width: 0; }
+  .entry-card { min-height: 250px; }
+  .library-grid,
   .tools-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .flow-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .flow-step:not(:last-child)::after { display: none; }
 }
-
 @media (max-width: 640px) {
   .topbar { padding: 0 16px; }
-  .topbar nav { display: none; }
-  .shell { padding: 24px 16px 56px; }
-  .hero { padding-bottom: 18px; }
-  .hero .sub { font-size: 14px; }
-  .status-row,
+  .top-actions { display: none; }
+  .shell { padding: 28px 16px 56px; }
+  .hero h1 { font-size: 38px; }
+  .entry-card { padding: 18px; }
+  .entry-head h2 { font-size: 22px; }
+  .library-grid,
   .tools-grid { grid-template-columns: 1fr; }
-  .status { align-items: flex-start; flex-direction: column; gap: 2px; }
-  .status span { text-align: left; }
-  .main-card { padding: 18px; }
-  .main-card h2 { font-size: 20px; }
-  .account-link { grid-template-columns: 1fr auto; }
-  .account-link em { grid-column: 1 / -1; white-space: normal; }
-  .action-grid,
-  .flow-strip { grid-template-columns: 1fr; }
-  .primary-link,
-  .brand-link,
-  .library-link { min-height: 44px; }
 }
 </style>
 </head>
 <body>
-
 <header class="topbar">
   <a class="brand" href="/workspace/"><i>谭</i><span>老谭工作台</span></a>
-  <nav>
+  <div class="top-actions">
     <a href="/">官网</a>
-    <a href="/tools/xhs/">小红书</a>
+    <a href="/tools/xhs/?mode=new">小红书</a>
     <a href="#library">资料库</a>
-  </nav>
-  <button class="theme-btn" id="theme" type="button">浅 / 深</button>
+  </div>
 </header>
 
-<main class="shell" id="app">
+<main class="shell">
   <section class="hero">
     <div>
-      <h1>打开就开工，别再找入口。</h1>
-      <p class="sub">首页只留三件事：看官网、写小红书、查常用资料。旧工具收起来，需要时再打开。</p>
+      <span class="kicker">老谭 AI 数字化总入口</span>
+      <h1>只留三个入口，打开就开工。</h1>
+      <p>这里不再堆工具。看官网、写小红书、查资料，三件最高频的事放在第一屏；其他旧工具全部收进备用区。</p>
     </div>
+    <aside class="system-note">
+      <b>今日入口</b>
+      <span>官网 / 小红书 / 资料库</span>
+    </aside>
   </section>
 
-  <section class="status-row" aria-label="老板状态条">
-    <div class="status"><b>官网</b><span>可查看</span></div>
-    <div class="status"><b>小红书</b><span>去写内容</span></div>
-    <div class="status"><b>资料库</b><span>查常用资料</span></div>
-  </section>
-
-  <section class="main-grid" aria-label="工作台主入口">
-    <article class="main-card">
-      <div class="topline">
+  <section class="entry-grid" aria-label="工作台主入口">
+    <article class="entry-card">
+      <div class="entry-head">
         <div>
           <h2>进入官网</h2>
-          <p>看线上门面、产品页和品牌表达，先确认外面呈现得对不对。</p>
+          <p>查看线上门面、服务价格和品牌呈现，确认外面看到的老谭是否清楚可信。</p>
         </div>
         <span class="mark">官</span>
       </div>
-      <div class="card-actions">
-        <a class="primary-link" href="/">打开官网 <span>进入</span></a>
+      <div class="entry-meta">
+        <span><b>用途</b>看门面和转化页</span>
+        <span><b>路径</b>官网首页</span>
       </div>
+      <a class="entry-button" href="/">进入官网 <small>打开</small></a>
     </article>
 
-    <article class="main-card xhs-card">
-      <div class="topline">
+    <article class="entry-card xhs">
+      <div class="entry-head">
         <div>
           <h2>写小红书</h2>
-          <p>最高频工作区。先确定账号和动作，再进入工具拆对标、写稿、改稿和发布检查。</p>
+          <p>最高频生产入口。账号、对标、素材、改稿和发布检查都放到小红书工作台里处理。</p>
         </div>
         <span class="mark">红</span>
       </div>
-
-      <a class="xhs-primary" href="/tools/xhs/?mode=new">
-        <strong>开始写今天一篇<small>直接进入现有小红书内容工作台</small></strong>
-        <span>开写</span>
-      </a>
-
-      <div class="xhs-block">
-        <div class="mini-label">1. 选账号：先定内容口径</div>
-        <div class="account-list" aria-label="小红书账号入口">
-          <a class="account-link" href="/tools/xhs/?brand=brand5&mode=new"><b>老谭个人 IP</b><em>装修避坑 / 报价合同 / 业主决策</em><span>去写</span></a>
-          <a class="account-link" href="/tools/xhs/?brand=brand4&mode=new"><b>宅师傅半包</b><em>438 半包 / 预算透明 / 普通家庭</em><span>去写</span></a>
-          <a class="account-link" href="/tools/xhs/?brand=brand1&mode=new"><b>8K 设计</b><em>审美设计 / 效果图 / 设计费</em><span>去写</span></a>
-          <a class="account-link" href="/tools/xhs/?brand=brand3&mode=new"><b>玖玖精装</b><em>精装改造 / 高端楼盘 / 瑞府案例</em><span>去写</span></a>
-          <a class="account-link" href="/tools/xhs/?brand=brand2&mode=new"><b>玖玖精工</b><em>真实工地 / 半包施工 / 工艺标准</em><span>去写</span></a>
-        </div>
+      <div class="entry-meta">
+        <span><b>用途</b>内容生产</span>
+        <span><b>路径</b>小红书 AI 工作台</span>
       </div>
-
-      <div class="xhs-block">
-        <div class="mini-label">2. 选动作：真实运营不是只写正文</div>
-        <div class="action-grid" aria-label="小红书常用动作">
-          <a class="action-link" href="/tools/xhs/?mode=new">写新笔记</a>
-          <a class="action-link" href="/tools/xhs/?mode=benchmark">拆对标</a>
-          <a class="action-link" href="/tools/xhs/?mode=revise">改旧稿</a>
-          <a class="action-link" href="/workspace/brand/">查品牌资料</a>
-          <a class="action-link" href="/tools/xhs/?mode=check">发布检查</a>
-        </div>
-      </div>
-
-      <div class="xhs-block">
-        <div class="mini-label">3. 最优路径演示</div>
-        <div class="flow-strip" aria-label="小红书写作路径">
-          <div class="flow-step"><b>账号</b><span>定人群</span></div>
-          <div class="flow-step"><b>选题</b><span>定问题</span></div>
-          <div class="flow-step"><b>对标</b><span>拆结构</span></div>
-          <div class="flow-step"><b>素材</b><span>填案例</span></div>
-          <div class="flow-step"><b>改稿</b><span>去 AI 味</span></div>
-          <div class="flow-step"><b>检查</b><span>发出去</span></div>
-        </div>
-      </div>
-
-      <div class="xhs-block">
-        <div class="mini-label">常用资料</div>
-        <div class="xhs-shortcuts">
-          <a href="/docs/xhs-automation.md">项目文档</a>
-          <a href="/workspace/brand/">品牌作战卡</a>
-          <a href="/tools/scripts/">话术承接</a>
-        </div>
-      </div>
+      <a class="entry-button" href="/tools/xhs/?mode=new">开始写小红书 <small>开写</small></a>
     </article>
 
-    <article class="main-card" id="library">
-      <div class="topline">
+    <article class="entry-card library">
+      <div class="entry-head">
         <div>
           <h2>资料库</h2>
-          <p>只放第一版最常用资料，不做大而全档案馆。</p>
+          <p>查品牌资料、项目文档和驾驶舱。只放常用资料，不做大而全档案馆。</p>
         </div>
         <span class="mark">库</span>
       </div>
-      <div class="library-list">
-        <a class="library-link" href="/workspace/brand/">品牌作战卡 <span>打开</span></a>
-        <a class="library-link" href="/docs/xhs-automation.md">小红书项目文档 <span>打开</span></a>
-        <a class="library-link" href="/docs/scripts-automation.md">话术项目文档 <span>打开</span></a>
-        <a class="library-link" href="/dashboard/">老谭项目驾驶舱 <span>打开</span></a>
-        <a class="library-link" href="/dashboard/brand.html">老谭终身品牌 <span>打开</span></a>
-        <a class="library-link" href="/dashboard/agency.html">老谭代运营 <span>打开</span></a>
-        <a class="library-link" href="/dashboard/consultant.html">老谭装修顾问 <span>打开</span></a>
+      <div class="entry-meta">
+        <span><b>用途</b>查资料和沉淀</span>
+        <span><b>路径</b>常用入口</span>
       </div>
+      <a class="entry-button" href="#library">打开资料库 <small>查看</small></a>
     </article>
+  </section>
+
+  <section class="section" id="library" aria-label="资料库">
+    <div class="section-head">
+      <h2>资料库常用入口</h2>
+      <p>只放现在最常用的资料和驾驶舱。</p>
+    </div>
+    <div class="library-panel">
+      <div class="library-grid">
+        <a class="library-link" href="/workspace/brand/"><b>品牌作战卡</b><span>品牌定位与内容口径</span></a>
+        <a class="library-link" href="/docs/xhs-automation.md"><b>小红书项目文档</b><span>内容工作台说明</span></a>
+        <a class="library-link" href="/docs/scripts-automation.md"><b>话术项目文档</b><span>私信与微信承接</span></a>
+        <a class="library-link" href="/dashboard/"><b>项目驾驶舱</b><span>经营总览</span></a>
+        <a class="library-link" href="/dashboard/brand.html"><b>老谭终身品牌</b><span>品牌线</span></a>
+        <a class="library-link" href="/dashboard/agency.html"><b>老谭代运营</b><span>B 端增长线</span></a>
+        <a class="library-link" href="/dashboard/consultant.html"><b>装修顾问</b><span>C 端服务线</span></a>
+        <a class="library-link" href="/tools/scripts/"><b>话术工作台</b><span>客户承接回复</span></a>
+      </div>
+    </div>
   </section>
 
   <section class="section" aria-label="旧工具">
     <div class="section-head">
       <h2>备用入口</h2>
-      <p>原来的 11 个模块还在，只是不占首页主视线。</p>
+      <p>原来的模块还在，需要时再展开。</p>
     </div>
     <button class="collapse-toggle" id="toggleAll" type="button">
       旧工具 / 全部工具
-      <span>需要时展开</span>
+      <span>默认收起</span>
     </button>
     <div class="collapse-body" id="allModules">
       <div class="tools-grid">
-        <a class="card" href="/workspace/client/"><span class="icon">客</span><h3>客户资料收集</h3><p>收集业主资料，生成客户摘要</p></a>
-        <a class="card" href="/workspace/report/"><span class="icon">报</span><h3>装修报告生成</h3><p>生成各价位报告草稿</p></a>
-        <a class="card" href="/workspace/match/"><span class="icon">配</span><h3>客户分级匹配</h3><p>判断客户等级和风险</p></a>
-        <a class="card" href="/workspace/brand/"><span class="icon">牌</span><h3>品牌作战卡</h3><p>各品牌资料卡</p></a>
-        <a class="card" href="/workspace/data/"><span class="icon">数</span><h3>经营数据驾驶舱</h3><p>内容到成交数据</p></a>
-        <a class="card" href="/workspace/content/"><span class="icon">文</span><h3>内容生产中台</h3><p>选题和内容方案</p></a>
-        <a class="card" href="/workspace/dialog/"><span class="icon">话</span><h3>客户对话判断器</h3><p>判断客户原话</p></a>
-        <a class="card" href="/workspace/follow/"><span class="icon">跟</span><h3>客户跟进看板</h3><p>按天数生成动作</p></a>
-        <a class="card" href="/workspace/review/"><span class="icon">复</span><h3>项目复盘生成器</h3><p>沉淀复盘报告</p></a>
-        <a class="card" href="/workspace/cases/"><span class="icon">库</span><h3>案例素材库</h3><p>案例卡和脱敏建议</p></a>
-        <a class="card" href="/workspace/public-plan/"><span class="icon">外</span><h3>对外产品页规划</h3><p>官网服务页规划</p></a>
+        <a class="tool-card" href="/workspace/client/"><span class="icon">客</span><h3>客户资料收集</h3><p>收集业主资料，生成客户摘要</p></a>
+        <a class="tool-card" href="/workspace/report/"><span class="icon">报</span><h3>装修报告生成</h3><p>生成各价位报告草稿</p></a>
+        <a class="tool-card" href="/workspace/match/"><span class="icon">配</span><h3>客户分级匹配</h3><p>判断客户等级和风险</p></a>
+        <a class="tool-card" href="/workspace/brand/"><span class="icon">牌</span><h3>品牌作战卡</h3><p>各品牌资料卡</p></a>
+        <a class="tool-card" href="/workspace/data/"><span class="icon">数</span><h3>经营数据驾驶舱</h3><p>内容到成交数据</p></a>
+        <a class="tool-card" href="/workspace/content/"><span class="icon">文</span><h3>内容生产中台</h3><p>选题和内容方案</p></a>
+        <a class="tool-card" href="/workspace/dialog/"><span class="icon">话</span><h3>客户对话判断器</h3><p>判断客户原话</p></a>
+        <a class="tool-card" href="/workspace/follow/"><span class="icon">跟</span><h3>客户跟进看板</h3><p>按天数生成动作</p></a>
+        <a class="tool-card" href="/workspace/review/"><span class="icon">复</span><h3>项目复盘生成器</h3><p>沉淀复盘报告</p></a>
+        <a class="tool-card" href="/workspace/cases/"><span class="icon">例</span><h3>案例素材库</h3><p>案例卡和脱敏建议</p></a>
+        <a class="tool-card" href="/workspace/public-plan/"><span class="icon">外</span><h3>对外产品页规划</h3><p>官网服务页规划</p></a>
       </div>
     </div>
   </section>
 
-  <footer class="footer">老谭工作台</footer>
+  <footer class="footer">老谭工作台 · 官网、小红书、资料库</footer>
 </main>
 
 <script>
-(function () {
-  const btn = document.getElementById('theme');
-  if (localStorage.getItem('ws-theme') === 'dark') document.body.classList.add('dark');
-  btn.onclick = () => {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('ws-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-  };
-})();
-
 document.getElementById('toggleAll').addEventListener('click', function () {
   this.classList.toggle('open');
   document.getElementById('allModules').classList.toggle('open');
