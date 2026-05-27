@@ -743,20 +743,16 @@ async function callOpenAI(input = {}, body = {}, env) {
     mine: input.imageCounts?.mine || input.images?.mine?.length || 0,
   };
   const hasMineImages = (input.images?.mine?.length || 0) > 0;
-  const imgsForOcr = hasMineImages ? cleanImages(input) : [];
+  const imgsForGpt = hasMineImages ? cleanImages(input) : [];
   input = compactInput(input);
 
   if (!env.OPENAI_API_KEY) return json({ error: 'OPENAI_API_KEY is not configured on server.' }, 500);
   let imageAnalysis = body.imageAnalysis || input.imageAnalysis || [];
   let imageSentForOcr = 0;
-
-  // 兼容旧草稿图片：只读用户自己的图片，不读对标图，避免文案跑偏。
-  if (body.action !== 'revise' && imgsForOcr.length > 0) {
-    imageSentForOcr = imgsForOcr.length;
-    imageAnalysis = await analyzeImages({...input, images:{benchmark:[], mine: imgsForOcr}}, env);
-  } else {
-    imageAnalysis = [];
-  }
+  let directImagesAttached = false;
+  let visionMode = imgsForGpt.length > 0 ? 'gpt-5.5-direct' : 'none';
+  let visionFallbackUsed = false;
+  let directVisionError = '';
 
   const current = body.action === 'revise' ? `
 
@@ -768,10 +764,10 @@ ${textBlock(body.revisionInstruction, 1200)}
 
 【历史版本摘要】
 ${textBlock(JSON.stringify(body.history || []), 1200)}` : '';
-  const userText = buildUserPrompt({...input, images:{}}, '') + `
+  const buildTextOnlyUser = (analysis = []) => buildUserPrompt({...input, images:{}}, '') + `
 
 【我的图片素材识别摘要/OCR，如为空可忽略】
-${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
+${textBlock(JSON.stringify(analysis, null, 2), 3000)}
 
 【强制要求】
 如果上面有图片识别摘要，正文和图片脚本必须引用至少2个具体画面细节/文字/风格/工地信息；不能只写泛泛行业文案。
@@ -779,19 +775,44 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   const system = '你是老谭小红书内容总编。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】、【对标文案】和【我的文字素材】。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。最终发布正文不得超过1000字；final 必须已经用真实换行分段，段落之间空一行，不要用分隔符代替换行。';
   let raw;
   try {
-    raw = await openAIChat([
-      { role: 'system', content: system },
-      { role: 'user', content: userText },
-    ], env, 1200, { timeoutMs: 120000, maxTokensCap: 1200, temperature: 0.35, reasoningEffort: reasoning, model, json: false });
-  } catch (e) {
-    try {
-      const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。对标：${textBlock(input.benchmarkTitle + '\n' + input.benchmarkText, 700)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。如果图片摘要为空或失败，要在check里说明图片识别失败。输出JSON，final不超过1000字，final内必须用真实换行分段：{"final":"标题\n\n正文第一段\n\n正文第二段\n\n标签","titles":"5个标题","script":"6页图片脚本","check":"发布检查","scores":{"hook":80,"real":80,"ai":"低"}}`;
+    if (body.action !== 'revise' && imgsForGpt.length > 0) {
+      raw = await openAIChatWithUserImages({...input, images:{benchmark:[], mine: imgsForGpt}}, [], env, current);
+      directImagesAttached = true;
+      visionMode = 'gpt-5.5-direct';
+    } else {
+      imageAnalysis = [];
       raw = await openAIChat([
-        { role: 'system', content: '你是老谭小红书内容总编，只用GPT-5.5。极速输出JSON，不要解释。' },
-        { role: 'user', content: micro },
-      ], env, 900, { timeoutMs: 90000, maxTokensCap: 900, temperature: 0.3, reasoningEffort: reasoning, model, json: false });
+        { role: 'system', content: system },
+        { role: 'user', content: buildTextOnlyUser(imageAnalysis) },
+      ], env, 1200, { timeoutMs: 120000, maxTokensCap: 1200, temperature: 0.35, reasoningEffort: reasoning, model, json: false });
+    }
+  } catch (e) {
+    directVisionError = String(e.message || e);
+    try {
+      if (body.action !== 'revise' && imgsForGpt.length > 0) {
+        imageSentForOcr = imgsForGpt.length;
+        visionFallbackUsed = true;
+        imageAnalysis = await analyzeImages({...input, images:{benchmark:[], mine: imgsForGpt}}, env);
+        visionMode = env.QWEN_API_KEY ? 'qwen-vl-fallback' : 'gpt-ocr-fallback';
+        raw = await openAIChat([
+          { role: 'system', content: system },
+          { role: 'user', content: buildTextOnlyUser(imageAnalysis) },
+        ], env, 1200, { timeoutMs: 120000, maxTokensCap: 1200, temperature: 0.35, reasoningEffort: reasoning, model, json: false });
+      } else {
+        throw e;
+      }
     } catch (e2) {
-      return json(buildFallbackGenerateResult(input, imageAnalysis, String(e2.message || e.message || e), model, reasoning, originalCounts, imageSentForOcr));
+      try {
+        const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。对标：${textBlock(input.benchmarkTitle + '\n' + input.benchmarkText, 700)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。如果图片摘要为空或失败，要在check里说明图片识别失败。输出JSON，final不超过1000字，final内必须用真实换行分段：{"final":"标题\n\n正文第一段\n\n正文第二段\n\n标签","titles":"5个标题","script":"6页图片脚本","check":"发布检查","scores":{"hook":80,"real":80,"ai":"低"}}`;
+        raw = await openAIChat([
+          { role: 'system', content: '你是老谭小红书内容总编，只用GPT-5.5。极速输出JSON，不要解释。' },
+          { role: 'user', content: micro },
+        ], env, 900, { timeoutMs: 90000, maxTokensCap: 900, temperature: 0.3, reasoningEffort: reasoning, model, json: false });
+        if (imgsForGpt.length > 0 && !visionFallbackUsed) visionMode = 'gpt-5.5-text-fallback';
+      } catch (e3) {
+        const reason = [directVisionError && 'GPT-5.5直读图片失败：' + directVisionError, String(e3.message || e2.message || e.message || e)].filter(Boolean).join('\n');
+        return json(buildFallbackGenerateResult(input, imageAnalysis, reason, model, reasoning, originalCounts, imageSentForOcr));
+      }
     }
   }
   let result = standardizeXhsResult(normalizeDeepSeekJSON(raw));
@@ -800,7 +821,7 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   if (result.final && typeof result.final === 'object' && result.final.body) result.final.body = formatXhsText(result.final.body);
   if (typeof result.final === 'string') result.final = ensureParagraphSpacing(result.final);
   result = limitXhsFinalLength(result, 1000);
-  if ((input.images?.mine?.length || 0) > 0 && !result.imageMaterial && !imageAnalysis.some(x=>!x.error)) {
+  if (originalCounts.mine > 0 && !directImagesAttached && !result.imageMaterial && !imageAnalysis.some(x=>!x.error)) {
     result.check = (result.check || '') + '\n\n图片关联警告：GPT-5.5 未返回可验证的图片细节。本次不应视为有效看图，请补充图片文字描述或降低图片复杂度后重试。';
   }
   result.imageAnalysis = imageAnalysis;
@@ -812,10 +833,16 @@ ${textBlock(JSON.stringify(imageAnalysis, null, 2), 3000)}
   result.readState.imageOcrErrors = imageAnalysis.filter(x=>x.error).length;
   result.readState.benchmarkImages = originalCounts.benchmark;
   result.readState.myImages = originalCounts.mine;
-  result.readState.imageReadable = Boolean(result.imageMaterial) || imageAnalysis.some(x=>!x.error);
-  result.readState.directImagesAttached = false;
+  result.readState.imageReadable = directImagesAttached || Boolean(result.imageMaterial) || imageAnalysis.some(x=>!x.error);
+  result.readState.directImagesAttached = directImagesAttached;
+  result.readState.visionMode = visionMode;
+  result.readState.visionFallbackUsed = visionFallbackUsed;
+  if (visionFallbackUsed && directVisionError) result.readState.directVisionError = textBlock(directVisionError, 500);
   result.readState.imageMaterialReturned = Boolean(result.imageMaterial);
-  result.check = (result.check || '') + `\n\n系统说明：本次小红书工作使用 ${model}，推理强度 ${reasoning}。对标图只用于拆解辅助；我的素材图先走 OCR/识图，生成阶段只使用图片摘要，避免大图二次传输导致接口超时。`;
+  const imageModeText = directImagesAttached
+    ? '我的素材图由 GPT-5.5 直接读取并生成，Qwen-VL 未参与。'
+    : (visionFallbackUsed ? 'GPT-5.5 直读图片失败后，已改用备用 OCR/摘要链路再交给 GPT-5.5 生成。' : '本次未上传我的素材图，按文字素材生成。');
+  result.check = (result.check || '') + `\n\n系统说明：本次小红书工作使用 ${model}，推理强度 ${reasoning}。${imageModeText} 对标图只用于拆解辅助，不会被当成你的案例素材。`;
   result.check = ensureParagraphSpacing(result.check || '');
   return json(result);
 }
@@ -1229,10 +1256,11 @@ async function callBenchmarkAnalysis(input = {}, env) {
 async function handleXhsGenerate(request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
   if (request.method === 'GET') {
-    const visionProvider = env.QWEN_API_KEY ? 'qwen-vl' : (env.OPENAI_API_KEY ? 'openai' : 'none');
     const primaryModel = env.OPENAI_API_KEY ? 'openai' : (env.ANTHROPIC_API_KEY ? 'anthropic' : (env.DEEPSEEK_API_KEY ? 'deepseek' : 'none'));
     const modelName = env.OPENAI_API_KEY ? (env.OPENAI_MODEL || 'gpt-5.5') : (env.ANTHROPIC_API_KEY ? (env.ANTHROPIC_MODEL || 'claude-opus-4-7') : (env.DEEPSEEK_MODEL || 'deepseek-chat'));
-    return json({ ok: true, provider: primaryModel, vision: visionProvider, endpoint: '/api/xhs-generate', model: modelName, reasoning: env.OPENAI_REASONING_EFFORT || 'medium', note: `默认 ${primaryModel === 'openai' ? 'GPT-5.5' : primaryModel === 'anthropic' ? 'Claude Opus 4.7' : 'DeepSeek'} 生成；识图: ${visionProvider === 'qwen-vl' ? 'Qwen-VL' : visionProvider === 'openai' ? 'GPT-5.5' : '未配置'}` });
+    const visionProvider = env.OPENAI_API_KEY ? 'gpt-5.5-direct' : 'none';
+    const visionFallback = env.QWEN_API_KEY ? 'qwen-vl' : (env.OPENAI_API_KEY ? 'gpt-5.5-ocr' : 'none');
+    return json({ ok: true, provider: primaryModel, vision: visionProvider, visionFallback, endpoint: '/api/xhs-generate', model: modelName, reasoning: env.OPENAI_REASONING_EFFORT || 'medium', note: `默认 ${primaryModel === 'openai' ? 'GPT-5.5' : primaryModel === 'anthropic' ? 'Claude Opus 4.7' : 'DeepSeek'} 生成；识图: ${visionProvider === 'gpt-5.5-direct' ? 'GPT-5.5直读' : '未配置'}；备用: ${visionFallback === 'qwen-vl' ? 'Qwen-VL' : visionFallback === 'gpt-5.5-ocr' ? 'GPT-5.5摘要' : '无'}` });
   }
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 

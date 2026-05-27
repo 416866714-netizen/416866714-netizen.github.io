@@ -22,3 +22,26 @@
 - Tags: xhs, image, timeout, cloudflare-worker, gpt-5.5
 
 ---
+
+## [ERR-20260527-002] xhs vision provider mismatch
+
+**Logged**: 2026-05-27T13:35:00+08:00
+**Priority**: medium
+**Status**: fixed
+**Area**: backend/frontend
+
+### Summary
+用户明确希望 GPT-5.5 自己识图，不希望默认另接 Qwen-VL。上一版虽然降低了带图生成异常，但产品心智变成“先 Qwen OCR，再 GPT 生成”，和用户对 GPT-5.5 多模态能力的预期不一致。
+
+### Details
+修复后，“我的图片素材”默认直接随生成请求发给 GPT-5.5；只有 GPT-5.5 直读图片失败时，才启用 Qwen-VL/OCR 摘要兜底。前端状态同步显示 `GPT-5.5直读`、`备用摘要`、`无图片`，避免用户误判当前链路。
+
+### Suggested Action
+以后外接视觉模型只能作为降级路径，不能在用户指定多模态主模型时抢主链路。状态栏必须把主模型、推理强度、识图模式说清楚。
+
+### Metadata
+- Source: user_feedback
+- Related Files: worker.js, public/tools/xhs/index.html
+- Tags: xhs, vision, gpt-5.5, qwen-vl, product-expectation
+
+---
