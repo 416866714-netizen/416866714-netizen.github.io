@@ -48,11 +48,18 @@ body {
   font-size: 14px;
   min-height: 100vh;
 }
+@media (min-width: 901px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+}
 
 /* ── Topbar ── */
 .topbar {
   position: sticky; top: 0; z-index: 20;
-  height: 56px;
+  height: 48px;
   background: rgba(248,250,252,.82);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -83,26 +90,200 @@ body {
 .badge-blue { background: var(--blue-light); color: var(--blue); }
 
 /* ── Shell ── */
-.shell { max-width: 1320px; margin: 0 auto; padding: 24px; }
+.shell { max-width: 100vw; margin: 0 auto; padding: 10px 14px 14px; }
+
+/* ── Workbench Header ── */
+.ops-hero {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  box-shadow: var(--shadow-xs);
+}
+.ops-panel { display: contents; }
+.ops-main,
+.ops-side { min-width: 0; }
+.ops-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 520px;
+}
+.ops-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
+}
+.ops-kicker {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+.mode-grid {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.mode-btn,
+.step-btn,
+.starter-btn {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: border-color var(--transition), background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.mode-btn {
+  min-height: 32px;
+  padding: 6px 12px;
+  text-align: center;
+  min-width: 92px;
+}
+.mode-btn b {
+  display: block;
+  font-size: 13px;
+}
+.mode-btn span { display: none; }
+.mode-btn.active,
+.step-btn.active {
+  border-color: rgba(37,99,235,.35);
+  background: var(--blue-light);
+  color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.08);
+}
+.mode-btn.active span { color: var(--blue); opacity: .78; }
+.ops-meta {
+  display: grid;
+  gap: 10px;
+}
+.model-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.model-control label {
+  display: none;
+  margin: 0;
+  font-size: 11px;
+}
+.model-control select {
+  width: 130px;
+  padding: 7px 28px 7px 10px;
+  font-size: 12px;
+  background-color: #fff;
+}
+.ops-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  background: #fafbfc;
+}
+.ops-meta-row b {
+  font-size: 12px;
+}
+.ops-meta-row span {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+.step-rail { display: none; }
+.step-btn {
+  min-height: 52px;
+  padding: 8px;
+  text-align: left;
+}
+.step-btn b {
+  display: block;
+  font-size: 12px;
+}
+.step-btn span {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.starter-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-top: 0;
+}
+.help-text {
+  margin-top: 0;
+  color: var(--muted-light);
+  font-size: 11px;
+  line-height: 1.45;
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.starter-btn {
+  padding: 7px 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+.starter-btn.primary {
+  border-color: transparent;
+  background: var(--ink);
+  color: #fff;
+}
+.mode-btn:hover,
+.step-btn:hover,
+.starter-btn:hover {
+  border-color: rgba(37,99,235,.42);
+}
 
 /* ── Main Grid ── */
-.main { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+.main {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.05fr) minmax(390px, 1fr) minmax(560px, 1.45fr);
+  gap: 12px;
+  align-items: start;
+}
+.left-col { display: contents; }
+#cardBenchmark { grid-column: 1; grid-row: 1 / span 2; order: 1; }
+#cardBrand { grid-column: 2; grid-row: 1; order: 2; }
+#cardMine { grid-column: 2; grid-row: 2; order: 3; }
+.output-card { grid-column: 3; grid-row: 1 / span 2; order: 4; align-self: start; }
 
 /* ── Cards ── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 20px;
-  margin-bottom: 16px;
+  padding: 12px;
+  margin-bottom: 10px;
   box-shadow: var(--shadow-xs);
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 .card:hover { border-color: #cbd5e1; box-shadow: var(--shadow-sm); }
+.card.active-stage,
+.output-card.active-stage {
+  border-color: rgba(37,99,235,.38);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.08), var(--shadow-sm);
+}
 .card-head {
   display: flex; align-items: center; justify-content: space-between;
   cursor: pointer; user-select: none;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 .card-head h3 {
   font-size: 14px; font-weight: 700;
@@ -120,13 +301,13 @@ body {
 /* ── Form ── */
 label {
   display: block; font-size: 12px; font-weight: 700; color: var(--muted);
-  margin: 12px 0 4px; letter-spacing: .02em;
+  margin: 8px 0 3px; letter-spacing: .02em;
 }
 label:first-child { margin-top: 0; }
 label span { font-weight: 400; color: var(--muted-light); }
 input, textarea, select {
   width: 100%; border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 9px 12px;
+  border-radius: var(--radius-sm); padding: 7px 10px;
   font-size: 13px; font-family: var(--font); color: var(--ink);
   background: var(--bg); outline: none;
   transition: border-color var(--transition), box-shadow var(--transition);
@@ -135,33 +316,127 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(37,99,235,.1);
 }
-textarea { min-height: 72px; resize: vertical; line-height: 1.6; }
+textarea { min-height: 62px; resize: vertical; line-height: 1.55; }
 select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
 
 /* ── Knowledge Box ── */
 .kb-box { background: var(--blue-light); border-radius: var(--radius); padding: 12px; }
-.kb-box textarea { min-height: 90px; font-size: 12px; background: #fff; }
+.kb-box textarea { min-height: 112px; font-size: 12px; background: #fff; }
 .kb-meta { font-size: 11px; color: var(--muted-light); margin-top: 6px; }
+
+/* ── Local Libraries ── */
+.mini-library {
+  margin-top: 8px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: #fafbfc;
+  padding: 8px;
+}
+.mini-library-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.mini-library-head b {
+  font-size: 12px;
+}
+.mini-library-list {
+  display: grid;
+  gap: 6px;
+  max-height: 96px;
+  overflow: auto;
+}
+.mini-library-item {
+  display: grid;
+  gap: 3px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  padding: 7px 8px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font);
+}
+.mini-library-item strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mini-library-item span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+.mini-library-empty {
+  color: var(--muted-light);
+  font-size: 12px;
+  line-height: 1.5;
+}
 
 /* ── Upload ── */
 .upload-zone {
-  position: relative; display: block; width: 100%;
-  padding: 16px; border: 2px dashed var(--border);
-  border-radius: var(--radius); text-align: center;
-  color: var(--muted-light); font-size: 12px; cursor: pointer;
-  background: var(--bg); transition: all var(--transition);
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 9px;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius);
+  background: #f8fafc;
+  color: var(--muted);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color var(--transition), background var(--transition), color var(--transition);
 }
-.upload-zone:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
-.upload-zone.has-img { border-color: var(--blue); color: var(--blue); background: var(--blue-light); border-style: solid; }
-.thumb-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-.thumb-row img { width: 52px; height: 52px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
-.thumb-wrap { position: relative; display: inline-block; }
+.upload-zone:hover,
+.upload-zone.has-img {
+  border-color: rgba(37,99,235,.55);
+  background: var(--blue-light);
+  color: var(--blue);
+}
+.upload-zone span {
+  font-size: 12px;
+  font-weight: 750;
+}
+.thumb-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.thumb-wrap {
+  position: relative;
+  width: 42px;
+  height: 42px;
+}
+.thumb-wrap img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+}
 .thumb-wrap .del {
-  position: absolute; top: -7px; right: -7px;
-  width: 20px; height: 20px; border-radius: 50%;
-  border: 0; background: var(--red); color: #fff;
-  font-size: 12px; cursor: pointer; line-height: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--red);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
 }
 
 /* ── Buttons ── */
@@ -201,20 +476,20 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 .output-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  padding: 12px;
   box-shadow: var(--shadow-xs);
-  position: sticky; top: 80px;
+  position: static;
 }
 
 /* ── Tabs ── */
 .tabs {
-  display: flex; gap: 4px; margin: 16px 0;
+  display: flex; gap: 4px; margin: 10px 0;
   background: var(--border-light); border-radius: var(--radius);
   padding: 4px;
 }
 .tab {
-  flex: 1; padding: 8px 12px; border-radius: 8px;
+  flex: 1; padding: 7px 8px; border-radius: 8px;
   font-size: 12px; font-weight: 700; font-family: var(--font);
   border: 0; background: transparent; color: var(--muted);
   cursor: pointer; transition: all var(--transition);
@@ -225,16 +500,22 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 
 /* ── Editor Area ── */
 .editor {
-  width: 100%; min-height: 280px; padding: 16px;
+  width: 100%; min-height: 250px; max-height: 42vh; padding: 12px;
   border: 1px solid var(--border); border-radius: var(--radius);
   font-size: 14px; line-height: 1.8; font-family: var(--font);
   resize: vertical; background: #fafbfc;
   outline: none; transition: border-color var(--transition), box-shadow var(--transition);
 }
 .editor:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); background: #fff; }
+.analysis-editor {
+  min-height: 250px;
+  max-height: 42vh;
+  font-size: 13px;
+  line-height: 1.7;
+}
 .readonly-panel {
   display: none; background: #fafbfc;
-  border-radius: var(--radius); padding: 16px;
+  border-radius: var(--radius); padding: 12px;
   min-height: 120px; white-space: pre-wrap;
   font-size: 13px; line-height: 1.7;
   max-height: 45vh; overflow: auto;
@@ -245,19 +526,19 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 /* ── Toolbar ── */
 .toolbar {
   display: flex; justify-content: space-between; align-items: center;
-  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-light);
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-light);
 }
 .word-count { font-size: 12px; color: var(--muted-light); font-weight: 600; }
 
 /* ── Chat Area ── */
 .chat-log {
-  max-height: 120px; overflow: auto; font-size: 12px;
+  max-height: 56px; overflow: auto; font-size: 12px;
   background: var(--border-light); border-radius: var(--radius);
-  padding: 10px 12px; margin-top: 10px; line-height: 1.6;
+  padding: 8px 10px; margin-top: 8px; line-height: 1.5;
 }
 .chat-log .msg { margin-bottom: 2px; }
 .chat-log .msg b { color: var(--muted); margin-right: 4px; }
-.revise-box { display: flex; gap: 8px; margin-top: 10px; }
+.revise-box { display: flex; gap: 8px; margin-top: 8px; }
 .revise-box input { flex: 1; font-size: 13px; }
 
 /* ── Toast ── */
@@ -274,18 +555,108 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* ── Quick Actions Section ── */
-.quick-section { margin: 14px 0 6px; }
+.quick-section { margin: 10px 0 4px; }
 .quick-section .label { font-size: 11px; font-weight: 700; color: var(--muted-light); margin-bottom: 8px; letter-spacing: .04em; }
+
+@media (min-width: 901px) {
+  .topbar { position: relative; }
+  .shell {
+    height: calc(100vh - 48px);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+  }
+  .main {
+    min-height: 0;
+    height: 100%;
+    align-items: stretch;
+    overflow: hidden;
+  }
+  #cardBenchmark,
+  .output-card {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+  #cardBrand,
+  #cardMine {
+    min-height: 0;
+    overflow: hidden;
+  }
+  #cardBenchmark,
+  #cardBrand,
+  #cardMine,
+  .output-card {
+    display: flex;
+    flex-direction: column;
+  }
+  .card-body {
+    min-height: 0;
+    overflow: auto;
+    padding-right: 2px;
+  }
+  #cardBrand { height: 36%; }
+  #cardMine { height: calc(64% - 10px); }
+  .output-card {
+    align-self: stretch;
+  }
+  .editor {
+    height: clamp(260px, 38vh, 410px);
+    min-height: 0;
+  }
+  .analysis-editor {
+    height: clamp(250px, 34vh, 380px);
+    min-height: 0;
+  }
+  .readonly-panel {
+    height: clamp(250px, 38vh, 410px);
+    min-height: 0;
+  }
+  #bText { min-height: 112px !important; }
+  #myNotes { min-height: 78px !important; }
+  .kb-box textarea { height: 112px; min-height: 0; }
+  .quick-section .row {
+    max-height: 68px;
+    overflow: auto;
+  }
+  .output-card > .mini-library {
+    margin-top: 8px !important;
+  }
+  #publishRecords {
+    max-height: 92px;
+    overflow: auto;
+  }
+}
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
+  .ops-hero { flex-direction: column; align-items: stretch; }
+  .ops-panel { display: block; }
+  .ops-main,
+  .ops-side { min-width: 0; flex-wrap: wrap; }
+  .mode-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .mode-btn { min-width: 0; }
+  .model-controls { width: 100%; }
+  .model-control { flex: 1; }
+  .model-control select { width: 100%; }
+  .starter-actions { flex-wrap: wrap; width: 100%; }
+  .starter-btn { flex: 1 1 120px; }
+  .help-text { max-width: none; white-space: normal; width: 100%; }
+  .step-rail { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .main { grid-template-columns: 1fr; }
+  #cardBenchmark,
+  #cardBrand,
+  #cardMine,
+  .output-card { grid-column: auto; grid-row: auto; }
   .output-card { position: static; }
   .shell { padding: 16px; }
   .topbar { padding: 0 16px; }
   .brand b { display: none; }
 }
 @media (max-width: 600px) {
+  .ops-title { font-size: 24px; }
+  .mode-grid,
+  .step-rail { grid-template-columns: 1fr; }
   .grid2 { grid-template-columns: 1fr; }
   .topbar { height: 50px; }
   .shell { padding: 12px; }
@@ -303,13 +674,57 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 </div>
 
 <div class="shell">
+<section class="ops-hero" aria-label="小红书AI工作台">
+  <div class="ops-panel ops-main">
+    <div class="mode-grid" aria-label="内容动作">
+      <button class="mode-btn active" type="button" data-mode="new" onclick="setMode('new')"><b>写新笔记</b><span>从选题和素材开始</span></button>
+      <button class="mode-btn" type="button" data-mode="benchmark" onclick="setMode('benchmark')"><b>拆对标</b><span>先拆结构再写</span></button>
+      <button class="mode-btn" type="button" data-mode="revise" onclick="setMode('revise')"><b>改旧稿</b><span>粘贴正文继续打磨</span></button>
+      <button class="mode-btn" type="button" data-mode="check" onclick="setMode('check')"><b>发布检查</b><span>检查风险和承接</span></button>
+    </div>
+  </div>
+  <div class="ops-panel ops-side">
+    <div class="model-controls">
+      <div class="model-control">
+        <label>模型</label>
+        <select id="modelSelect" onchange="saveAiSettings(); refreshWorkbench()">
+          <option value="gpt-5.5">GPT-5.5</option>
+        </select>
+      </div>
+      <div class="model-control">
+        <label>推理强度</label>
+        <select id="reasoningSelect" onchange="saveAiSettings(); refreshWorkbench()">
+          <option value="low">快</option>
+          <option value="medium" selected>均衡</option>
+          <option value="high">精修</option>
+        </select>
+      </div>
+    </div>
+    <div class="help-text" id="modelHint">当前接入检测中...</div>
+    <div class="step-rail" aria-label="工作流步骤">
+      <button class="step-btn active" type="button" data-step="brand" onclick="jumpToStage('brand')"><b>账号</b><span>定口径</span></button>
+      <button class="step-btn" type="button" data-step="benchmark" onclick="jumpToStage('benchmark')"><b>对标</b><span>拆结构</span></button>
+      <button class="step-btn" type="button" data-step="mine" onclick="jumpToStage('mine')"><b>素材</b><span>填案例</span></button>
+      <button class="step-btn" type="button" data-step="generate" onclick="jumpToStage('generate')"><b>生成</b><span>出草稿</span></button>
+      <button class="step-btn" type="button" data-step="revise" onclick="jumpToStage('revise')"><b>改稿</b><span>去AI味</span></button>
+      <button class="step-btn" type="button" data-step="check" onclick="jumpToStage('check')"><b>检查</b><span>发之前</span></button>
+    </div>
+    <div class="starter-actions">
+      <button class="starter-btn primary" type="button" onclick="fillStarter()">填入起稿框架</button>
+      <button class="starter-btn" type="button" onclick="saveDraft(false)">保存草稿</button>
+      <button class="starter-btn" type="button" onclick="clearDraft()">清空草稿</button>
+      <button class="starter-btn" type="button" onclick="savePublishRecord()">沉淀为发布记录</button>
+    </div>
+  </div>
+</section>
+
 <div class="main">
 
 <!-- ========== 左栏 ========== -->
 <div class="left-col">
 
   <!-- 品牌知识库 -->
-  <div class="card" id="cardBrand">
+  <div class="card active-stage" id="cardBrand" data-stage="brand">
     <div class="card-head" onclick="toggleCard('cardBrand')">
       <h3>🎯 品牌知识库</h3>
       <span class="arrow">▼</span>
@@ -322,6 +737,7 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
             <option value="brand2">玖玖精工/半包</option>
             <option value="brand3">玖玖精装</option>
             <option value="brand4" selected>宅师傅半包装修</option>
+            <option value="brand5">老谭装修避坑</option>
           </select>
           <button class="btn btn-sm btn-outline" onclick="saveBrandKb()">保存</button>
           <button class="btn btn-sm btn-ghost" onclick="resetBrandKb()">恢复</button>
@@ -334,52 +750,59 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   </div>
 
   <!-- 对标图文 -->
-  <div class="card" id="cardBenchmark">
+  <div class="card" id="cardBenchmark" data-stage="benchmark">
     <div class="card-head" onclick="toggleCard('cardBenchmark')">
       <h3>📌 对标图文</h3>
       <span class="arrow">▼</span>
     </div>
     <div class="card-body">
+      <label>小红书链接 <span>可选</span></label>
+      <input id="bUrl" placeholder="粘贴小红书笔记链接，仅作来源记录；正文仍建议复制进下方">
+      <div class="help-text">可粘链接作来源；如果不放链接，直接上传小红书笔记截图也能OCR拆解。</div>
       <label>对标标题</label>
-      <input id="bTitle" placeholder="把对标笔记标题放这里">
+      <input id="bTitle" placeholder="可不填：正文第一行会自动识别为标题">
       <label>对标正文 / OCR</label>
-      <textarea id="bText" placeholder="粘贴对标正文或截图OCR文字" style="min-height:80px"></textarea>
-      <label>我喜欢它哪里</label>
-      <textarea id="bNotes" placeholder="例：封面冲突强、节奏好、结尾引导自然" style="min-height:50px"></textarea>
-      <label>对标截图 <span>最多3张</span></label>
+      <textarea id="bText" placeholder="直接粘贴整篇对标：第一行标题 + 后面正文，不用复制两次" style="min-height:160px" onpaste="setTimeout(function(){normalizeBenchmarkPaste(false)},0)" onblur="normalizeBenchmarkPaste(false)"></textarea>
+      <label>对标截图 <span>最多3张，支持左图右文的小红书截图OCR</span></label>
       <div class="upload-zone" id="bLabel">
-        <span>点击选择对标截图</span>
+        <span>上传小红书对标截图</span>
         <input type="file" accept="image/*" multiple onchange="handleFiles(this.files,'bImages','bLabel','bThumbs')" style="position:absolute;inset:0;opacity:0;z-index:10;cursor:pointer">
       </div>
       <div class="thumb-row" id="bThumbs"></div>
       <div style="margin-top:10px">
         <button class="btn btn-blue btn-sm" id="btnAnalyze" onclick="doAnalyze()">拆解对标文案</button>
       </div>
-      <textarea id="bAnalysis" placeholder="拆解结果会显示在这里" readonly style="min-height:70px;background:var(--border-light);margin-top:8px;font-size:12px"></textarea>
+      <textarea id="bAnalysis" class="analysis-editor" placeholder="拆解结果会显示在这里" readonly style="background:var(--border-light);margin-top:8px"></textarea>
+      <div class="mini-library">
+        <div class="mini-library-head">
+          <b>本地对标库</b>
+          <button class="btn btn-sm btn-outline" type="button" onclick="saveBenchmark()">保存当前对标</button>
+        </div>
+        <div class="mini-library-list" id="benchmarkLibrary"></div>
+      </div>
     </div>
   </div>
 
   <!-- 我的素材 -->
-  <div class="card" id="cardMine">
+  <div class="card" id="cardMine" data-stage="mine">
     <div class="card-head" onclick="toggleCard('cardMine')">
       <h3>🎨 我的素材</h3>
       <span class="arrow">▼</span>
     </div>
     <div class="card-body">
-      <label>核心观点</label>
+      <label>这篇要讲什么</label>
       <input id="core" placeholder="例：装修前不要先问总价，要先看清方案和报价边界">
-      <label>文字素材</label>
-      <textarea id="myNotes" placeholder="例：长沙120平改善房，业主拿了三份报价准备签合同" style="min-height:60px"></textarea>
-      <label>效果图/实拍 <span>最多2张</span></label>
+      <div class="help-text">这是给模型的主方向。写一句话就行，决定标题、开头和全文重点。</div>
+      <label>我的真实素材</label>
+      <textarea id="myNotes" placeholder="例：长沙120平业主拿了三份报价准备签合同，担心水电和柜子后期增项" style="min-height:90px"></textarea>
+      <div class="help-text">这里放你的案例、客户问题、楼盘面积、报价/合同/工地细节。素材越具体，文案越像真人。</div>
+      <label>我的图片素材 <span>最多5张，生成时会强制引用画面细节</span></label>
       <div class="upload-zone" id="mLabel">
-        <span>点击选择效果图</span>
+        <span>上传效果图 / 实拍 / 报价截图</span>
         <input type="file" accept="image/*" multiple onchange="handleFiles(this.files,'mImages','mLabel','mThumbs')" style="position:absolute;inset:0;opacity:0;z-index:10;cursor:pointer">
       </div>
+      <div class="help-text">这里是你的素材图，会进入生成逻辑；对标图只辅助拆解，不会被当成你的案例。</div>
       <div class="thumb-row" id="mThumbs"></div>
-      <div class="grid2" style="margin-top:10px">
-        <div><label>目标人群</label><select id="audience"><option>长沙准备装修的业主</option><option>正在比价的业主</option><option>准备签合同的业主</option></select></div>
-        <div><label>图片页数</label><select id="pages"><option>6</option><option>7</option><option>8</option></select></div>
-      </div>
       <div class="grid2">
         <div><label>必须出现</label><input id="must" placeholder="例：长沙、报价体检"></div>
         <div><label>不能出现</label><input id="avoid" placeholder="例：绝对承诺、恐吓"></div>
@@ -389,7 +812,7 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 </div>
 
 <!-- ========== 右栏 ========== -->
-<div class="output-card">
+<div class="output-card" data-stage="generate">
   <button class="btn btn-primary btn-lg" id="btnGenerate" onclick="doGenerate()">生成小红书图文方案</button>
 
   <!-- 快捷改稿 -->
@@ -409,7 +832,7 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   <div class="tabs" id="tabs">
     <button class="tab active" onclick="switchTab('final',this)">正文编辑</button>
     <button class="tab" onclick="switchTab('titles',this)">标题库</button>
-    <button class="tab" onclick="switchTab('script',this)">图片脚本</button>
+    <button class="tab" onclick="switchTab('script',this)">封面脚本</button>
     <button class="tab" onclick="switchTab('check',this)">发布检查</button>
     <button class="tab" onclick="switchTab('story',this)">灵感拆解</button>
   </div>
@@ -427,6 +850,7 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   <div class="toolbar">
     <span class="word-count" id="wordCount">0 字</span>
     <div class="row">
+      <button class="btn btn-outline btn-sm" onclick="savePublishRecord()">沉淀记录</button>
       <button class="btn btn-outline btn-sm" onclick="copyCurrent()">复制当前页</button>
       <button class="btn btn-outline btn-sm" onclick="copyFinal()">复制正文</button>
     </div>
@@ -438,6 +862,13 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
     <input id="chatInput" placeholder="输入修改要求，回车发送...">
     <button class="btn btn-primary btn-sm" onclick="doChat()">发送</button>
   </div>
+  <div class="mini-library" style="margin-top:14px">
+    <div class="mini-library-head">
+      <b>发布记录</b>
+      <button class="btn btn-sm btn-outline" type="button" onclick="renderPublishRecords()">刷新</button>
+    </div>
+    <div class="mini-library-list" id="publishRecords"></div>
+  </div>
 </div>
 
 </div><!-- main -->
@@ -448,35 +879,436 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 <!-- 内置品牌资料 -->
 <script>
 var DEFAULT_BRANDS = {
-  brand1:{name:"8K设计",knowledge:"8K设计｜长沙高审美住宅全案设计品牌，用清晰设计费标准，服务想把家装得好看、专业、并且真正能落地的装修客户。\n\n核心产品是全案设计服务：平面方案、4K高清效果图、施工图、设计落地配合。设计费标准清晰。\n\n目标人群：注重审美和风格的长沙业主，大平层、改善型住宅、毛坯房客户，想找设计师但担心设计费贵、设计和施工脱节的人。\n\n内容方向：高审美、全案设计、4K效果图、同面积/同风格案例、设计费、设计落地、户型优化。\n\n转化钩子：1｜设计费和服务内容；2｜同面积/同风格案例；3｜设计到施工怎么落地。\n\n表达边界：可以强调高审美、原创设计、设计费清晰；不要承诺绝对省钱、保证效果完全一样。不要空泛说\"高端大气\"，要落到具体户型、风格、设计费。"},
-  brand2:{name:"玖玖精工/半包",knowledge:"玖玖精工｜长沙高标准半包施工品牌，核心不是低价，而是真实工地、施工工艺和高标准交付。\n\n核心产品是半包施工和施工落地服务。可以看真实工地，有设计图纸可以免费核算，拥有100+别墅、复式、大平层工地在施工。\n\n目标人群：已有设计图、正在找施工方的业主；关注施工标准、工艺和报价的人；大平层、复式、别墅客户。\n\n内容方向：真实工地、半包施工、工艺标准、图纸精算、看附近工地、施工报价、工地细节。\n\n转化钩子：1｜看附近真实工地；2｜半包报价/工价明细；3｜有设计图，免费精算。\n\n表达边界：不要说成精装房改造品牌，不要写成设计公司，不要主打低价。语气要专业、实在、施工现场感强。"},
-  brand3:{name:"玖玖精装",knowledge:"玖玖精装｜长沙高端大宅精装全案改造品牌，专注高端楼盘、精装房改造和一站式交付。\n\n核心产品：设计+改造+定制+软装一站式落地。长沙100+大平层案例落地中，近期长沙瑞府有30+套推进中。\n\n目标人群：高端楼盘业主，精装房想重新改造的客户，大平层、别墅、改善型住宅客户。\n\n内容方向：精装改造、高端楼盘、长沙瑞府、全案交付、同户型案例、完工落地、4K效果图。\n\n转化钩子：1｜相近户型/面积效果图；2｜真实现场/完工案例；3｜设计费/改造费参考。\n\n表达边界：可以强调高端精装房改造、瑞府背书、100+案例；不要承诺绝对省钱、保证零增项。语气要高级、专业、克制。"},
-  brand4:{name:"宅师傅半包装修",knowledge:"宅师傅半包装修｜长沙普通家庭透明半包装修品牌，服务预算敏感、怕被坑、想先把方案和预算搞清楚的业主。\n\n核心产品：普通家庭半包装修。基础半包438元/㎡，综合一般550-600元/㎡。可以免费量房、免费平面图、免费施工图、免费精准预算，不签约也可以带走资料参考。支持先施工后付款，验收满意后再付款；非图纸变更增项，公司负责；有27项超国标工艺。\n\n目标人群：中端偏低预算客户、普通刚需家庭、第一次装修的小白业主、价格敏感型客户，怕增项、怕先交钱、怕报价不透明的人。\n\n内容方向：438半包、普通家庭、免费量房、免费平面图、免费施工图、精准预算、先施工后付款、零增项。\n\n转化钩子：1｜看半包大概要多少钱；2｜免费量房/出图/做预算；3｜了解先装修后付款/零增项。\n\n表达边界：可以强调438元/㎡起、免费量房出图预算、先施工后付款；不要把438说成所有客户最终价，不要过度承诺绝对零增项。语气要清楚、实在、接地气。"}
+  "brand5": {
+    "name": "老谭装修避坑",
+    "knowledge": "【品牌名称】\n\n老谭\n\n【给AI的使用说明】\n\n你在生成老谭账号内容时，必须始终把老谭理解为“长沙业主装修前的独立判断顾问”。老谭不是装修公司销售，不是设计师账号，不是施工监理账号，也不是给某一家装修公司导流的中介账号。你生成的每一篇小红书内容，都要帮助长沙业主在签约前、付款前、选公司前、看报价前、看合同前建立判断标准。内容的核心不是“推荐谁”，而是“教用户怎么判断”。老谭账号的价值不是装修科普，而是判断工具。用户看完以后应该产生的心理路径是：这说的就是我，我终于知道该怎么看了，我先收藏一下，我还是拿不准，可以问问老谭。写作时不要把老谭写成热情销售，也不要把老谭写成什么都能解决的万能专家。老谭只做装修前独立判断，重点处理业主在签约前的信息不对称、价格不确定、合同不放心、公司不知道怎么选、方案和预算拿不准等问题。\n\n【品牌一句话定位】\n\n老谭，是长沙业主装修前的独立判断顾问。\n\n【目标客户】\n\n目标客户是正在准备装修、准备选装修公司、准备签合同、已经拿到报价单或合同但还没完全放心的长沙业主。优先服务长沙本地自住业主，尤其是第一次装修、改善型装修、预算已经初步确定但害怕被坑的人。他们不一定懂装修，不一定懂材料和工艺，也不一定知道半包、全包、整装、设计工作室、小团队、大公司之间到底差在哪。他们真正需要的不是被立刻推销，而是有人帮他们把复杂信息翻译成可以判断的标准。内容必须默认读者是花钱装修的人，不是同行，不是设计师，不是装修公司老板。不要对行业讲大道理，要对业主讲“你现在该怎么看、该问什么、该警惕什么、该保留什么证据”。\n\n【用户核心痛点】\n\n用户的核心痛点是装修前拿不准。拿不准报价是否真实，担心低价签约后增项；拿不准合同条款是否有坑，担心责任边界不清；拿不准半包、全包、整装怎么选，担心选错模式；拿不准装修公司说的话是真是假，担心被话术带着走；拿不准预算够不够，担心前期看起来便宜，后期越装越高；拿不准自己家到底适合什么方案，担心听了太多建议反而更乱。老谭内容必须抓住“签之前最焦虑”这个阶段。用户不是想看装修百科，而是想在做决定前少走弯路。\n\n【核心心智】\n\n老谭要让用户形成一个稳定心智：装修前拿不准，先问问老谭。这个心智必须通过“独立、判断、长沙、本地经验、真实案例、检查工具”反复建立。老谭说话的感觉应该是冷静、直接、专业、有边界，不讨好、不恐吓、不替用户做决定。老谭给用户的是判断方法，不是直接替用户选公司。内容要让用户感觉：老谭站在业主这一边，但不情绪化；老谭懂长沙装修，但不卖弄专业；老谭能把复杂问题讲清楚，但不会强推成交。\n\n【必须反复融入的品牌卖点】\n\n第一，独立判断。老谭不是装修公司销售，不站某家公司，只帮助业主看清报价、合同、预算和选择逻辑。第二，长沙本地经验。内容要多使用长沙、本地报价、本地公司、本地楼盘、本地装修习惯、本地业主常见问题，不做全国泛科普。第三，装修前场景。重点覆盖签约前、付款前、看报价前、看合同前、选模式前、定预算前。第四，判断工具化。多做检查表、清单、对照表、花费明细、案例拆解，让用户可以直接对照使用。第五，真实案例感。可以使用脱敏案例、真实报价问题、合同风险、长沙业主常见情况，但不能编造夸张故事。第六，轻引导。内容结尾要自然引向“让老谭帮用户做初步判断”的动作，但表达必须根据具体内容变化，不要强行使用“找我咨询”“私信领资料”“加微信成交”等销售感话术。\n\n【可作为内容证据的素材】\n\n可使用长沙业主报价单里的典型问题、合同条款常见风险、半包全包整装差异、本地价格区间、装修公司选择维度、预算拆分、真实咨询案例、脱敏聊天问题、社群常见提问、老谭看过大量报价后总结出的规律。证据要服务判断，不要服务炫耀。比如写报价内容时，可以展示“暂估”“按实结算”“材料型号不清”“施工项目描述模糊”“漏项”“管理费计算不清”等具体风险；写合同内容时，可以讲付款节点、延期责任、增项确认、材料变更、验收标准；写选择内容时，可以讲不同装修模式适合什么人。每条内容至少要给一个可执行判断标准。\n\n【小红书表达发散原则】\n\n标题要短、具体、有问题感，优先围绕长沙、报价、合同、预算、半包、全包、签约前、拿不准等主题发散。标题不是固定句式，AI 应根据当篇内容的真实问题重新生成，让用户一眼知道“这篇能帮我判断什么”。封面要简单有力，建议纯色深底、大字标题、栏目标签、老谭识别，不要用花哨效果图做背景。正文结构可以灵活变化，但必须完成几个任务：先让用户认出自己的场景，再拆出问题，再给判断标准，最后给自然求助入口。语气要像老谭在帮业主看问题，不要像营销文案。内容不是越热闹越好，而是越能让用户保存、对照、发来咨询越好。\n\nAI 生成选题时优先选择“签约前马上会用到”的问题，不优先选择完工欣赏、装修风格、施工过程流水账。老谭账号最适合做四类内容：第一类是审报价，例如暂估、漏项、材料型号、管理费、拆除和水电增项；第二类是审合同，例如付款节点、延期责任、验收标准、增项确认；第三类是定预算，例如长沙本地不同装修模式大致花费、哪些钱不能省、哪些钱容易被低估；第四类是定方向，例如半包、全包、整装、设计工作室、小团队、大公司分别适合什么人。每篇内容只解决一个判断问题，不要一篇里塞太多装修知识。\n\n【转化意图 / 不要写死话术】\n\n转化意图是让用户把自己拿不准的材料或情况发给老谭做判断。AI 不要固定复读某一句私信口令，而要根据内容主题生成自然入口：报价类引导用户发报价，合同类引导用户在签前核对风险，预算类引导用户说明面积和预算，选择类引导用户说明自己的阶段和偏好。私信承接时先确认用户阶段：是否已拿报价、是否已拿合同、是否已定公司、房子在哪个区域、面积和预算大概多少。不要一上来强推付费或强推微信，先给用户一个初步判断方向，再引导更完整的判断服务。\n\n【禁止使用的表达】\n\n禁止把老谭写成装修公司、销售顾问、合作品牌客服、施工监理、设计师或中介。禁止写“老谭推荐这家公司”“找老谭安排装修”“老谭帮你选定哪家公司”这类会破坏独立性的表达。禁止为了制造焦虑而夸大风险，禁止编造案例，禁止点名攻击具体公司，禁止泄露客户隐私。禁止把内容写成泛装修百科，也不要大量使用“闭眼选”“绝对不踩坑”“长沙唯一”“保证不增项”等不可验证承诺。不要把老谭写成低价导购号，也不要把 B 端合作品牌的卖点混到老谭账号里。\n\n【品牌边界 / 不要写偏】\n\n老谭只做装修前独立判断，不做某个品牌的销售转化。可以讲半包、全包、整装、设计、报价、合同，但都必须站在业主判断角度讲。老谭不能混入 8K 的 8000 元设计卖点，不能混入宅师傅的 438 半包卖点，不能混入玖玖精装的高端精装房全案改造卖点，也不能混入玖玖半包的大宅施工获客话术。老谭可以基于案例做判断，但不要替任何品牌背书。\n\n【AI生成内容时的最终判断标准】\n\n生成完每篇老谭内容后，必须检查：这篇是不是帮助长沙业主在装修前做判断？有没有明确场景和可执行标准？有没有保持独立顾问身份？有没有避免销售感？用户看完是否愿意收藏、对照自己的报价或合同、再来问老谭？如果答案是否定的，这篇就不是合格的老谭内容。\n\n最终内容应该让用户感觉“我不是被推销了，而是终于有了一个判断尺子”。如果内容只有观点没有工具，要补检查项；如果内容只有工具没有信任，要补真实脱敏场景；如果内容只有焦虑没有解决方法，要补可操作建议；如果结尾只有强推咨询，要改成轻判断入口。"
+  },
+  "brand1": {
+    "name": "8K设计",
+    "knowledge": "【品牌名称】\n\n8K设计\n\n【给AI的使用说明】\n\n你在生成 8K设计账号内容时，必须把 8K 理解为“长沙高审美住宅全案设计账号”。它的核心不是施工半包，不是精装房改造公司，也不是普通效果图展示号。8K 的内容任务是用高审美案例吸引用户，用 8000 元固定一口价降低咨询门槛，用效果图到落地的证据建立信任，再用同面积、同风格、同需求案例推动用户私信。8K 内容要同时做到好看、清楚、可转化。不能只写审美词，也不能只打价格。写小红书时，要让用户明白：8K 不是便宜设计，而是高审美设计不溢价；8K 不是只会出图，而是能提供平面方案、效果图、施工图和落地配合；8K 不是泛装修号，而是服务长沙改善型住宅、毛坯房全案设计、高审美业主的设计入口。\n\n【品牌一句话定位】\n\n8K设计，是长沙高审美住宅全案设计账号，用 8000 元固定一口价和真实落地能力，吸引想要好看、专业、能落地的装修客户。\n\n【目标客户】\n\n目标客户是长沙准备装修、重视审美、希望家里好看但又不想承受高额设计费的业主。优先包括 200 平以内住宅客户、改善型住宅客户、大平层客户、毛坯房全案设计客户，以及已经有风格偏好但不知道怎么落地的用户。他们通常喜欢现代、奶油、法式、中古、侘寂、意式等风格，愿意为设计付费，但害怕设计费按面积越算越高，也害怕设计师只会出漂亮效果图，后期施工落不了地。他们需要先看到高审美案例，再确认设计服务边界、设计费包含内容、落地能力和是否有同面积同风格参考。\n\n【用户核心痛点】\n\n用户的痛点主要有四类。第一，怕设计费贵，担心按面积收费动辄几万，咨询门槛太高。第二，怕便宜设计没质量，担心 8000 元只是低价套图。第三，怕效果图好看但实景翻车，担心材质、灯光、比例、施工配合跟不上。第四，怕自己家没有参考，看到漂亮图却不知道是否适合自家面积、户型、风格和预算。内容要持续解决这些问题：设计费到底包含什么，为什么固定 8000 元不是低端，哪些设计能真正落地，用户发楼盘、面积、风格后可以匹配什么案例。\n\n【核心心智】\n\n8K 要占住的心智是：好看、设计费清晰、能落地。用户刷到 8K 后，应该记住“长沙高审美全案设计，200 平以内固定 8000 元，效果图不是终点，能落地才重要”。这个心智要通过高质量效果图、清晰服务边界、落地案例、同面积同风格案例不断强化。内容风格要有审美吸引力，但表达不能飘。不要只说“高级感”“氛围感”“松弛感”，要把审美转化成具体设计判断，例如户型优化、动线、收纳、采光、比例、灯光、材质、施工图和现场配合。\n\n【必须反复融入的品牌卖点】\n\n第一，高审美案例。用漂亮、真实、有风格识别度的 4K 效果图吸引用户停留和收藏。第二，8000 元设计费透明。强调 200 平以内固定 8000 元，服务边界清晰，不按面积无限加价。第三，完整全案设计服务。要反复说明包含平面方案、效果图、施工图、落地配合等内容，不能让用户以为只是几张效果图。第四，设计能落地。通过效果图与完工图、施工现场、施工图、材质灯光比例还原等证据证明不是纯效果图设计。第五，同面积同风格案例匹配。引导用户提供小区、面积、喜欢的风格或担心的问题，再匹配参考案例。第六，好设计不溢价。表达重点是“设计费清晰、边界清楚、高审美不高溢价”，不是“便宜设计”。\n\n【可作为内容证据的素材】\n\n可使用 4K 效果图、完工图、效果图和实景对比、平面方案、户型优化过程、施工图局部、材料和灯光落地细节、同面积案例合集、同风格案例合集、设计费服务清单、200 平以内固定 8000 元说明、用户常见问题。内容证据要围绕“吸引、解释、证明、转化”四个动作：用效果图吸引，用设计费清单解释，用落地对比证明，用案例匹配推动私信。写案例时不要只描述图好看，要说明适合什么客户、解决什么户型问题、设计亮点是什么、落地关键在哪里。\n\n【小红书表达发散原则】\n\n标题要围绕高审美、8000 元、全案设计、落地、同面积参考发散，但不要套用固定标题模板。AI 应根据当篇素材选择一个主角：可能是风格吸引、设计费解释、户型优化、落地证明，也可能是同面积案例匹配。封面优先使用最有吸引力的效果图或效果图对比，文字短而清楚，突出面积、风格、设计费清晰、落地或案例匹配中的一个重点。正文结构可以灵活变化：案例种草型重在审美和适合谁；设计费透明型重在服务边界；落地证明型重在效果图到实景；户型优化型重在专业判断。不要让所有笔记长得像同一个模板。\n\nAI 写 8K 时要把“美图吸引”和“服务解释”结合起来。只发漂亮效果图，用户会收藏但不一定咨询；只解释设计费，内容又会变得像广告。所以内容最好采用“先被审美吸引，再用一个具体问题进入专业判断”的方式。例如现代风案例不要只写好看，要写这个户型为什么适合现代风；奶油风不要只写温柔，要写灯光、墙面、收纳如何避免廉价；大平层不要只写高级，要写动线、尺度和材质统一。每篇内容至少落到一个可私信的问题：面积、风格、设计费、落地或户型。\n\n【转化意图 / 不要写死话术】\n\n转化意图是让用户愿意留下楼盘、小区、面积、喜欢风格、当前最担心的问题，并进入案例或服务边界匹配。AI 可以围绕设计费、案例、4K、落地、户型、大平层等方向设计入口，但必须根据当篇内容自然生成，不要重复同一句话。比如讲设计费时，引导用户了解服务边界；讲案例时，引导用户提供面积和风格；讲落地时，引导用户看相近案例或完工对比；讲户型时，引导用户描述户型问题。私信承接的目标不是马上成交，而是先确认客户面积、风格、阶段，再发送服务清单或案例，推进微信案例匹配。\n\n【禁止使用的表达】\n\n禁止把 8K 写成半包施工账号，禁止主讲 438 半包、施工工艺、报价避坑、精装房全案改造报价。禁止把 8000 元写成“便宜设计”“低价设计”“白菜价设计”，要写成“高审美设计不溢价”“设计费清晰”。禁止只发美图不讲服务边界，禁止夸大“百分百还原”“绝对不翻车”。禁止过度攻击高价设计师或同行。禁止把 8K 写成纯效果图工作室，也不要把设计服务说得无限包办，服务内容必须以真实边界为准。\n\n【品牌边界 / 不要写偏】\n\n8K 的主线是设计审美、8000 元设计费清晰、设计能落地。不要写成宅师傅或玖玖半包那种半包施工账号，也不要写成玖玖精装那种高端精装房全案改造账号。8K 可以讲落地，但落地是为了证明设计能力，不是为了主推施工半包。8K 可以讲案例，但案例是设计案例和落地案例，不是工地施工获客内容。\n\n【AI生成内容时的最终判断标准】\n\n生成完 8K 内容后，必须检查：这篇是否体现高审美？是否解释或强化设计费清晰？是否让用户相信设计能落地？是否有同面积、同风格、楼盘面积私信入口？有没有误写成半包、精装改造或低价设计？如果不能同时服务审美吸引和私信转化，就不是合格的 8K 内容。\n\n如果一篇内容看起来像普通效果图合集，要补“适合谁”和“为什么这样设计”；如果像价格广告，要补高审美案例和服务边界；如果像施工号，要删掉过深工艺细节，改成设计落地配合；如果私信入口太空，要改成让用户发“面积 + 风格 + 小区”的具体动作。"
+  },
+  "brand4": {
+    "name": "宅师傅半包装修",
+    "knowledge": "【品牌名称】\n\n宅师傅\n\n【给AI的使用说明】\n\n你在生成宅师傅账号内容时，必须把宅师傅理解为“长沙自住业主的半包装修决策型获客号”。宅师傅不是装修美图号，不是泛装修避坑号，也不是硬广套餐号。它要长期反复建立一个心智：长沙高标准 438 半包。438 是点击反差，高标准是信任解释，长沙是本地流量，自住业主是目标人群。写内容时必须围绕“一个优势 + 一个真实工地证据 + 一个私信动作”来生成。不要按“今天有水电照片所以写水电记录”的方式写，而是先判断照片能证明宅师傅哪个优势，再用内容把这个优势讲清楚。素材不是主角，素材是证据。每篇内容都要回答：这张图证明了宅师傅什么？用户应该看哪里？这个细节为什么能说明高标准、透明或风险更低？\n\n【品牌一句话定位】\n\n宅师傅，是长沙自住业主的预算友好型高标准透明半包，核心表达是：长沙高标准 438 半包，真实工地给你看，图纸预算摊开给你比。\n\n【目标客户】\n\n目标客户是长沙准备装修、正在对比半包公司、预算敏感但不想降低施工标准的自住业主。他们不是只要最低价，而是希望价格合理、预算透明、工地真实、付款安全、后期少增项。用户可能是第一次装修，可能正在对比 438、500、600 不同半包报价，也可能已经被多家公司报过价但看不懂差别。他们关心的是：438 会不会低标准？工地能不能看？预算能不能带走？施工图有没有？材料型号写不写清楚？付款会不会一上来交很多？后期增项靠什么控制？\n\n【用户核心痛点】\n\n用户主要痛点是既怕贵，又怕便宜没好货。看到 438 半包，第一反应可能是怀疑低端、偷工减料、材料差、后期增项。看到高价半包，又担心品牌溢价、总价不透明、钱交多了被动。用户还怕报价看不懂，怕只写品牌不写型号，怕没有施工图就报价，怕后期扯皮，怕工长靠增项赚钱，怕材料中间环节有猫腻。宅师傅内容必须用真实工地、预算可带走、免费前期服务、付款机制、材料机制和工艺标准来化解这些顾虑。\n\n【核心心智】\n\n宅师傅要让用户形成四个稳定印象：438 不是低标准，工地敢给你看，图纸预算敢给你比，钱和增项更安全。最重要的心智排序是：长沙高标准 438 半包；图纸预算摊开给你比；真实工地证明施工标准；先服务、再决策，降低业主风险。内容的表达要有反差，但不能廉价；要敢讲 438，但必须立刻解释“不是低标准”；要敢讲免费前期服务，但不能让用户以为是套路；要敢讲工艺标准，但必须用工地图证明。\n\n【必须反复融入的品牌卖点】\n\n第一，438 元每平米起半包。必须说明这是价格入口，不是低标准，价格低来自轻资产运营和低毛利，不是省工艺省材料。第二，免费前期服务。免费量房、平面图、施工图、精准预算，不选宅师傅也能带走对比参考，这是最强私信转化锤。第三，真实工地证据。每天师傅在工地拍摄的真实照片要被当成证据图，用来证明施工标准。第四，施工标准。27 项超国标工艺、10 大高标准施工工艺系统、对标高标准施工体系等内容要用具体工序讲清楚。第五，预算透明。图纸和预算可带走，材料表写清型号、规格、执行标准、性能标准和产地，不靠模糊报价锁客户。第六，付款和增项机制。1000 元诚意金开工，验收满意后按步骤付款；非图纸变更导致的增项，公司负责；服务型工长固定服务费，工匠由公司结算。第七，材料机制和保障。材料品牌商直接发货到工地，减少中间环节；工地险、工匠险等保障要作为安全感补充。\n\n【可作为内容证据的素材】\n\n可使用真实工地照片、水电阶段、防水、泥工、木工、油漆、吊顶、材料进场、材料表、预算表、施工图、量房现场、付款说明、保险说明、工长管理机制、预算对比场景。图片水平普通没关系，但文案必须告诉用户看图里哪个细节。比如水电内容要讲“水电阶段最能看出糊不糊弄”；防水内容要讲高度、阴阳角、管根、闭水；材料内容要讲品牌、系列、型号、规格；预算内容要讲预算能不能带走、有没有施工图、项目是否清楚；付款内容要讲第一笔钱别急着交。\n\n【小红书表达发散原则】\n\n首图用真实工地图加一句强冲突大字，不要堆权益。标题优先围绕长沙、438、半包、工序、预算、图纸发散，但不要固定成同一批句式。AI 应根据当篇素材选择不同切口：价格反差、本地搜索、服务优势、风险提醒、对比判断、工序证据都可以，但一篇只选一个主切口。正文不必机械套模板，但必须完成“业主疑虑、宅师傅优势、图片证据、判断标准、自然行动入口”这几个功能。不要让每篇都以同样的开头、同样的结尾出现。\n\n宅师傅内容要优先做“优势选题库驱动”，不要被素材牵着走。AI 拿到一张水电图，不是自动写“今天水电施工记录”，而是先判断它能证明“438 不是低标准”“27 项工艺”“真实工地可看”还是“预算透明”。拿到预算表，不是简单晒报价，而是写“预算能带走再谈半包”“材料型号不写清楚容易争”。拿到材料图，不是写材料品牌有多好，而是写“材料直发工地、型号规格清楚、减少中间猫腻”。每篇只讲一个优势，用户才记得住。\n\n【转化意图 / 不要写死话术】\n\n转化意图是让用户进入免费前期服务或真实工地验证流程。核心动作包括：了解免费量房、平面图、施工图、精准预算；对比半包预算；看真实工地；确认 438 包含内容。AI 不要固定使用某几句结尾，而要根据当篇内容的优势生成入口：讲预算就引导预算对比，讲工地就引导看工地，讲付款就引导了解付款方式，讲材料就引导看材料清单。私信承接时先判断用户是在看工地、问预算、问 438 包含什么、已有报价对比，还是准备量房。然后引导用户留下小区、面积、户型、装修阶段，推进免费量房、出图、预算或工地参考。\n\n【禁止使用的表达】\n\n禁止把宅师傅写成低端低价账号，不要说“便宜半包”“普通家庭低价装修”。公开表达优先说“自住业主”“预算友好”“高标准透明半包”。禁止直接写“长沙唯一”，除非有明确证据和允许。禁止每篇堆满 438、工艺、预算、付款、材料等全部卖点，每篇只打一个主卖点。禁止把师傅拍的照片当成作品展示，要当成证据图。禁止写“高端小区都选宅师傅”。禁止机械 AI 套话，禁止夸大“零增项”“绝不加钱”等不可验证承诺。\n\n【品牌边界 / 不要写偏】\n\n宅师傅是长沙自住业主的 438 高标准透明半包，不是大宅高端半包，不是高端精装房全案改造，也不是纯设计账号。不要混用玖玖半包的“大宅、高端设计落地、图纸精算、100+ 大宅工地”等口径。宅师傅可以讲真实工地和工艺，但核心要回到 438、高标准、图纸预算可带走、付款和增项更安全。\n\n【AI生成内容时的最终判断标准】\n\n生成完宅师傅内容后，必须检查：这篇是否只讲一个宅师傅优势？是否用真实工地或预算图纸作为证据？是否解释 438 不是低标准？是否引导用户私信预算、图纸、报价或工地？是否避免写成低价号或大宅高端半包号？如果只是施工流水账或硬广套餐，就不是合格内容。\n\n如果内容里只有“我们工艺好”，要补现场证据；如果只有“438 便宜”，要补高标准和透明机制；如果只有工地图没有用户利益，要补“业主为什么要看这个细节”；如果同时讲太多卖点，要删到只剩一个主卖点。宅师傅最好的内容不是让用户觉得便宜，而是让用户觉得“这个价格还能把图纸、预算、工地和付款机制摊开讲，值得进一步问问”。"
+  },
+  "brand3": {
+    "name": "玖玖精装",
+    "knowledge": "【品牌名称】\n\n玖玖精装\n\n【给AI的使用说明】\n\n你在生成玖玖精装账号内容时，必须把玖玖精装理解为“长沙高端精装房全案改造账号”。它不是普通装修公司号，不是纯设计工作室号，不是单项定制号，也不是普通半包施工号。玖玖精装服务的是买了高端精装房、不满意开发商原始精装、希望家里更好看、更省心、更能落地的客户。内容必须围绕“高端精装房、全案改造、设计 + 改造 + 定制 + 软装一体落地、本地楼盘案例、同楼盘同户型案例匹配”来写。不要做泛装修科普，不要吸引大量低预算泛流量。小红书内容的目标不是让用户觉得装修知识很多，而是让精准客户愿意留下楼盘、面积、风格和微信，进入案例匹配流程。\n\n【品牌一句话定位】\n\n玖玖精装，是长沙高端精装房业主改造前，判断设计、改造、定制和软装能否一体落地的本地全案账号。\n\n【目标客户】\n\n核心客户是长沙高端楼盘精装房业主，尤其是瑞府等高端楼盘客户。他们房子已经买了，交付标准不低，但原始精装不完全符合个人审美和生活方式。他们不想简单将就，也不想全拆浪费；不想分别找设计、施工、定制、软装多个团队协调；不想效果图好看但现场落地翻车。第二类客户是长沙大平层、改善型住宅、高预算精装房客户，他们愿意为审美、品质、省心和确定性付费。第三类客户是已收房或即将收房，对原始精装不满意但不知道哪里该保留、哪里该微改、哪里必须重做的人。\n\n【用户核心痛点】\n\n用户真正担心的不是“找不到装修公司”，而是“精装房到底怎么改才不浪费、不混乱、不翻车”。他们担心全拆太浪费，微改又不出效果；担心只换柜子导致整体不协调；担心纯设计公司画得好看，但施工、定制、软装接不住；担心普通局改只解决局部问题，缺少整体审美；担心花了高预算，最后还是像拼凑出来的家。内容必须回答：原始精装哪些地方值得保留？哪些地方必须改？设计、改造、定制、软装如何衔接？有没有同楼盘、同户型、相近面积案例？效果图能不能真正落地？\n\n【核心心智】\n\n玖玖精装要占住的心智是：高端精装房想改得好看、省心、能落地，先看玖玖精装。这个心智包含三个利益点：好看，解决开发商原始精装审美普通、不够高级的问题；省心，解决业主不想分别协调多个团队的问题；能落地，解决效果图好看、实景翻车的问题。内容要让用户感到玖玖精装不是普通局改，也不是只出图，而是能把原创设计、高标准微改、全屋定制深化、软装搭配连成一个整体。\n\n【必须反复融入的品牌卖点】\n\n第一，高端精装房聚焦。内容要不断出现长沙、高端楼盘、瑞府、精装房、大平层、改善型住宅、本地案例等信号，筛选精准客户。第二，全案改造。设计、微改、定制、软装必须一起讲，不能只讲柜子或只讲效果图。第三，一体落地。要证明效果图能被施工、定制、软装接住，内容里适当带出真实现场、施工体系、定制安装和最终效果。第四，本地案例匹配。瑞府等高端楼盘案例是信任入口，同楼盘、同户型、相近面积、相近风格是推动私信和加微信的关键理由。第五，8000 元设计入口。表达为高审美全案设计入口，不是低价设计，用来降低客户第一次咨询和成交设计的门槛。第六，定制深化能力。定制不是卖柜子，而是把柜子、墙面、灯光、软装和现场尺寸统一起来。\n\n【可作为内容证据的素材】\n\n可使用高端楼盘案例、瑞府相关案例、4K 效果图、平面改造图、真实现场、完工案例、同楼盘同户型参考、原始精装问题对比、设计方案、定制安装现场、软装落地、施工节点、案例库、预算参考、设计费说明。注意瑞府 30+ 套等表达必须谨慎，适合写成正在设计、施工、定制推进中，不要全部说成完工案例。每个案例都要讲清楚原始精装哪里不理想、哪里保留、哪里微改、哪里必须重做、设计和定制如何衔接、最终为什么变高级。\n\n【小红书表达发散原则】\n\n标题要聚焦楼盘、面积、精装房痛点、全案落地和案例匹配，但不要写成固定标题库。AI 应根据当篇案例选择一个切口：原始精装问题、保留与微改判断、全拆风险、定制与整体设计、效果图落地、同楼盘参考、8000 元设计入口都可以。封面可使用楼盘 + 面积 + 核心改造问题，或精装房改造前后对比，避免泛装修风格图。正文可以使用案例拆解、判断清单、对比分析、真实现场等多种形式，但必须围绕精装房真实场景，不要写成通用装修知识。\n\n玖玖精装内容要少做“装修知识”，多做“精装房改造判断”。AI 写每篇内容时，要默认用户已经有一套开发商交付的精装房，问题不是从零装修，而是如何在原有基础上做取舍。选题优先围绕：哪里不建议全拆、哪里微改就够、哪里必须重做、只换柜子为什么容易乱、灯光墙面定制软装为什么要一起看、同楼盘同户型案例能提供什么判断。内容要有高端客户的克制感，不要低价刺激，不要过度制造恐慌，要让用户觉得专业、审美在线、落地稳。\n\n【转化意图 / 不要写死话术】\n\n转化意图不是直接成交，而是让客户愿意回复、留下微信、进入案例匹配，并提供楼盘、面积、风格和装修阶段。AI 可以围绕同楼盘案例、同户型案例、相近面积案例、真实现场、完工案例、设计费、改造费、定制预算等方向设计入口，但必须随着内容主题变化。讲瑞府就引导同楼盘参考，讲精装房保留与微改就引导先判断改造范围，讲定制就引导看整体衔接，讲设计费就引导了解设计入口。微信承接要说明身份、差异和获取信息，但不要每次都照搬同一段话。\n\n【禁止使用的表达】\n\n禁止把玖玖精装写成普通装修科普号、低价设计号、纯效果图号、单项定制号、半包施工号或强销号。禁止使用“便宜设计”表达 8000 元设计费，正确表达是高审美全案设计入口。禁止夸大瑞府等楼盘案例数量，未完工项目不能写成完工案例。禁止催到店、催付款、强推成交。禁止只讲审美不讲落地，也禁止只讲施工不讲审美。禁止点名负面攻击同行，禁止承诺百分百还原或绝对不翻车。\n\n【品牌边界 / 不要写偏】\n\n玖玖精装是高端精装房全案改造，不是 8K 的普通住宅设计账号，不是宅师傅的 438 半包，也不是玖玖半包的大宅施工账号。它可以讲 8000 元设计入口，但必须服务精装房全案改造；可以讲施工和定制，但必须服务一体落地；可以讲案例，但必须聚焦高端精装房、本地楼盘、同楼盘同户型案例匹配。\n\n【AI生成内容时的最终判断标准】\n\n生成完玖玖精装内容后，必须检查：这篇是否精准面向长沙高端精装房客户？是否讲清设计、改造、定制、软装一体落地？是否有楼盘、面积、原始精装问题或真实案例证据？是否引导用户留下楼盘、面积、风格进入案例匹配？是否避免写成纯设计、普通半包或泛装修科普？如果不能吸引高端精装房精准客户，就不是合格内容。\n\n如果内容只讲风格审美，要补原始精装问题和改造判断；如果只讲定制柜子，要补整体设计、墙面、灯光和软装关系；如果只讲施工现场，要补最终效果和全案落地；如果引导太销售，要改成“按楼盘和面积匹配案例”。玖玖精装的好内容应该让客户愿意说出自己的楼盘和面积，而不是只点个赞就走。"
+  },
+  "brand2": {
+    "name": "玖玖精工/半包",
+    "knowledge": "【品牌名称】\n\n玖玖半包\n\n【给AI的使用说明】\n\n你在生成玖玖半包账号内容时，必须把玖玖半包理解为“长沙大宅高标准半包施工账号”。它不是低价半包号，不是普通刚需半包号，不是纯设计审美号，也不是精装房改造号。玖玖半包要用真实工地、施工工艺、图纸精算和高端设计落地能力，吸引长沙别墅、复式、大平层、改善型住宅客户。内容的目标不是泛流量，而是让有大宅施工需求的客户愿意发图纸、留区域、约看工地、咨询半包报价。每条内容必须把专业工艺翻译成客户能理解的风险和判断标准，不要空讲工艺，不要只晒工地，不要只做销售引导。\n\n【品牌一句话定位】\n\n玖玖半包，是长沙大宅高标准半包施工账号，专注真实工地、施工工艺、图纸精算和高端设计落地。\n\n【目标客户】\n\n目标客户是长沙大宅客户，包括别墅、复式、大平层、改善型住宅业主。第一类是已经有设计图、正在找施工方的业主，他们最怕设计图落不了地、施工方看不懂复杂节点、报价漏项、现场还原翻车。第二类是大平层、复式、别墅客户，他们不追求最低价，而是重视工艺、管理、报价透明、施工确定性。第三类是想看真实工地再决策的客户，他们不信广告，更愿意看现场、工人细节、节点验收和附近工地。第四类是对报价、增项、偷工减料敏感的客户，他们需要图纸精算和清晰报价逻辑。\n\n【用户核心痛点】\n\n用户的痛点集中在施工确定性。大宅项目复杂，普通半包逻辑容易出问题。客户担心施工方只会干普通户型，不懂别墅、复式、大平层复杂节点；担心高端设计图纸现场做不出来；担心报价只按面积粗估，后期漏项增项；担心工艺标准不清，防水、水电、泥木、油漆、验收节点没有统一标准；担心只看效果图或口头承诺，没有真实工地可考察；担心半包价格低但落地差，价格高又有品牌溢价。玖玖半包内容必须反复把这些担心转化成可判断的标准。\n\n【核心心智】\n\n玖玖半包要占据的心智是：大宅半包施工拿不准，先看玖玖工地。这个心智需要三个条件同时成立：相关性，客户刷到内容觉得这就是我担心的问题；证据感，内容不是空讲标准，而是有真实工地、工艺细节、图纸落地证据；行动入口，客户看完知道下一步可以看附近工地、发图纸精算、了解半包报价。内容要让客户意识到，玖玖半包打的不是便宜半包，而是长沙大宅高标准施工里的高性价比。\n\n【必须反复融入的品牌卖点】\n\n第一，长沙本地真实工地。用本地工地、本地楼盘、本地区域匹配建立信任，客户可以看附近工地。第二，大宅施工经验。内容要围绕别墅、复式、大平层、改善型住宅的复杂节点，不写普通刚需半包逻辑。第三，高标准工艺体系。水电、防水、泥工、木工、油漆、验收节点都要讲成客户听得懂的判断标准。第四，图纸精算。承接已有设计图客户，有图纸后可以按施工标准免费精算，不是随口按面积报价。第五，高端设计落地。强调懂设计师图纸、懂复杂节点、懂还原，长期承接设计工作室高端设计施工单，能把高端设计真正落地。第六，高标准里的高性价比。不是最低价，而是在高标准施工层级里更合理，少花品牌溢价，保留施工品质。\n\n【可作为内容证据的素材】\n\n可使用正在施工的大宅工地、别墅工地、复式工地、大平层工地、水电节点、防水闭水、泥工平整度、木工吊顶、油漆基层、材料进场、节点验收、施工现场管理、图纸精算过程、半包报价结构、设计图纸与现场节点对照、设计工作室合作案例、效果图到现场落地细节。每个证据都必须转化成客户判断标准。例如看工地不要只看干不干净，要看材料进场、工艺节点、现场管理、节点是否按图纸做；讲图纸精算要说工程量、工艺、节点、材料、施工难度；讲报价要说漏项、模糊项、工艺标准不清的风险。\n\n【小红书表达发散原则】\n\n标题要直接击中大宅施工痛点，围绕长沙、大宅、半包、图纸、工地、施工、报价、设计落地等关键词发散。AI 不要使用固定标题库，而要根据当篇素材决定切口：有设计图客户、看工地客户、问报价客户、担心工艺客户、担心设计落地客户，标题和封面都应不同。封面要明确工地类型 + 痛点，优先真实工地或图纸节点，不要只放效果图。正文可按看工地、拆工艺、算图纸、讲报价、说落地等方向灵活组织，但每篇必须有施工证据、判断标准和下一步动作。\n\n玖玖半包内容要把“施工专业”翻译成“大宅业主为什么要在意”。AI 不要只写横平竖直、防水闭水、泥工平整这些术语，而要写这些细节会如何影响后期漏水、开裂、返工、预算失控、设计还原。大宅客户更看重确定性，所以内容要经常出现“先看图纸、再看工程量、再看工艺标准、最后看报价”的逻辑。对已有设计图客户，重点写图纸精算和设计落地；对没有图纸但在找施工方的客户，重点写看附近工地和同类型工地；对只问价格的客户，重点写不能只比总价。\n\n【转化意图 / 不要写死话术】\n\n小红书私信目标不是直接成交，而是让客户进入三个动作之一：看附近真实工地；了解半包报价或工价明细；已有设计图，免费精算。AI 生成入口时不要固定复读某一句话，要根据内容主题选择动作：工地内容引导区域和看工地，图纸内容引导发图纸精算，报价内容引导说明面积和图纸情况，设计落地内容引导先判断施工难点。私信承接时按回复分流：想看工地就问区域、小区、面积；想看报价就问有没有图纸和房屋类型；有图纸就引导发图纸做精算；还没设计就介绍设计 + 施工一体；只问价格就先筛选房型、图纸和标准，不直接报低价。\n\n【禁止使用的表达】\n\n禁止把玖玖半包写成低价半包，禁止说“我们便宜”“比谁都省钱”“最低价”。正确表达是“在高标准施工层级里更合理”“少花品牌溢价，保留施工品质”“不是最低价，而是高标准里的高性价比”。禁止混用宅师傅口径，包括 438 元每平米、普通家庭、免费量房出图预算、刚需透明半包、低决策成本。禁止过度承诺“先施工后付款”“零增项”“漏项公司承担”“比顶级公司便宜 20%”“100+ 工地”等，具体付款方式、适用条件、合同边界、工地数量和价格对比必须以真实政策为准。禁止公开客户隐私、成交金额、合作方内部资料、未授权截图、分成比例，也禁止点名负面评价其他公司。\n\n【品牌边界 / 不要写偏】\n\n玖玖半包是大宅高标准半包施工，不是宅师傅 438 自住业主半包，不是 8K 设计账号，也不是玖玖精装高端精装房全案改造。可以讲设计落地，但目的是证明施工能力；可以讲图纸精算，但要面向已有设计图的大宅施工客户；可以讲真实工地，但必须回到大宅、高标准、施工工艺、报价和转化。\n\n【AI生成内容时的最终判断标准】\n\n生成完玖玖半包内容后，必须检查：这篇是否明确是长沙大宅高标准半包施工？是否出现真实工地、施工工艺、图纸精算或设计落地中的至少一个核心元素？是否把专业工艺翻译成客户能懂的判断标准？是否有看附近工地、发图纸精算或了解报价参考的行动入口？是否避免了 438、普通家庭、低价半包等宅师傅口径？如果内容只是晒工地或泛施工科普，就不是合格内容。\n\n如果内容像普通施工队流水账，要补大宅场景和复杂节点；如果内容像低价半包广告，要删掉低价刺激，改成高标准里的高性价比；如果内容只讲工艺没有转化，要补看工地、发图纸或报价参考入口；如果内容借用了宅师傅 438 口径，要立即删除。玖玖半包最终要让用户产生的动作是：我有图纸，想让他们精算；我在长沙某区域，想看附近工地；我做大宅，想确认施工方能不能接住设计。"
+  }
 };
 </script>
 
 <script>
 // ====== State ======
-var state = { bImages:[], mImages:[], currentTab:'final', lastResult:{} };
-var MAX = { bImages:3, mImages:2 };
+var state = { bImages:[], mImages:[], currentTab:'final', lastResult:{}, entryMode:'new', template:'避坑型', cloudBenchmarks:[], cloudBenchmarksReady:false };
+var MAX = { bImages:3, mImages:5 };
+var DRAFT_KEY = 'laotan-xhs-workbench-draft-v2';
+var BENCHMARK_KEY = 'laotan-xhs-benchmark-library-v1';
+var PUBLISH_KEY = 'laotan-xhs-publish-records-v1';
+var AI_SETTINGS_KEY = 'laotan-xhs-ai-settings-v1';
+var BRAND_DEFAULT_VERSION = '2026-05-27-full-kb-v2';
 function $(id){return document.getElementById(id)}
 function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show')},1800)}
 
 // ====== 折叠卡片 ======
 function toggleCard(id){$(id).classList.toggle('collapsed')}
 
+// ====== 工作流控制 ======
+var MODE_LABELS = {
+  new: ['写新笔记', '填核心观点和素材'],
+  benchmark: ['拆对标', '粘贴对标标题和正文'],
+  revise: ['改旧稿', '粘贴旧稿并输入修改要求'],
+  check: ['发布检查', '检查标题、风险和私信承接']
+};
+
+function refreshWorkbench(){
+  var brandName = $('brandName') ? ($('brandName').value || $('brand').selectedOptions[0].text) : '';
+  if ($('activeBrandLabel')) $('activeBrandLabel').textContent = brandName || '未选择';
+  if ($('activeModeLabel')) $('activeModeLabel').textContent = (MODE_LABELS[state.entryMode] || MODE_LABELS.new)[0];
+  if ($('nextStepLabel')) $('nextStepLabel').textContent = (MODE_LABELS[state.entryMode] || MODE_LABELS.new)[1];
+  if ($('modelHint')) {
+    var model = $('modelSelect') ? $('modelSelect').value : 'gpt-5.5';
+    var reasoning = $('reasoningSelect') ? $('reasoningSelect').value : 'medium';
+    var text = {low:'快', medium:'均衡', high:'精修'}[reasoning] || reasoning;
+    $('modelHint').textContent = '当前：' + model + ' / ' + text + '。越强越慢，快档适合批量试稿。';
+  }
+  document.querySelectorAll('.mode-btn').forEach(function(btn){
+    btn.classList.toggle('active', btn.dataset.mode === state.entryMode);
+  });
+}
+
+function loadAiSettings(){
+  try {
+    var s = JSON.parse(localStorage.getItem(AI_SETTINGS_KEY) || '{}');
+    if ($('modelSelect')) $('modelSelect').value = 'gpt-5.5';
+    if ($('reasoningSelect') && s.reasoning) $('reasoningSelect').value = s.reasoning;
+  } catch(e) {}
+}
+function saveAiSettings(){
+  localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify({
+    model: $('modelSelect') ? $('modelSelect').value : 'gpt-5.5',
+    reasoning: $('reasoningSelect') ? $('reasoningSelect').value : 'medium'
+  }));
+}
+
+function markStage(stage){
+  var map = {brand:'cardBrand', benchmark:'cardBenchmark', mine:'cardMine', generate:null, revise:null, check:null};
+  document.querySelectorAll('[data-stage]').forEach(function(el){ el.classList.remove('active-stage'); });
+  document.querySelectorAll('.step-btn').forEach(function(btn){ btn.classList.toggle('active', btn.dataset.step === stage); });
+  var id = map[stage];
+  var el = id ? $(id) : document.querySelector('.output-card');
+  if (el) el.classList.add('active-stage');
+}
+
+function jumpToStage(stage){
+  markStage(stage);
+  if (stage === 'revise') {
+    switchTab('final', document.querySelector('#tabs .tab'));
+    $('resultFinal').placeholder = '把旧稿粘贴到这里，再在底部输入修改要求。';
+  }
+  if (stage === 'check') {
+    switchTab('check', document.querySelectorAll('#tabs .tab')[3]);
+    seedPublishCheck();
+  }
+  var target = stage === 'brand' ? $('cardBrand') :
+    stage === 'benchmark' ? $('cardBenchmark') :
+    stage === 'mine' ? $('cardMine') : document.querySelector('.output-card');
+  if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function setMode(mode, silent){
+  state.entryMode = mode || 'new';
+  if (state.entryMode === 'benchmark') jumpToStage('benchmark');
+  else if (state.entryMode === 'revise') jumpToStage('revise');
+  else if (state.entryMode === 'check') jumpToStage('check');
+  else jumpToStage('mine');
+  refreshWorkbench();
+  if (!silent) toast('已切换：' + (MODE_LABELS[state.entryMode] || MODE_LABELS.new)[0]);
+}
+
+function selectBrand(slot, silent){
+  if (!DEFAULT_BRANDS[slot]) return;
+  $('brand').value = slot;
+  loadBrandKb();
+  refreshWorkbench();
+  if (!silent) toast('已选择：' + $('brandName').value);
+}
+
+function seedPublishCheck(){
+  if (!$('resultCheck').textContent.trim()) {
+    $('resultCheck').textContent = '发布前检查清单：\n\n1. 标题有没有具体痛点，不要太像广告。\n2. 开头前三行有没有让业主继续看下去。\n3. 正文有没有真实场景、客户问题或案例细节。\n4. 有没有绝对承诺、恐吓式表达、贬低具体公司。\n5. 结尾有没有自然私信承接：小区、面积、阶段、报价/合同截图。\n6. 标签是否围绕长沙装修、装修避坑、报价、合同、账号品牌。';
+  }
+}
+
+function fillStarter(){
+  var brand = $('brandName').value || $('brand').selectedOptions[0].text;
+  var starters = {
+    brand5: ['装修前不要先问总价，先看清报价和合同边界。', '客户已经拿到报价/合同，担心低价签约后增项，想知道现在该先看哪里。', '报价风险、合同付款节点、小区面积、装修阶段', '绝对省钱、保证零风险、点名攻击具体公司'],
+    brand4: ['普通家庭做半包，最怕的不是贵，而是预算没算清。', '长沙普通家庭准备装修，想先知道自己家半包大概要多少钱，担心增项和先交钱。', '438半包、免费量房、免费平面图、精准预算、先施工后付款', '把438说成所有客户最终价、绝对零增项'],
+    brand1: ['好看的设计不应该只停在效果图里，还要能落地。', '业主喜欢高审美风格，但担心设计费贵、图纸落不了地、施工跟不上。', '4K效果图、设计费清晰、同风格案例、设计落地', '高端大气、保证完全复刻、绝对省钱'],
+    brand3: ['精装房改造不是堆软装，是重新做生活方式。', '高端楼盘业主不满意原始精装，想看同楼盘同户型改造参考。', '高端楼盘、精装改造、瑞府案例、全案交付、4K效果图', '低价感、保证零增项、完全复刻'],
+    brand2: ['半包施工靠不靠谱，先看真实工地和图纸核算。', '业主已有设计图，正在找施工方，最担心施工翻车和报价不透明。', '真实工地、半包施工、图纸精算、工艺标准、附近工地', '最低价、保证永远不出问题']
+  };
+  var item = starters[$('brand').value] || starters.brand4;
+  if (!$('core').value) $('core').value = item[0];
+  if (!$('myNotes').value) $('myNotes').value = item[1];
+  if (!$('must').value) $('must').value = item[2];
+  if (!$('avoid').value) $('avoid').value = item[3];
+  jumpToStage('mine');
+  toast('已填入 ' + brand + ' 起稿框架');
+}
+
+function formIds(){
+  return ['bUrl','bTitle','bText','bAnalysis','brand','brandName','knowledgeText','core','myNotes','must','avoid','resultFinal','chatInput'];
+}
+
+function collectDraft(){
+  var values = {};
+  formIds().forEach(function(id){
+    if ($(id)) values[id] = $(id).value || '';
+  });
+  return {
+    savedAt: Date.now(),
+    values: values,
+    mode: state.entryMode,
+    tab: state.currentTab,
+    resultTitles: $('resultTitles') ? $('resultTitles').textContent : '',
+    resultScript: $('resultScript') ? $('resultScript').textContent : '',
+    resultCheck: $('resultCheck') ? $('resultCheck').textContent : '',
+    resultStory: $('resultStory') ? $('resultStory').textContent : '',
+    images: {
+      benchmark: state.bImages.slice(0, MAX.bImages),
+      mine: state.mImages.slice(0, MAX.mImages)
+    }
+  };
+}
+
+function saveDraft(silent){
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(collectDraft()));
+    if (!silent) toast('草稿已保存');
+  } catch (e) {
+    if (!silent) toast('草稿保存失败，内容可能太大');
+  }
+}
+
+function restoreDraft(){
+  var raw = localStorage.getItem(DRAFT_KEY);
+  if (!raw) return false;
+  try {
+    var draft = JSON.parse(raw);
+    Object.keys(draft.values || {}).forEach(function(id){
+      if ($(id) && id !== 'knowledgeText') $(id).value = draft.values[id] || '';
+    });
+    if (draft.values && draft.values.brand && DEFAULT_BRANDS[draft.values.brand]) {
+      $('brand').value = draft.values.brand;
+      loadBrandKb();
+    }
+    if (draft.values && draft.values.knowledgeText) $('knowledgeText').value = draft.values.knowledgeText;
+    if ($('resultTitles')) $('resultTitles').textContent = draft.resultTitles || '';
+    if ($('resultScript')) $('resultScript').textContent = draft.resultScript || '';
+    if ($('resultCheck')) $('resultCheck').textContent = draft.resultCheck || '';
+    if ($('resultStory')) $('resultStory').textContent = draft.resultStory || '';
+    state.bImages = Array.isArray(draft.images && draft.images.benchmark) ? draft.images.benchmark.slice(0, MAX.bImages) : [];
+    state.mImages = Array.isArray(draft.images && draft.images.mine) ? draft.images.mine.slice(0, MAX.mImages) : [];
+    showThumbs('bThumbs','bImages','bLabel');
+    showThumbs('mThumbs','mImages','mLabel');
+    updateUploadLabel('bLabel','bImages');
+    updateUploadLabel('mLabel','mImages');
+    state.entryMode = draft.mode || 'new';
+    state.currentTab = draft.tab || 'final';
+    var tabOrder = ['final','titles','script','check','story'];
+    var tabIndex = Math.max(0, tabOrder.indexOf(state.currentTab));
+    switchTab(state.currentTab, document.querySelectorAll('#tabs .tab')[tabIndex]);
+    updateKbMeter();
+    updateWordCount();
+    refreshWorkbench();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function clearDraft(){
+  if (!confirm('确认清空小红书当前草稿？品牌知识库不会删除。')) return;
+  localStorage.removeItem(DRAFT_KEY);
+  ['bUrl','bTitle','bText','bAnalysis','core','myNotes','must','avoid','resultFinal','chatInput'].forEach(function(id){
+    if ($(id)) $(id).value = '';
+  });
+  ['resultTitles','resultScript','resultCheck','resultStory'].forEach(function(id){
+    if ($(id)) $(id).textContent = '';
+  });
+  state.bImages = [];
+  state.mImages = [];
+  showThumbs('bThumbs','bImages','bLabel');
+  showThumbs('mThumbs','mImages','mLabel');
+  updateUploadLabel('bLabel','bImages');
+  updateUploadLabel('mLabel','mImages');
+  updateWordCount();
+  toast('草稿已清空');
+}
+
+function getBenchmarks(){
+  if (state.cloudBenchmarksReady) return state.cloudBenchmarks || [];
+  try { return JSON.parse(localStorage.getItem(BENCHMARK_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+
+function setBenchmarks(items){
+  localStorage.setItem(BENCHMARK_KEY, JSON.stringify(items.slice(0, 20)));
+  state.cloudBenchmarks = items.slice(0, 80);
+  state.cloudBenchmarksReady = true;
+  renderBenchmarkLibrary();
+}
+
+function loadCloudBenchmarks(){
+  return fetch('/api/xhs-benchmarks')
+    .then(function(r){ if(!r.ok) throw new Error('cloud failed'); return r.json(); })
+    .then(function(j){
+      state.cloudBenchmarks = Array.isArray(j.items) ? j.items : [];
+      state.cloudBenchmarksReady = true;
+      renderBenchmarkLibrary();
+    }).catch(function(){
+      state.cloudBenchmarksReady = false;
+      renderBenchmarkLibrary();
+    });
+}
+
+function saveBenchmark(){
+  var url = ($('bUrl').value || '').trim();
+  var title = ($('bTitle').value || '').trim();
+  var text = ($('bText').value || '').trim();
+  var analysis = ($('bAnalysis').value || '').trim();
+  if (!url && !title && !text && !analysis) {
+    toast('先放一点对标内容再保存');
+    return;
+  }
+  var item = {
+    id: Date.now(),
+    brand: $('brandName').value || $('brand').selectedOptions[0].text,
+    url: url,
+    title: title || '未命名对标',
+    text: text,
+    notes: '',
+    analysis: analysis,
+    savedAt: new Date().toLocaleString()
+  };
+  fetch('/api/xhs-benchmarks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({item:item})})
+    .then(function(r){ if(!r.ok) throw new Error('cloud save failed'); return r.json(); })
+    .then(function(j){
+      setBenchmarks(Array.isArray(j.items) ? j.items : [j.item].concat(getBenchmarks()));
+      toast('已保存到云端对标库');
+    }).catch(function(){
+      var items = getBenchmarks();
+      items.unshift(item);
+      setBenchmarks(items);
+      toast('云端暂不可用，已先保存到本地');
+    });
+}
+
+function loadBenchmark(id){
+  var item = getBenchmarks().find(function(x){ return String(x.id) === String(id); });
+  if (!item) return;
+  $('bUrl').value = item.url || '';
+  $('bTitle').value = item.title || '';
+  $('bText').value = item.text || '';
+  $('bAnalysis').value = item.analysis || '';
+  jumpToStage('benchmark');
+  toast('已载入对标：' + (item.title || '未命名'));
+}
+
+function deleteBenchmark(id, event){
+  if (event) event.stopPropagation();
+  fetch('/api/xhs-benchmarks?id='+encodeURIComponent(id),{method:'DELETE'})
+    .then(function(r){ if(!r.ok) throw new Error('cloud delete failed'); return r.json(); })
+    .then(function(j){
+      setBenchmarks(Array.isArray(j.items) ? j.items : getBenchmarks().filter(function(x){ return String(x.id) !== String(id); }));
+      toast('已从云端删除');
+    }).catch(function(){
+      var items = getBenchmarks().filter(function(x){ return String(x.id) !== String(id); });
+      setBenchmarks(items);
+      toast('已删除本地对标');
+    });
+}
+
+function renderBenchmarkLibrary(){
+  var box = $('benchmarkLibrary');
+  if (!box) return;
+  var items = getBenchmarks();
+  if (!items.length) {
+    box.innerHTML = '<div class="mini-library-empty">还没有保存对标。拆完一篇好笔记后，点“保存当前对标”，三台电脑都能调用。</div>';
+    return;
+  }
+  box.innerHTML = items.slice(0, 5).map(function(item){
+    return '<button class="mini-library-item" type="button" onclick="loadBenchmark('+item.id+')"><strong>'+escapeHtml(item.title || '未命名对标')+'</strong><span>'+escapeHtml((item.brand || '') + ' · ' + (item.savedAt || ''))+'</span><span><a href="#" onclick="deleteBenchmark('+item.id+', event)">删除</a></span></button>';
+  }).join('');
+}
+
+function escapeHtml(text){
+  return String(text || '').replace(/[&<>"']/g, function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+
+function getPublishRecords(){
+  try { return JSON.parse(localStorage.getItem(PUBLISH_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+
+function setPublishRecords(items){
+  localStorage.setItem(PUBLISH_KEY, JSON.stringify(items.slice(0, 30)));
+  renderPublishRecords();
+}
+
+function firstLine(text){
+  return String(text || '').split('\n').map(function(x){return x.trim()}).filter(Boolean)[0] || '未命名笔记';
+}
+
+function savePublishRecord(){
+  var finalText = ($('resultFinal').value || '').trim();
+  if (!finalText) {
+    toast('先生成或粘贴正文，再沉淀记录');
+    jumpToStage('generate');
+    return;
+  }
+  var records = getPublishRecords();
+  records.unshift({
+    id: Date.now(),
+    brand: $('brandName').value || $('brand').selectedOptions[0].text,
+    mode: (MODE_LABELS[state.entryMode] || MODE_LABELS.new)[0],
+    title: firstLine(finalText).replace(/^标题[:：]\s*/, ''),
+    text: finalText,
+    check: $('resultCheck').textContent || '',
+    createdAt: new Date().toLocaleString(),
+    status: '待发布/待复盘'
+  });
+  setPublishRecords(records);
+  toast('已沉淀为发布记录');
+}
+
+function loadPublishRecord(id){
+  var item = getPublishRecords().find(function(x){ return String(x.id) === String(id); });
+  if (!item) return;
+  $('resultFinal').value = item.text || '';
+  $('resultCheck').textContent = item.check || '';
+  switchTab('final', document.querySelector('#tabs .tab'));
+  jumpToStage('generate');
+  updateWordCount();
+  toast('已载入发布记录');
+}
+
+function deletePublishRecord(id, event){
+  if (event) event.stopPropagation();
+  setPublishRecords(getPublishRecords().filter(function(x){ return String(x.id) !== String(id); }));
+  toast('已删除发布记录');
+}
+
+function renderPublishRecords(){
+  var box = $('publishRecords');
+  if (!box) return;
+  var records = getPublishRecords();
+  if (!records.length) {
+    box.innerHTML = '<div class="mini-library-empty">还没有发布记录。生成正文后点“沉淀记录”，后面就可以做复盘和数据化。</div>';
+    return;
+  }
+  box.innerHTML = records.slice(0, 6).map(function(item){
+    return '<button class="mini-library-item" type="button" onclick="loadPublishRecord('+item.id+')"><strong>'+escapeHtml(item.title || '未命名笔记')+'</strong><span>'+escapeHtml((item.brand || '') + ' · ' + (item.mode || '') + ' · ' + (item.status || ''))+'</span><span>'+escapeHtml(item.createdAt || '')+' · <a href="#" onclick="deletePublishRecord('+item.id+', event)">删除</a></span></button>';
+  }).join('');
+}
+
 // ====== 品牌知识库 ======
 function kbKey(){return 'laotan-xhs-kb-'+($('brand').value||'brand1')}
 function kbNameKey(){return kbKey()+'-name'}
+function kbVersionKey(){return kbKey()+'-version'}
+function shouldUseDefaultKb(slot, saved, def){
+  if (!saved) return true;
+  var savedVersion = localStorage.getItem(kbVersionKey());
+  if (slot === 'brand5' && savedVersion !== BRAND_DEFAULT_VERSION && saved.length < 1200 && (def.knowledge || '').length > saved.length) return true;
+  return false;
+}
 function loadBrandKb(){
   var slot=$('brand').value, def=DEFAULT_BRANDS[slot]||{};
-  $('brandName').value = localStorage.getItem(kbNameKey()) || def.name || '';
-  $('knowledgeText').value = localStorage.getItem(kbKey()) || def.knowledge || '';
+  var savedName = localStorage.getItem(kbNameKey());
+  var savedKb = localStorage.getItem(kbKey());
+  var useDefault = shouldUseDefaultKb(slot, savedKb, def);
+  $('brandName').value = useDefault ? (def.name || '') : (savedName || def.name || '');
+  $('knowledgeText').value = useDefault ? (def.knowledge || '') : savedKb;
+  if (useDefault) {
+    localStorage.setItem(kbKey(), def.knowledge || '');
+    localStorage.setItem(kbNameKey(), def.name || '');
+    localStorage.setItem(kbVersionKey(), BRAND_DEFAULT_VERSION);
+  }
   updateKbMeter();
+  refreshWorkbench();
 }
 function saveBrandKb(){
   localStorage.setItem(kbKey(), $('knowledgeText').value);
   localStorage.setItem(kbNameKey(), $('brandName').value);
+  localStorage.setItem(kbVersionKey(), BRAND_DEFAULT_VERSION);
   toast('品牌资料已保存'); updateKbMeter();
 }
 function resetBrandKb(){
@@ -484,6 +1316,7 @@ function resetBrandKb(){
   var def=DEFAULT_BRANDS[$('brand').value]||{};
   $('knowledgeText').value=def.knowledge||''; $('brandName').value=def.name||'';
   localStorage.removeItem(kbKey()); localStorage.removeItem(kbNameKey());
+  localStorage.removeItem(kbVersionKey());
   toast('已恢复默认'); updateKbMeter();
 }
 function autoSaveBrandName(){localStorage.setItem(kbNameKey(),$('brandName').value)}
@@ -505,40 +1338,75 @@ function handleFiles(files, key, labelId, thumbId){
     reader.onload=function(ev){
       state[key].push({name:file.name, dataUrl:ev.target.result, size:Math.round(ev.target.result.length*0.75)});
       showThumbs(thumbId, key, labelId);
-      var span=label.querySelector('span');
-      if(span) span.textContent='已选 '+state[key].length+' 张，点击换图';
-      label.classList.add('has-img');
+      updateUploadLabel(labelId, key);
+      saveDraft(true);
     };
     reader.readAsDataURL(file);
   });
   if(fileInput) fileInput.value='';
 }
+function updateUploadLabel(labelId, key){
+  var label=$(labelId), span=label ? label.querySelector('span') : null;
+  if(!label || !span) return;
+  if(state[key].length===0){
+    label.classList.remove('has-img');
+    span.textContent=key==='bImages'?'上传小红书对标截图':'上传效果图 / 实拍 / 报价截图';
+  } else {
+    label.classList.add('has-img');
+    span.textContent='已选 '+state[key].length+' 张，点击继续添加';
+  }
+}
 function showThumbs(thumbId, key, labelId){
-  var box=$(thumbId); box.innerHTML='';
+  var box=$(thumbId);
+  if(!box) return;
+  box.innerHTML='';
   state[key].forEach(function(img,i){
     var d=document.createElement('div');
     d.className='thumb-wrap';
-    d.innerHTML='<img src="'+img.dataUrl+'" alt="缩略图"><button class="del" onclick="delImg(\''+key+'\','+i+',\''+thumbId+'\',\''+labelId+'\')">×</button>';
+    d.innerHTML='<img src="'+img.dataUrl+'" alt="缩略图"><button class="del" type="button" onclick="delImg(\''+key+'\','+i+',\''+thumbId+'\',\''+labelId+'\')">×</button>';
     box.appendChild(d);
   });
 }
 function delImg(key, i, thumbId, lid){
-  state[key].splice(i,1); showThumbs(thumbId, key, lid);
-  var label=$(lid), span=label.querySelector('span');
-  if(state[key].length===0){
-    label.classList.remove('has-img');
-    if(span) span.textContent=key==='bImages'?'点击选择对标截图':'点击选择效果图';
-  } else {
-    if(span) span.textContent='已选 '+state[key].length+' 张，点击换图';
+  state[key].splice(i,1);
+  showThumbs(thumbId, key, lid);
+  updateUploadLabel(lid, key);
+  saveDraft(true);
+}
+
+// ====== 对标粘贴智能识别 ======
+function splitTitleAndBody(raw){
+  var lines = String(raw || '').replace(/\r/g, '').split('\n');
+  var useful = lines.map(function(x){ return x.trim(); }).filter(Boolean);
+  if (!useful.length) return { title: '', body: '' };
+  var first = useful[0].replace(/^标题[:：]\s*/, '');
+  var shouldUseFirstAsTitle = first.length <= 48 && useful.length >= 2;
+  return {
+    title: shouldUseFirstAsTitle ? first : '',
+    body: shouldUseFirstAsTitle ? useful.slice(1).join('\n') : useful.join('\n')
+  };
+}
+
+function normalizeBenchmarkPaste(force){
+  var title = ($('bTitle').value || '').trim();
+  var text = ($('bText').value || '').trim();
+  if (!text) return;
+  var parsed = splitTitleAndBody(text);
+  if (parsed.title && (!title || force)) {
+    $('bTitle').value = parsed.title;
+    $('bText').value = parsed.body;
+    toast('已自动识别第一行为标题');
   }
 }
 
 // ====== 数据收集 ======
 function getData(){
+  normalizeBenchmarkPaste(false);
   return {
+    benchmarkUrl: ($('bUrl').value||'').slice(0,500),
     benchmarkTitle: ($('bTitle').value||'').slice(0,500),
     benchmarkText: ($('bText').value||'').slice(0,1200),
-    benchmarkNotes: ($('bNotes').value||'').slice(0,800),
+    benchmarkNotes: '',
     benchmarkAnalysis: ($('bAnalysis').value||'').slice(0,800),
     brandSlot: $('brand').value,
     brandName: ($('brandName').value||$('brand').selectedOptions[0].text).slice(0,80),
@@ -547,10 +1415,12 @@ function getData(){
     myNotes: ($('myNotes').value||'').slice(0,1000),
     mustSay: ($('must').value||'').slice(0,300),
     avoidSay: ($('avoid').value||'').slice(0,300),
-    audience: $('audience').value,
-    pageCount: $('pages').value,
-    mode: '快速生成',
-    template: '避坑型',
+    audience: '长沙准备装修的业主',
+    pageCount: '6',
+    mode: state.entryMode,
+    template: state.template,
+    aiModel: $('modelSelect') ? $('modelSelect').value : 'gpt-5.5',
+    reasoningEffort: $('reasoningSelect') ? $('reasoningSelect').value : 'medium',
     skills: ['去 AI 味','小红书爆款结构','故事化表达','强冲突标题','老谭装修顾问语气'],
     imageCounts: {benchmark:state.bImages.length, mine:state.mImages.length},
     images: {
@@ -584,17 +1454,43 @@ function updateWordCount(){
 function copyCurrent(){
   var text;
   if(state.currentTab==='final'){
-    text=$('resultFinal').value;
+    text=formatXhsDisplayText($('resultFinal').value);
   } else {
     var el=$('result'+state.currentTab.charAt(0).toUpperCase()+state.currentTab.slice(1));
     text=el.textContent;
   }
   copyText(text);
 }
-function copyFinal(){copyText($('resultFinal').value)}
+function copyFinal(){copyText(formatXhsDisplayText($('resultFinal').value))}
 function copyText(text){
   if(!text||text==='等待生成...'){toast('没有内容，请先生成');return}
   navigator.clipboard.writeText(text).then(function(){toast('已复制')}).catch(function(){toast('复制失败')});
+}
+
+function formatXhsDisplayText(value){
+  var s = String(value || '')
+    .replace(/\r/g, '')
+    .replace(/[\u2028\u2029]/g, '\n')
+    .replace(/<br\s*\/?>(?!\n)/gi, '\n')
+    .replace(/\s*([|｜])\s*/g, '\n\n')
+    .replace(/([。！？；])(?=\S)/g, '$1\n\n');
+  var lines = s.split('\n').map(function(x){ return x.trim(); }).filter(Boolean);
+  var out = [];
+  lines.forEach(function(line){
+    if (/^(标题|最终正文|正文|标签|#)/.test(line) || line.length <= 34) {
+      out.push(line);
+      return;
+    }
+    var parts = line.replace(/([。！？；])\s*/g, '$1\n').split('\n').map(function(x){ return x.trim(); }).filter(Boolean);
+    var buf = '';
+    parts.forEach(function(part){
+      if (!buf) buf = part;
+      else if ((buf + part).length <= 42) buf += part;
+      else { out.push(buf); buf = part; }
+    });
+    if (buf) out.push(buf);
+  });
+  return out.join('\n\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
 // ====== API ======
@@ -603,8 +1499,100 @@ function postAPI(data){
     .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error(t.slice(0,500))});return r.json()});
 }
 
+function parseApiError(e){
+  var raw = String(e && e.message ? e.message : e || '');
+  try {
+    var j = JSON.parse(raw);
+    return [j.error, j.status, j.detail, j.tip].filter(Boolean).join('｜');
+  } catch (_) {
+    return raw;
+  }
+}
+
+function localBenchmarkAnalysis(){
+  normalizeBenchmarkPaste(false);
+  var title = ($('bTitle').value || firstLine($('bText').value)).trim();
+  var text = ($('bText').value || '').trim();
+  var notes = '学习标题钩子、开头痛点、段落节奏、结尾引导，但不照抄表达。';
+  var lines = text.split('\n').map(function(x){return x.trim();}).filter(Boolean);
+  var opening = lines.slice(0, 2).join(' / ') || '开头需要先把用户带入具体场景。';
+  var middle = lines.slice(2, Math.min(lines.length, 7)).join(' / ') || '正文需要拆成痛点、判断标准、案例证据、行动入口。';
+  return [
+    '本地拆解结果（接口异常时可用）：',
+    '',
+    '标题钩子：' + (title || '标题需要补一个具体痛点'),
+    '开头痛点：' + opening,
+    '正文结构：先抛用户正在纠结的问题，再给判断标准，然后放证据/案例，最后给低压力私信入口。',
+    '段落节奏：短句、分段、每段只讲一个判断，不要写成广告说明书。',
+    '情绪推进：从“我也担心”推进到“我知道该看哪里”，避免恐吓和绝对承诺。',
+    '结尾引导：围绕当前品牌，让用户发小区/面积/报价/合同/图纸/风格中的一个具体信息。',
+    '可借鉴点：' + notes,
+    '禁止照抄：不要复用原文句子、案例细节和夸张承诺，只借结构和转化动作。'
+  ].join('\n');
+}
+
+function localGenerateResult(reason){
+  normalizeBenchmarkPaste(false);
+  var brand = ($('brandName').value || $('brand').selectedOptions[0].text || '当前品牌').trim();
+  var core = ($('core').value || $('bTitle').value || '装修前先把判断标准搞清楚').trim();
+  var notes = ($('myNotes').value || $('bText').value || '补充一个真实客户场景、楼盘面积、报价/图纸/效果图细节，会更像真人内容。').trim();
+  var must = ($('must').value || '').trim();
+  var avoid = ($('avoid').value || '绝对承诺、夸大恐吓、点名攻击同行').trim();
+  var ctaMap = {
+    brand5: '如果你也拿不准，可以把面积、阶段和报价/合同关键页发我，我先帮你看风险点。',
+    brand4: '想先知道自己家半包大概要多少钱，可以发小区、面积和阶段，先做一版预算判断。',
+    brand1: '想看同面积同风格案例，可以发面积和喜欢的风格，我帮你匹配参考。',
+    brand3: '如果是精装房想改，可以发楼盘、面积和想保留/想改的地方，先判断改造范围。',
+    brand2: '如果已有设计图，可以先发图纸和面积，先看施工难点和报价边界。'
+  };
+  var cta = ctaMap[$('brand').value] || '可以发你的具体情况，我先帮你判断下一步。';
+  var title = core.length > 24 ? core.slice(0, 24) : core;
+  var finalText = [
+    title,
+    '',
+    '很多长沙业主不是不想好好装修，是一开始就不知道该先看什么。',
+    '',
+    notes.slice(0, 220),
+    '',
+    '这件事别只听一句总价，也别只看一张好看的图。',
+    '',
+    '你至少要先看三件事：',
+    '1. 当前方案到底解决了什么问题',
+    '2. 报价/服务边界有没有写清楚',
+    '3. 后面谁负责落地，怎么验收和确认',
+    '',
+    must ? '这篇必须抓住：' + must : '判断清楚以后，再决定要不要往下谈。',
+    '',
+    cta,
+    '',
+    '#' + brand.replace(/\s+/g, '') + ' #长沙装修 #小红书装修'
+  ].join('\n');
+  return {
+    final: finalText,
+    titles: [
+      '1. ' + title,
+      '2. 长沙装修，先别急着听总价',
+      '3. 这一步没看清，后面很容易乱',
+      '4. 装修前先把判断标准拿到手',
+      '5. 别被一句话带着签'
+    ].join('\n'),
+    script: [
+      '第1页：封面大字，突出一个具体痛点：' + title,
+      '第2页：用户场景，写小区/面积/阶段/担心点',
+      '第3页：拆第一个判断标准',
+      '第4页：放证据，报价/图纸/工地/效果图细节',
+      '第5页：给对照清单',
+      '第6页：自然私信入口，问一个具体信息'
+    ].join('\n'),
+    check: '本地生成说明：大模型接口暂时异常，已生成可编辑初稿。\n\n发布前检查：\n1. 是否补了真实小区/面积/客户阶段。\n2. 是否保留当前品牌口径：' + brand + '。\n3. 是否避开：' + avoid + '。\n4. 结尾是否只让用户做一个低成本动作。\n\n接口错误：' + (reason || '未知'),
+    story: '本地灵感拆解：用对标结构，不照搬原文；用当前品牌知识库确定边界；用你的素材补真实感。',
+    localFallback: true
+  };
+}
+
 // ====== 拆解对标 ======
 function doAnalyze(){
+  normalizeBenchmarkPaste(true);
   var btn=$('btnAnalyze'); btn.disabled=true; btn.textContent='拆解中...';
   postAPI({action:'benchmark-analysis',input:getData()})
     .then(function(json){
@@ -612,8 +1600,9 @@ function doAnalyze(){
       $('bAnalysis').value=typeof ba==='string'?ba:JSON.stringify(ba,null,2);
       toast('拆解完成');
     }).catch(function(e){
-      $('bAnalysis').value='失败：'+String(e.message||e).slice(0,300);
-      toast('拆解失败');
+      var reason = parseApiError(e);
+      $('bAnalysis').value=localBenchmarkAnalysis() + '\n\n接口错误：' + reason.slice(0,300);
+      toast('接口异常，已用本地拆解');
     }).finally(function(){
       btn.disabled=false; btn.textContent='拆解对标文案';
     });
@@ -621,8 +1610,9 @@ function doAnalyze(){
 
 // ====== 生成 ======
 function doGenerate(){
-  var btn=$('btnGenerate'); btn.disabled=true; btn.textContent='生成中（20-40秒）...';
-  $('resultFinal').value='⏳ Claude Opus 正在生成...';
+  normalizeBenchmarkPaste(false);
+  var btn=$('btnGenerate'); btn.disabled=true; btn.textContent='生成中（GPT-5.5 可能需要30-90秒）...';
+  $('resultFinal').value='正在生成...';
   postAPI({action:'generate',input:getData()})
     .then(function(json){
       state.lastResult=json;
@@ -630,11 +1620,19 @@ function doGenerate(){
       switchTab('final', document.querySelector('#tabs .tab'));
       updateWordCount();
       var rs=json.readState||{};
-      $('status').innerHTML='<span class="badge badge-blue">Opus 4.7</span>'+(rs.imageReadable?'<span class="badge badge-ok">识图:正常</span>':'');
+      var model = rs.model || ($('modelSelect') ? $('modelSelect').value : 'GPT');
+      var reasoning = rs.reasoning || ($('reasoningSelect') ? $('reasoningSelect').value : '');
+      $('status').innerHTML='<span class="badge badge-blue">'+escapeHtml(model)+'</span>'+(reasoning?'<span class="badge badge-ok">推理:'+escapeHtml(reasoning)+'</span>':'')+(rs.imageReadable?'<span class="badge badge-ok">识图:正常</span>':'');
       toast('生成完成');
     }).catch(function(e){
-      $('resultFinal').value='生成失败：'+String(e.message||e).slice(0,500);
-      toast('生成失败');
+      var reason = parseApiError(e);
+      var local = localGenerateResult(reason);
+      state.lastResult=local;
+      showResult(local);
+      switchTab('final', document.querySelector('#tabs .tab'));
+      updateWordCount();
+      $('status').innerHTML='<span class="badge badge-warn">接口异常</span><span class="badge badge-ok">本地可用</span>';
+      toast('接口异常，已生成本地初稿');
     }).finally(function(){
       btn.disabled=false; btn.textContent='生成小红书图文方案';
     });
@@ -643,7 +1641,7 @@ function doGenerate(){
 function showResult(json){
   var f=json.final||'';
   if(typeof f==='object') f=JSON.stringify(f,null,2);
-  $('resultFinal').value=f||'（无内容）';
+  $('resultFinal').value=f ? formatXhsDisplayText(f) : '（无内容）';
   $('resultTitles').textContent=json.titles||'';
   $('resultScript').textContent=json.script||'';
   $('resultCheck').textContent=json.check||'';
@@ -695,12 +1693,82 @@ function addChatMsg(role, text){
 }
 $('chatInput').onkeydown=function(e){if(e.key==='Enter')doChat()};
 
+// ====== 工作台入口参数 ======
+function applyWorkspaceEntry(){
+  var params = new URLSearchParams(location.search);
+  var brand = params.get('brand') || '';
+  var mode = params.get('mode') || '';
+  var brandMap = {
+    laotan: 'brand5',
+    zsf: 'brand4',
+    '8k': 'brand1',
+    jjz: 'brand3',
+    jjg: 'brand2'
+  };
+  if (brandMap[brand]) brand = brandMap[brand];
+  if (DEFAULT_BRANDS[brand]) {
+    selectBrand(brand, true);
+  }
+  if (!mode && !brand) { refreshWorkbench(); return; }
+
+  var modeText = {
+    new: '写新笔记',
+    benchmark: '拆对标',
+    revise: '改旧稿',
+    check: '发布检查'
+  }[mode] || '写新笔记';
+
+  var target = null;
+  if (mode === 'benchmark') {
+    target = $('cardBenchmark');
+    $('bTitle').focus();
+    state.entryMode = 'benchmark';
+    markStage('benchmark');
+  } else if (mode === 'revise') {
+    target = document.querySelector('.output-card');
+    switchTab('final', document.querySelector('#tabs .tab'));
+    if (!$('resultFinal').value) {
+      $('resultFinal').placeholder = '把旧稿粘贴到这里，再在底部输入修改要求。';
+    }
+    $('resultFinal').focus();
+    state.entryMode = 'revise';
+    markStage('revise');
+  } else if (mode === 'check') {
+    target = document.querySelector('.output-card');
+    switchTab('check', document.querySelectorAll('#tabs .tab')[3]);
+    seedPublishCheck();
+    state.entryMode = 'check';
+    markStage('check');
+  } else {
+    target = $('cardMine');
+    $('core').focus();
+    if (!$('core').value) $('core').placeholder = '今天这篇想讲清楚的一个判断，比如：装修前不要只问总价。';
+    state.entryMode = 'new';
+    markStage('mine');
+  }
+
+  if (target) setTimeout(function(){ target.scrollIntoView({behavior:'smooth', block:'start'}); }, 120);
+  refreshWorkbench();
+  toast('已进入：' + ($('brandName').value || $('brand').selectedOptions[0].text) + '｜' + modeText);
+}
+
 // ====== 初始化 ======
 loadBrandKb();
+restoreDraft();
+renderBenchmarkLibrary();
+renderPublishRecords();
+applyWorkspaceEntry();
+loadAiSettings();
+refreshWorkbench();
+document.addEventListener('input', function(){ saveDraft(true); }, true);
+window.addEventListener('beforeunload', function(){ saveDraft(true); });
+setInterval(function(){ saveDraft(true); }, 4000);
 fetch('/api/xhs-generate',{method:'GET'}).then(function(r){return r.json()}).then(function(j){
-  var provider=j.provider==='anthropic'?'Opus 4.7':(j.provider==='deepseek'?'DeepSeek':'未知');
+  var provider=j.provider==='openai'?(j.model||'GPT'):(j.provider==='anthropic'?'Opus 4.7':(j.provider==='deepseek'?'DeepSeek':'未知'));
   var vision=j.vision==='qwen-vl'?'Qwen-VL':(j.vision==='openai'?'GPT':'未配置');
-  $('status').innerHTML='<span class="badge badge-blue">'+provider+'</span><span class="badge badge-ok">识图:'+vision+'</span>';
+  var reasoning = $('reasoningSelect') ? $('reasoningSelect').value : (j.reasoning || '');
+  $('status').innerHTML='<span class="badge badge-blue">'+provider+'</span>'+(reasoning?'<span class="badge badge-ok">推理:'+reasoning+'</span>':'')+'<span class="badge badge-ok">识图:'+vision+'</span>';
+  if ($('modelHint')) $('modelHint').textContent = '线上：' + provider + ' / 推理 ' + (reasoning || j.reasoning || '默认') + '。快档适合批量试，精修适合最终稿。';
 }).catch(function(){
   $('status').innerHTML='<span class="badge badge-warn">接口检测失败</span>';
 });

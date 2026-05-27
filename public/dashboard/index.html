@@ -37,7 +37,6 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-    body.lock { overflow: hidden; }
     a { color: inherit; text-decoration: none; }
     button, input, textarea, select { font: inherit; }
     .topbar {
@@ -411,27 +410,6 @@
       font-size: 13px;
       font-weight: 700;
     }
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 99;
-      display: grid;
-      place-items: center;
-      padding: 18px;
-      background: rgba(248,250,252,0.94);
-      backdrop-filter: blur(18px);
-    }
-    .gate {
-      width: min(440px, 100%);
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: #fff;
-      box-shadow: 0 24px 90px rgba(15,23,42,0.16);
-    }
-    .gate h2 { margin: 0 0 10px; font-size: 30px; }
-    .gate p { margin: 0 0 18px; color: var(--muted); line-height: 1.55; }
-    .hide { display: none !important; }
     .reveal {
       opacity: 0;
       transform: translateY(18px);
@@ -512,23 +490,9 @@
     .workflow[data-tone="white"] { background: #fff; }
     .prompt-output { background: #f8fafc; }
     .check { background: #f8fafc; }
-    .gate { box-shadow: var(--shadow); }
   </style>
 </head>
-<body class="lock">
-  <div class="overlay" id="gate">
-    <div class="gate">
-      <p class="eyebrow">内部访问</p>
-      <h2>老谭 AI 工作台</h2>
-      <p>输入密码进入项目工作台。</p>
-      <input id="pw" type="password" placeholder="请输入密码" autocomplete="off" />
-      <div class="button-row">
-        <button class="tool-btn" id="enter" type="button">进入</button>
-        <button class="tool-btn secondary" id="clear" type="button">清除</button>
-      </div>
-    </div>
-  </div>
-
+<body>
   <header class="topbar">
     <a class="brand" href="#top">
       <span class="brand-mark">谭</span>
@@ -540,7 +504,6 @@
       <a href="#assets">资产回流</a>
       <a href="#links">入口</a>
     </nav>
-    <button class="pill-btn" id="lockAgain" type="button">锁定</button>
   </header>
 
   <main class="shell" id="top">
@@ -733,12 +696,6 @@
   </main>
 
   <script>
-    const PW = '0000';
-    const gate = document.getElementById('gate');
-    const pw = document.getElementById('pw');
-    const enter = document.getElementById('enter');
-    const clear = document.getElementById('clear');
-    const lockAgain = document.getElementById('lockAgain');
     const taskType = document.getElementById('taskType');
     const taskInput = document.getElementById('taskInput');
     const taskFocus = document.getElementById('taskFocus');
@@ -746,36 +703,6 @@
     const buildPrompt = document.getElementById('buildPrompt');
     const copyPrompt = document.getElementById('copyPrompt');
     const clearPrompt = document.getElementById('clearPrompt');
-
-    function unlock() {
-      document.body.classList.remove('lock');
-      gate.classList.add('hide');
-      localStorage.setItem('laotan-workbench-unlocked', '1');
-    }
-    function showGate() {
-      document.body.classList.add('lock');
-      gate.classList.remove('hide');
-      localStorage.removeItem('laotan-workbench-unlocked');
-      pw.value = '';
-      setTimeout(() => pw.focus(), 50);
-    }
-    if (localStorage.getItem('laotan-workbench-unlocked') === '1') unlock();
-    enter.addEventListener('click', () => {
-      if (pw.value.trim() === PW) unlock();
-      else {
-        pw.value = '';
-        pw.placeholder = '密码不对，再试一次';
-        pw.focus();
-      }
-    });
-    clear.addEventListener('click', () => {
-      pw.value = '';
-      pw.focus();
-    });
-    lockAgain.addEventListener('click', showGate);
-    pw.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') enter.click();
-    });
 
     const templates = {
       cContent: {
@@ -860,7 +787,6 @@ ${selected.body}
       el.style.transitionDelay = `${(index % 3) * 55}ms`;
       io.observe(el);
     });
-    pw.focus();
   </script>
 </body>
 </html>
