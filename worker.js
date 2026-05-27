@@ -187,13 +187,18 @@ function buildSystemPrompt(input = {}) {
 {
   "benchmarkAnalysis":"对标拆解",
   "final":"最终可发布版本，含标题、正文、标签",
-  "titles":"标题 8 个 + 封面文案 5 个",
+  "titleCoverPairs":[
+    {"title":"标题1","coverText":"封面大字","coverSubtext":"封面小字/栏目标签","coverVisual":"封面画面、构图和光影建议","imageUse":"适合使用哪张素材图或什么画面","reason":"为什么这个标题和封面匹配"}
+  ],
+  "titles":"兼容字段：把5组标题封面方案整理成可读文本",
   "versions":"正文 A/B/C 三个版本",
-  "script":"6 页封面/图文脚本，每页含封面大字、页面观点、可用素材建议",
+  "script":"6 页图文脚本，每页含页面观点、可用素材建议；不要再把封面和标题分开生成",
   "story":"灵感拆解/故事化表达建议",
   "check":"发布检查，含抄袭风险、广告感、AI味、优化建议",
   "scores":{"hook":数字,"real":数字,"ai":"低/中/高"}
 }
+【标题封面硬性要求】
+titleCoverPairs 必须正好 5 组。每组必须是一一对应的完整方案：一个标题只配一个封面，不要先生成标题库再生成封面库。封面大字要能承接标题的钩子，画面建议要说明用什么图、什么局部、什么构图。
 【重要】JSON 字符串内的引号必须使用中文引号 ""（U+201C/U+201D），严禁使用英文双引号 " （U+0022），否则 JSON 解析会失败。例如应写 "业主说"报价太贵"" 而不是 "业主说\"报价太贵\""。`;
 }
 
@@ -225,7 +230,7 @@ ${textBlock(input.myNotes, 500)}
 【模板】${input.template || ''}
 【模式】${input.mode || ''}
 
-输出：必须包含 benchmarkAnalysis、final、titles、script、check、scores。final 含标题、正文、标签合计不超过1000字；必须使用真实换行符分段，不要用”|/｜/分段符号”代替换行；每段之间空一行，复制到小红书后也应自然分段。`;
+输出：必须包含 benchmarkAnalysis、final、titleCoverPairs、titles、script、check、scores。titleCoverPairs 必须正好 5 组，每组标题和封面一一对应，不能把标题库和封面脚本分开。final 含标题、正文、标签合计不超过1000字；必须使用真实换行符分段，不要用”|/｜/分段符号”代替换行；每段之间空一行，复制到小红书后也应自然分段。`;
 }
 
 function buildReviseUserPrompt(input = {}, prompt = '') {
@@ -246,7 +251,7 @@ ${textBlock(input.myNotes, 400)}
 1. 保持品牌知识库中的定位、卖点、表达边界
 2. 不新增品牌知识库中没有的承诺或服务
 3. 保持原有的对标拆解结构（benchmarkAnalysis），如需调整注明原因
-4. 保留原有的标题库、图片脚本，只按需微调`;
+4. 保留原有的 titleCoverPairs 标题封面组合和图片脚本，只按需微调；标题和封面仍必须一一对应`;
 }
 
 function normalizeDeepSeekJSON(content) {
@@ -297,11 +302,102 @@ function normalizeDeepSeekJSON(content) {
   };
 }
 
+function coerceTitleCoverPairs(value = []) {
+  if (!value) return [];
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return coerceTitleCoverPairs(parsed);
+    } catch (_) {
+      return value.split(/\n{2,}|(?=\n?\s*\d+[\.、])/)
+        .map(x => x.trim())
+        .filter(Boolean)
+        .slice(0, 5)
+        .map((chunk) => {
+          const title = (chunk.match(/标题[：:]\s*([^\n]+)/) || chunk.match(/^\s*\d+[\.、]\s*([^\n]+)/) || [])[1] || chunk.split('\n')[0] || '';
+          const coverText = (chunk.match(/封面(?:大字|文案)?[：:]\s*([^\n]+)/) || [])[1] || title;
+          const coverVisual = (chunk.match(/(?:画面|构图|视觉)[：:]\s*([^\n]+)/) || [])[1] || '';
+          const reason = (chunk.match(/(?:理由|匹配|原因)[：:]\s*([^\n]+)/) || [])[1] || '';
+          return { title: title.trim(), coverText: coverText.trim(), coverSubtext: '', coverVisual: coverVisual.trim(), imageUse: '', reason: reason.trim() };
+        });
+    }
+  }
+  const list = Array.isArray(value) ? value : Object.values(value);
+  return list.map((item) => {
+    if (typeof item === 'string') return { title: item, coverText: item, coverSubtext: '', coverVisual: '', imageUse: '', reason: '' };
+    if (!item || typeof item !== 'object') return null;
+    const title = item.title || item['标题'] || item.name || item.hook || '';
+    const coverText = item.coverText || item.cover || item['封面大字'] || item['封面文案'] || item.coverTitle || title;
+    return {
+      title: String(title || '').trim(),
+      coverText: String(coverText || '').trim(),
+      coverSubtext: String(item.coverSubtext || item['封面小字'] || item.subtitle || item.tag || '').trim(),
+      coverVisual: String(item.coverVisual || item['封面画面'] || item.visual || item.layout || item.scene || '').trim(),
+      imageUse: String(item.imageUse || item['用图建议'] || item.material || item.image || '').trim(),
+      reason: String(item.reason || item['匹配理由'] || item.logic || item.why || '').trim(),
+    };
+  }).filter(x => x && (x.title || x.coverText)).slice(0, 5);
+}
+
+function deriveTitleCoverPairs(titles = '', script = '') {
+  const titleLines = String(titles || '')
+    .split('\n')
+    .map(x => x.replace(/^\s*\d+[\.、]\s*/, '').trim())
+    .filter(Boolean)
+    .slice(0, 5);
+  const scriptLines = String(script || '')
+    .split('\n')
+    .map(x => x.trim())
+    .filter(Boolean);
+  if (!titleLines.length && !scriptLines.length) return [];
+  const pairs = [];
+  for (let i = 0; i < 5; i++) {
+    const title = titleLines[i] || titleLines[0] || `标题方案${i + 1}`;
+    const line = scriptLines[i] || scriptLines[0] || '';
+    const coverText = (line.match(/封面(?:大字|文案)?[：:]\s*([^，。\n]+)/) || [])[1] || title;
+    pairs.push({
+      title,
+      coverText,
+      coverSubtext: '',
+      coverVisual: line.replace(/^第\d+页[：:]\s*/, ''),
+      imageUse: '',
+      reason: '由旧版标题/脚本字段自动合并，建议生成后再精修。'
+    });
+  }
+  return pairs;
+}
+
+function formatTitleCoverPairs(pairs = []) {
+  const list = coerceTitleCoverPairs(pairs);
+  if (!list.length) return '';
+  return list.map((item, idx) => {
+    return [
+      `${idx + 1}. ${item.title || '未命名标题'}`,
+      `封面大字：${item.coverText || item.title || ''}`,
+      item.coverSubtext ? `封面小字：${item.coverSubtext}` : '',
+      item.coverVisual ? `画面建议：${item.coverVisual}` : '',
+      item.imageUse ? `用图建议：${item.imageUse}` : '',
+      item.reason ? `匹配逻辑：${item.reason}` : ''
+    ].filter(Boolean).join('\n');
+  }).join('\n\n');
+}
+
+function normalizeTitleCoverOutput(result = {}) {
+  let pairs = coerceTitleCoverPairs(result.titleCoverPairs || result['标题封面组合'] || result['标题封面方案']);
+  if (!pairs.length) pairs = deriveTitleCoverPairs(result.titles, result.script);
+  if (pairs.length) {
+    result.titleCoverPairs = pairs;
+    result.titleCoverPairsText = formatTitleCoverPairs(pairs);
+    result.titles = result.titleCoverPairsText;
+  }
+  return result;
+}
+
 function standardizeXhsResult(result = {}) {
   if (!result || typeof result !== 'object') return result;
   if (typeof result.final === 'string' && /(?:^|\n)\s*final\s*[:：]/i.test(result.final)) {
     const mixed = result.final;
-    const finalMatch = mixed.match(/(?:^|\n)\s*final\s*[:：]\s*\n?([\s\S]*?)(?=(?:\n\s*(?:titles|script|check|story|scores|versions|benchmarkAnalysis)\s*[:：])|$)/i);
+    const finalMatch = mixed.match(/(?:^|\n)\s*final\s*[:：]\s*\n?([\s\S]*?)(?=(?:\n\s*(?:titleCoverPairs|titles|script|check|story|scores|versions|benchmarkAnalysis)\s*[:：])|$)/i);
     if (finalMatch && finalMatch[1]) result.final = finalMatch[1].trim();
     const benchmarkMatch = mixed.match(/(?:^|\n)\s*benchmarkAnalysis\s*[:：]\s*\n?([\s\S]*?)(?=\n\s*final\s*[:：]|$)/i);
     if (benchmarkMatch && !result.benchmarkAnalysis) result.benchmarkAnalysis = benchmarkMatch[1].trim();
@@ -319,6 +415,7 @@ function standardizeXhsResult(result = {}) {
   if (result.script && typeof result.script === 'object') result.script = JSON.stringify(result.script, null, 2);
   if (result.check && typeof result.check === 'object') result.check = JSON.stringify(result.check, null, 2);
   if (result.story && typeof result.story === 'object') result.story = JSON.stringify(result.story, null, 2);
+  result = normalizeTitleCoverOutput(result);
   if (!result.scores) result.scores = { hook: '--', real: '--', ai: '低' };
   return result;
 }
@@ -557,7 +654,7 @@ function buildReviseSystemPrompt(input = {}) {
 8. 输出格式保持不变，必须是同样的JSON结构
 
 【输出要求】
-必须只输出 JSON，字段与原始生成保持一致：benchmarkAnalysis, final, titles, versions, script, check, scores。
+必须只输出 JSON，字段与原始生成保持一致：benchmarkAnalysis, final, titleCoverPairs, titles, versions, script, check, scores。titleCoverPairs 必须保持 5 组标题+封面一一对应。
 final 不超过1000字，final 必须用真实换行分段。`;
 }
 
@@ -718,7 +815,7 @@ async function openAIChatWithUserImages(input = {}, imageAnalysis = [], env, cur
 【图片关联硬性要求】
 1. 先在 benchmarkAnalysis 之后增加/包含 imageMaterial 字段，写出你从图片里看到的具体内容：画面主体、文字、颜色/风格、空间/工地/材料/页面信息。
 2. final 正文开头前3段内必须出现至少1个图片里的具体细节。
-3. script 每一页都要说明用哪张图、图里哪个局部或文字作为画面依据。
+3. titleCoverPairs 的每组封面都要说明用哪张图、图里哪个局部或文字作为画面依据；script 每一页也要引用素材图。
 4. 如果你看不清图片，final 不要泛写，必须明确说“图片看不清，需要补充文字素材”，并停止编造。
 5. 禁止只写品牌通用卖点，必须把图片内容当成案例素材。
 
@@ -726,7 +823,7 @@ async function openAIChatWithUserImages(input = {}, imageAnalysis = [], env, cur
 ${textBlock(JSON.stringify(imageAnalysis, null, 2), 1200)}
 
 【输出JSON字段】
-benchmarkAnalysis, imageMaterial, final, titles, script, check, scores。final 不超过1000字，必须用真实换行分段，段落之间空一行。` + current;
+benchmarkAnalysis, imageMaterial, final, titleCoverPairs, titles, script, check, scores。titleCoverPairs 必须正好 5 组，每组标题和封面一一对应；final 不超过1000字，必须用真实换行分段，段落之间空一行。` + current;
   const content = [{ type: 'text', text }, ...imageBlocks];
   return await openAIChat([
     { role: 'system', content: '你是小红书图文编辑和图片观察员。小红书工作只允许使用 GPT-5.5。最高优先级：必须看用户上传图片，并把图片具体细节写进正文；如果看不清就明说，不能写泛泛装修文案。' },
@@ -771,8 +868,9 @@ ${textBlock(JSON.stringify(analysis, null, 2), 3000)}
 
 【强制要求】
 如果上面有图片识别摘要，正文和图片脚本必须引用至少2个具体画面细节/文字/风格/工地信息；不能只写泛泛行业文案。
-对标文案也必须参与：先拆解，再改写成当前品牌和素材的版本。` + current;
-  const system = '你是老谭小红书内容总编。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】、【对标文案】和【我的文字素材】。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。最终发布正文不得超过1000字；final 必须已经用真实换行分段，段落之间空一行，不要用分隔符代替换行。';
+对标文案也必须参与：先拆解，再改写成当前品牌和素材的版本。
+必须输出 titleCoverPairs：5组标题+封面一一对应，不要分开标题库和封面库。` + current;
+  const system = '你是老谭小红书内容总编。必须优先读取并使用【当前选择品牌】、【网页内置品牌资料】、【对标文案】和【我的文字素材】。文案必须明确出现当前品牌名称，必须使用当前品牌的核心定位/卖点，不能写成别的品牌。快速输出，不要长篇思考。尽量JSON；也可直接正文。要求真实、短句、去AI味。必须做对标拆解，并在输出 benchmarkAnalysis 字段里说明学了对标的哪些结构。必须输出 titleCoverPairs，正好5组标题+封面一一对应。最终发布正文不得超过1000字；final 必须已经用真实换行分段，段落之间空一行，不要用分隔符代替换行。';
   let raw;
   try {
     if (body.action !== 'revise' && imgsForGpt.length > 0) {
@@ -803,7 +901,7 @@ ${textBlock(JSON.stringify(analysis, null, 2), 3000)}
       }
     } catch (e2) {
       try {
-        const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。对标：${textBlock(input.benchmarkTitle + '\n' + input.benchmarkText, 700)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。如果图片摘要为空或失败，要在check里说明图片识别失败。输出JSON，final不超过1000字，final内必须用真实换行分段：{"final":"标题\n\n正文第一段\n\n正文第二段\n\n标签","titles":"5个标题","script":"6页图片脚本","check":"发布检查","scores":{"hook":80,"real":80,"ai":"低"}}`;
+        const micro = `用GPT-5.5快速生成小红书内容。主题：${textBlock(input.corePoint || input.benchmarkTitle || '装修内容', 120)}。品牌资料：${textBlock(input.knowledgeText, 500)}。对标：${textBlock(input.benchmarkTitle + '\n' + input.benchmarkText, 700)}。我的文字素材：${textBlock(input.myNotes, 300)}。图片摘要：${textBlock(JSON.stringify(imageAnalysis), 700)}。如果图片摘要为空或失败，要在check里说明图片识别失败。输出JSON，final不超过1000字，final内必须用真实换行分段，titleCoverPairs必须正好5组标题+封面一一对应：{"final":"标题\n\n正文第一段\n\n正文第二段\n\n标签","titleCoverPairs":[{"title":"标题1","coverText":"封面大字","coverSubtext":"封面小字","coverVisual":"画面建议","imageUse":"用图建议","reason":"匹配逻辑"}],"titles":"5组标题封面文本","script":"6页图片脚本","check":"发布检查","scores":{"hook":80,"real":80,"ai":"低"}}`;
         raw = await openAIChat([
           { role: 'system', content: '你是老谭小红书内容总编，只用GPT-5.5。极速输出JSON，不要解释。' },
           { role: 'user', content: micro },
@@ -883,18 +981,55 @@ function buildFallbackGenerateResult(input = {}, imageAnalysis = [], reason = ''
     '#' + brand.replace(/\s+/g, '') + ' #长沙装修 #装修报价 #装修合同 #签约前避坑'
   ].filter(Boolean).join('\n');
   final = ensureParagraphSpacing(formatXhsText(final));
+  const titleCoverPairs = [
+    {
+      title,
+      coverText: title,
+      coverSubtext: '签约前先看这一步',
+      coverVisual: '用报价单、合同局部或工地现场作底图，标题压在画面上半区，留出干净留白。',
+      imageUse: '优先用用户上传的真实报价/合同/工地图；没有图片时用简洁文字封面。',
+      reason: '标题直接承接核心观点，封面把用户先拦在签约前。'
+    },
+    {
+      title: '长沙装修签约前，别只看总价',
+      coverText: '别只看总价',
+      coverSubtext: '报价边界更重要',
+      coverVisual: '左右对比构图：左侧总价数字，右侧材料/工艺/增项清单。',
+      imageUse: '适合报价单、预算表、合同条款截图打码后使用。',
+      reason: '标题说动作劝阻，封面放大“总价”误区，适合提高停留。'
+    },
+    {
+      title: '报价低不低，先看合同边界',
+      coverText: '低价不等于靠谱',
+      coverSubtext: '先看合同边界',
+      coverVisual: '合同页或清单页作为背景，用圈注标出付款节点、增项确认、材料型号。',
+      imageUse: '适合合同关键页、报价清单或手写标注图。',
+      reason: '标题和封面都围绕低价风险，但不做恐吓和绝对承诺。'
+    },
+    {
+      title: '交定金前先查这3项',
+      coverText: '定金前查3项',
+      coverSubtext: '报价/合同/责任',
+      coverVisual: '三栏清单式封面，每栏一个检查项，整体像可收藏的检查表。',
+      imageUse: '适合做纯文字清单封面，或叠加工地/桌面资料图。',
+      reason: '标题给明确动作，封面直接呈现可收藏价值。'
+    },
+    {
+      title: '装修报价拿不准，先别急着签',
+      coverText: '拿不准先别签',
+      coverSubtext: brand,
+      coverVisual: '人物视角看报价单或手机聊天记录，保留一点真实犹豫感。',
+      imageUse: '适合用户自己的聊天截图、报价截图、现场沟通图打码后使用。',
+      reason: '标题贴近用户犹豫心理，封面把“暂停签约”做成低压力提醒。'
+    }
+  ];
   const result = limitXhsFinalLength({
     benchmarkAnalysis: fallbackBenchmarkAnalysis(input, [], reason),
     final,
-    titles: [
-      '1. ' + title,
-      '2. 长沙装修签约前，别只看总价',
-      '3. 报价低不低，先看合同边界',
-      '4. 交定金前先查这3项',
-      '5. 装修报价拿不准，先别急着签'
-    ].join('\n'),
+    titleCoverPairs,
+    titles: formatTitleCoverPairs(titleCoverPairs),
     script: [
-      '第1页：封面大字：' + title,
+      '第1页：封面：从上方标题封面5组里选1组，封面和标题必须配套使用。',
       '第2页：真实场景：小区/面积/装修阶段/拿到几份报价',
       '第3页：报价边界：材料型号、数量、单价、是否另算',
       '第4页：合同边界：付款节点、增项确认、验收标准',

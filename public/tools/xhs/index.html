@@ -1019,8 +1019,8 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   <!-- 标签页 -->
   <div class="tabs" id="tabs">
     <button class="tab active" onclick="switchTab('final',this)">正文编辑</button>
-    <button class="tab" onclick="switchTab('titles',this)">标题库</button>
-    <button class="tab" onclick="switchTab('script',this)">封面脚本</button>
+    <button class="tab" onclick="switchTab('titles',this)">标题封面</button>
+    <button class="tab" onclick="switchTab('script',this)">图文脚本</button>
     <button class="tab" onclick="switchTab('check',this)">发布检查</button>
     <button class="tab" onclick="switchTab('story',this)">灵感拆解</button>
   </div>
@@ -1649,6 +1649,53 @@ function updateWordCount(){
   $('wordCount').textContent=text.replace(/\s/g,'').length+' 字';
 }
 
+function formatTitleCoverPairs(value, fallbackScript){
+  if (!value && !fallbackScript) return '';
+  var pairs = [];
+  if (Array.isArray(value)) {
+    pairs = value.slice(0, 5).map(function(item){
+      if (typeof item === 'string') return {title:item, coverText:item};
+      item = item || {};
+      return {
+        title: item.title || item['标题'] || item.hook || '',
+        coverText: item.coverText || item.cover || item['封面大字'] || item['封面文案'] || item.title || '',
+        coverSubtext: item.coverSubtext || item['封面小字'] || item.subtitle || '',
+        coverVisual: item.coverVisual || item['封面画面'] || item.visual || item.layout || '',
+        imageUse: item.imageUse || item['用图建议'] || item.material || '',
+        reason: item.reason || item['匹配理由'] || item.logic || ''
+      };
+    });
+  } else if (value && typeof value === 'object') {
+    pairs = Object.keys(value).map(function(k){ return value[k]; }).slice(0, 5);
+    return formatTitleCoverPairs(pairs, fallbackScript);
+  } else if (typeof value === 'string' && /封面|画面|匹配|用图/.test(value)) {
+    return value.trim();
+  } else {
+    var titles = String(value || '').split('\n').map(function(x){return x.replace(/^\s*\d+[\.、]\s*/,'').trim();}).filter(Boolean).slice(0,5);
+    var scripts = String(fallbackScript || '').split('\n').map(function(x){return x.trim();}).filter(Boolean);
+    pairs = titles.map(function(title, i){
+      var line = scripts[i] || scripts[0] || '';
+      var m = line.match(/封面(?:大字|文案)?[：:]\s*([^，。\n]+)/);
+      return {
+        title: title,
+        coverText: (m && m[1]) || title,
+        coverVisual: line.replace(/^第\d+页[：:]\s*/, ''),
+        reason: '由旧版标题/脚本自动合并，生成新版后会更精准。'
+      };
+    });
+  }
+  return pairs.filter(function(item){ return item && (item.title || item.coverText); }).slice(0,5).map(function(item, i){
+    return [
+      (i + 1) + '. ' + (item.title || '未命名标题'),
+      '封面大字：' + (item.coverText || item.title || ''),
+      item.coverSubtext ? '封面小字：' + item.coverSubtext : '',
+      item.coverVisual ? '画面建议：' + item.coverVisual : '',
+      item.imageUse ? '用图建议：' + item.imageUse : '',
+      item.reason ? '匹配逻辑：' + item.reason : ''
+    ].filter(Boolean).join('\n');
+  }).join('\n\n');
+}
+
 // ====== 复制 ======
 function copyCurrent(){
   var text;
@@ -1776,17 +1823,55 @@ function localGenerateResult(reason){
     '',
     '#' + brand.replace(/\s+/g, '') + ' #长沙装修 #小红书装修'
   ].join('\n');
+  var titleCoverPairs = [
+    {
+      title: title,
+      coverText: title,
+      coverSubtext: '先别急着定',
+      coverVisual: '用真实报价/合同/工地素材做底，标题放上半区，整体干净克制。',
+      imageUse: '优先用我的图片素材；没有素材就做文字封面。',
+      reason: '标题和封面都围绕核心观点，适合作为主推版本。'
+    },
+    {
+      title: '长沙装修，先别急着听总价',
+      coverText: '别只听总价',
+      coverSubtext: '先看边界',
+      coverVisual: '报价单局部加醒目标注，突出总价背后的隐藏项。',
+      imageUse: '适合报价单、预算表或聊天记录截图打码后使用。',
+      reason: '标题负责劝阻，封面负责把误区放大。'
+    },
+    {
+      title: '这一步没看清，后面很容易乱',
+      coverText: '这一步没看清',
+      coverSubtext: '后面容易乱',
+      coverVisual: '用清单式封面列出方案、报价、落地三个关键词。',
+      imageUse: '适合纯文字清单封面或资料桌面图。',
+      reason: '标题制造悬念，封面给出具体检查方向。'
+    },
+    {
+      title: '装修前先把判断标准拿到手',
+      coverText: '先拿判断标准',
+      coverSubtext: brand,
+      coverVisual: '像检查表一样排版，三条标准清晰可收藏。',
+      imageUse: '适合做收藏型干货封面。',
+      reason: '标题偏收藏价值，封面直接呈现可执行感。'
+    },
+    {
+      title: '别被一句话带着签',
+      coverText: '别急着签',
+      coverSubtext: '先问清3件事',
+      coverVisual: '手机聊天或合同页背景，叠加三个短问题。',
+      imageUse: '适合聊天记录、合同、报价图打码后使用。',
+      reason: '标题有冲突，封面给行动，适合引导私信。'
+    }
+  ];
   return {
     final: finalText,
-    titles: [
-      '1. ' + title,
-      '2. 长沙装修，先别急着听总价',
-      '3. 这一步没看清，后面很容易乱',
-      '4. 装修前先把判断标准拿到手',
-      '5. 别被一句话带着签'
-    ].join('\n'),
+    titleCoverPairs: titleCoverPairs,
+    titleCoverPairsText: formatTitleCoverPairs(titleCoverPairs),
+    titles: formatTitleCoverPairs(titleCoverPairs),
     script: [
-      '第1页：封面大字，突出一个具体痛点：' + title,
+      '第1页：封面：从「标题封面」5组中选1组，标题和封面必须配套使用',
       '第2页：用户场景，写小区/面积/阶段/担心点',
       '第3页：拆第一个判断标准',
       '第4页：放证据，报价/图纸/工地/效果图细节',
@@ -1858,7 +1943,7 @@ function showResult(json){
   var f=json.final||'';
   if(typeof f==='object') f=JSON.stringify(f,null,2);
   $('resultFinal').value=f ? formatXhsDisplayText(f) : '（无内容）';
-  $('resultTitles').textContent=json.titles||'';
+  $('resultTitles').textContent=formatTitleCoverPairs(json.titleCoverPairs || json.titleCoverPairsText || json.titles, json.script) || json.titles || '';
   $('resultScript').textContent=json.script||'';
   $('resultCheck').textContent=json.check||'';
   $('resultStory').textContent=json.story||'';
