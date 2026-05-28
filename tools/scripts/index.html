@@ -162,6 +162,81 @@
     }
     .desk-head h2 { margin-bottom: 6px; font-size: 28px; }
     .desk-head p { margin-bottom: 0; color: var(--muted); line-height: 1.6; }
+    .desk-head > .actions-row { display: none; }
+    .quick-desk {
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr) 430px;
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+    .decision-group + .decision-group { margin-top: 16px; }
+    .decision-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 950;
+    }
+    .decision-stack { display: grid; gap: 8px; }
+    .decision-btn {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 11px 12px;
+      background: #fff;
+      text-align: left;
+      color: var(--ink);
+      font-weight: 900;
+      transition: .16s ease;
+    }
+    .decision-btn small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.45;
+    }
+    .decision-btn:hover, .decision-btn.active {
+      border-color: rgba(31,111,235,.42);
+      background: linear-gradient(180deg, #fff, #f5f9ff);
+      box-shadow: 0 10px 24px rgba(31,111,235,.08);
+    }
+    .decision-btn.active { color: var(--blue); }
+    .quick-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+    .quick-card h4 { margin: 0 0 8px; font-size: 15px; }
+    .action-steps { display: grid; gap: 8px; margin-top: 10px; }
+    .action-step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+      border: 1px solid rgba(226,232,240,.9);
+      border-radius: var(--radius);
+      background: #f8fafc;
+    }
+    .action-step b {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      font-size: 12px;
+    }
+    .script-copy-grid { display: grid; gap: 10px; }
     .desk-grid {
       display: grid;
       grid-template-columns: 300px minmax(0, 1fr) 390px;
@@ -286,13 +361,13 @@
     .toast.show { opacity: 1; transform: none; }
     @media (max-width: 1180px) {
       .brand-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .desk-grid, .library-grid { grid-template-columns: 1fr; }
+      .desk-grid, .quick-desk, .library-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
       .shell { width: 94vw; padding-top: 10px; }
       .topbar, .hero, .desk-head { display: block; }
       .top-actions, .desk-head .actions-row { margin-top: 10px; }
-      .brand-grid, .two { grid-template-columns: 1fr; }
+      .brand-grid, .quick-desk, .two { grid-template-columns: 1fr; }
       .brand-card { min-height: 230px; }
       .status-pill { margin-top: 12px; }
     }
@@ -313,15 +388,15 @@
   <section class="hero">
     <div>
       <h1>先选品牌，再推进客户</h1>
-      <p>第一屏只做一件事：确定业务线。进入品牌后再处理客户原话、推荐动作、发送话术、物料和下一步跟进。</p>
+      <p>第一屏只做一件事：确定业务线。进入品牌后不用填表，只点阶段、状态和顾虑，马上看到该做什么、发什么、怎么邀约。</p>
     </div>
-    <span class="status-pill" id="cloudState">云端客户池：检测中</span>
+    <span class="status-pill" id="cloudState">点击式推进：不用填表</span>
   </section>
 
   <section class="brand-gate" id="brandGate">
     <div class="gate-head">
       <span>选择今天要处理的品牌</span>
-      <span id="gateSummary">加载客户记录中...</span>
+      <span id="gateSummary">先选业务线，再点状态</span>
     </div>
     <div class="brand-grid" id="brandGrid"></div>
   </section>
@@ -330,101 +405,150 @@
     <div class="desk-head">
       <div>
         <h2 id="deskTitle">客户推进台</h2>
-        <p id="deskSubtitle">选择客户，系统会按当前品牌给出动作、话术、物料和下一步。</p>
-      </div>
-      <div class="actions-row">
-        <button class="ghost" id="newClientBtn" type="button">新增客户</button>
-        <button class="btn green" id="saveClientBtn" type="button">保存到云端</button>
+        <p id="deskSubtitle">不用录客户资料。脑子里想到一个客户后，点一下他现在的阶段和顾虑，系统直接给下一步。</p>
       </div>
     </div>
 
-    <div class="desk-grid">
+    <div class="quick-desk">
       <aside class="panel">
         <div class="panel-hd">
           <div>
-            <h3>客户列表</h3>
-            <small id="clientCount">0 个客户</small>
+            <h3>点一下客户状态</h3>
+            <small>不填资料，只做判断</small>
           </div>
         </div>
         <div class="panel-bd">
-          <div class="field">
-            <label>搜索客户</label>
-            <input id="clientSearch" placeholder="称呼、楼盘、面积、顾虑">
+          <div class="decision-group">
+            <div class="decision-title"><span>1. 现在到哪一步</span><span id="stagePicked"></span></div>
+            <div class="decision-stack" id="stageButtons"></div>
           </div>
-          <div class="client-list" id="clientList"></div>
+          <div class="decision-group">
+            <div class="decision-title"><span>2. 客户热度</span><span id="levelPicked"></span></div>
+            <div class="decision-stack" id="levelButtons"></div>
+          </div>
+          <div class="decision-group">
+            <div class="decision-title"><span>3. 他卡在哪里</span><span id="typePicked"></span></div>
+            <div class="decision-stack" id="typeButtons"></div>
+          </div>
         </div>
       </aside>
 
       <section class="panel">
         <div class="panel-hd">
           <div>
-            <h3>当前客户判断</h3>
-            <small>只填影响下一句话的字段</small>
+            <h3>现在该做什么</h3>
+            <small id="quickMeta">点左边后自动刷新</small>
           </div>
         </div>
-        <div class="panel-bd">
-          <input id="clientId" type="hidden">
-          <div class="two">
-            <div class="field"><label>称呼</label><input id="clientName" placeholder="例：张姐 / 瑞府客户"></div>
-            <div class="field"><label>来源</label><select id="clientSource"><option>小红书私信</option><option>微信</option><option>转介绍</option><option>老客户</option><option>其他</option></select></div>
-          </div>
-          <div class="two">
-            <div class="field"><label>楼盘 / 区域</label><input id="clientArea" placeholder="例：长沙瑞府"></div>
-            <div class="field"><label>面积 / 房型</label><input id="clientSize" placeholder="例：180平 / 大平层"></div>
-          </div>
-          <div class="two">
-            <div class="field"><label>预算 / 价格信息</label><input id="clientBudget" placeholder="例：30万左右 / 未说"></div>
-            <div class="field"><label>下次跟进</label><input id="nextFollowAt" type="date"></div>
-          </div>
-          <div class="two">
-            <div class="field"><label>阶段</label><select id="clientStage"></select></div>
-            <div class="field"><label>客户级别</label><select id="clientLevel"></select></div>
-          </div>
-          <div class="two">
-            <div class="field"><label>核心顾虑</label><select id="clientConcern"></select></div>
-            <div class="field"><label>推荐动作</label><input id="clientAction" readonly></div>
-          </div>
-          <div class="field"><label>客户原话</label><textarea id="latestMessage" class="tall" placeholder="粘贴客户微信 / 小红书私信原话"></textarea></div>
-          <div class="actions-row">
-            <button class="btn dark" id="generateReplyBtn" type="button">生成客户回复</button>
-            <button class="ghost" id="copyContextBtn" type="button">复制判断上下文</button>
-          </div>
-        </div>
+        <div class="panel-bd" id="quickPlan"></div>
       </section>
 
       <aside class="panel">
         <div class="panel-hd">
           <div>
-            <h3>今天该怎么推进</h3>
-            <small id="recommendMeta">等待选择品牌</small>
+            <h3>直接复制话术</h3>
+            <small>鼠标点一下就能发</small>
           </div>
         </div>
-        <div class="panel-bd" id="recommendation"></div>
+        <div class="panel-bd">
+          <div class="script-copy-grid" id="quickScripts"></div>
+        </div>
       </aside>
     </div>
 
-    <section class="panel secondary">
-      <div class="panel-hd">
-        <div>
-          <h3>AI生成结果</h3>
-          <small>生成后可保存为客户最近回复</small>
-        </div>
-        <div class="actions-row">
-          <button class="copy" id="copyReplyBtn" type="button">复制回复</button>
-          <button class="btn green" id="saveReplyBtn" type="button">保存回复到客户</button>
-        </div>
-      </div>
-      <div class="panel-bd">
-        <div class="quote result-box" id="generatedReply">还没有生成。先填客户原话，再点“生成客户回复”。</div>
-        <div class="two" style="margin-top:12px">
-          <div class="field"><label>客户结果</label><select id="clientResult"><option value="">选择本次结果</option><option>已发物料</option><option>已邀约</option><option>已约看工地</option><option>已约到公司</option><option>已约看完工现场</option><option>已约免费量房</option><option>客户回复了</option><option>客户没回复</option><option>成交</option><option>流失</option></select></div>
-          <div class="field"><label>结果备注</label><input id="resultNote" placeholder="例：约周六看工地 / 客户说先看看"></div>
-        </div>
-        <button class="btn dark" id="saveResultBtn" type="button">保存结果并更新客户</button>
-      </div>
-    </section>
-
     <section class="secondary">
+      <details class="toolbox">
+        <summary>二级工具：客户记录 / AI生成</summary>
+        <div class="toolbox-body">
+          <div class="desk-grid old-client-grid">
+            <aside class="panel">
+              <div class="panel-hd">
+                <div>
+                  <h3>客户列表</h3>
+                  <small id="clientCount">0 个客户</small>
+                </div>
+              </div>
+              <div class="panel-bd">
+                <div class="field">
+                  <label>搜索客户</label>
+                  <input id="clientSearch" placeholder="称呼、楼盘、面积、顾虑">
+                </div>
+                <div class="client-list" id="clientList"></div>
+              </div>
+            </aside>
+
+            <section class="panel">
+              <div class="panel-hd">
+                <div>
+                  <h3>当前客户判断</h3>
+                  <small>需要存档或生成 AI 回复时再用</small>
+                </div>
+              </div>
+              <div class="panel-bd">
+                <input id="clientId" type="hidden">
+                <div class="two">
+                  <div class="field"><label>称呼</label><input id="clientName" placeholder="例：张姐 / 瑞府客户"></div>
+                  <div class="field"><label>来源</label><select id="clientSource"><option>小红书私信</option><option>微信</option><option>转介绍</option><option>老客户</option><option>其他</option></select></div>
+                </div>
+                <div class="two">
+                  <div class="field"><label>楼盘 / 区域</label><input id="clientArea" placeholder="例：长沙瑞府"></div>
+                  <div class="field"><label>面积 / 房型</label><input id="clientSize" placeholder="例：180平 / 大平层"></div>
+                </div>
+                <div class="two">
+                  <div class="field"><label>预算 / 价格信息</label><input id="clientBudget" placeholder="例：30万左右 / 未说"></div>
+                  <div class="field"><label>下次跟进</label><input id="nextFollowAt" type="date"></div>
+                </div>
+                <div class="two">
+                  <div class="field"><label>阶段</label><select id="clientStage"></select></div>
+                  <div class="field"><label>客户级别</label><select id="clientLevel"></select></div>
+                </div>
+                <div class="two">
+                  <div class="field"><label>核心顾虑</label><select id="clientConcern"></select></div>
+                  <div class="field"><label>推荐动作</label><input id="clientAction" readonly></div>
+                </div>
+                <div class="field"><label>客户原话</label><textarea id="latestMessage" class="tall" placeholder="粘贴客户微信 / 小红书私信原话"></textarea></div>
+                <div class="actions-row">
+                  <button class="ghost" id="newClientBtn" type="button">新增客户</button>
+                  <button class="btn green" id="saveClientBtn" type="button">保存到云端</button>
+                  <button class="btn dark" id="generateReplyBtn" type="button">生成客户回复</button>
+                  <button class="ghost" id="copyContextBtn" type="button">复制判断上下文</button>
+                </div>
+              </div>
+            </section>
+
+            <aside class="panel">
+              <div class="panel-hd">
+                <div>
+                  <h3>客户推进建议</h3>
+                  <small id="recommendMeta">等待选择品牌</small>
+                </div>
+              </div>
+              <div class="panel-bd" id="recommendation"></div>
+            </aside>
+          </div>
+
+          <section class="panel secondary old-ai-panel">
+            <div class="panel-hd">
+              <div>
+                <h3>AI生成结果</h3>
+                <small>生成后可保存为客户最近回复</small>
+              </div>
+              <div class="actions-row">
+                <button class="copy" id="copyReplyBtn" type="button">复制回复</button>
+                <button class="btn green" id="saveReplyBtn" type="button">保存回复到客户</button>
+              </div>
+            </div>
+            <div class="panel-bd">
+              <div class="quote result-box" id="generatedReply">还没有生成。先填客户原话，再点“生成客户回复”。</div>
+              <div class="two" style="margin-top:12px">
+                <div class="field"><label>客户结果</label><select id="clientResult"><option value="">选择本次结果</option><option>已发物料</option><option>已邀约</option><option>已约看工地</option><option>已约到公司</option><option>已约看完工现场</option><option>已约免费量房</option><option>客户回复了</option><option>客户没回复</option><option>成交</option><option>流失</option></select></div>
+                <div class="field"><label>结果备注</label><input id="resultNote" placeholder="例：约周六看工地 / 客户说先看看"></div>
+              </div>
+              <button class="btn dark" id="saveResultBtn" type="button">保存结果并更新客户</button>
+            </div>
+          </section>
+        </div>
+      </details>
       <details class="toolbox">
         <summary>二级工具：完整规则库 / 话术库</summary>
         <div class="toolbox-body">
@@ -500,21 +624,21 @@ const brandProfiles = {
     code: "精",
     title: "玖玖精工 / 半包",
     short: "大宅高标准半包施工｜真实工地可看｜图纸精算",
-    action: "看工地 / 带图纸判断施工",
-    promise: "判断工艺、报价漏项、图纸能不能落地。",
-    mind: "客户来玖玖精工，不是听半包介绍，而是做施工判断：工艺标准、真实工地、报价漏项、图纸能不能落地。",
-    materials: ["真实工地实拍", "节点工艺图", "图纸精算案例", "报价结构拆解"],
+    action: "看工地 / 看完工 / 到公司",
+    promise: "判断工艺、完工落地、报价漏项和图纸能不能落地。",
+    mind: "客户来玖玖精工，不是听半包介绍，而是做施工判断：先看真实工地，再看完工落地，有图纸或报价顾虑再到公司拆清楚。",
+    materials: ["真实工地实拍", "完工实拍", "节点工艺图", "图纸精算案例", "报价结构拆解"],
     redlines: ["不说成低价半包。", "不占普通家庭低价心智。", "看工地是主动作，不要一上来只发报价。"],
     types: [
-      { name: "工艺验证型", concerns: ["工艺"], worry: "施工靠不靠谱", action: "看工地", judge: "现场看工艺、管理、材料和节点。", material: "大宅工地实拍 / 水电防水泥木节点" },
-      { name: "有图纸型", concerns: ["落地", "报价"], worry: "图纸能不能落地", action: "到公司", judge: "带图纸判断施工难点、预算风险和落地路径。", material: "图纸节点 vs 现场节点 / 图纸精算案例" },
-      { name: "报价型", concerns: ["预算", "报价"], worry: "半包报价是否漏项", action: "到公司", judge: "拆报价结构，看项目、材料、工艺标准和漏项。", material: "报价结构说明 / 漏项风险清单" }
+      { name: "工艺验证型", concerns: ["工艺"], worry: "施工靠不靠谱", action: "看工地 / 看完工 / 到公司", judge: "先看施工现场的工艺、管理、材料和节点，再看完工落地；复杂报价或图纸问题到公司拆清楚。", material: "大宅工地实拍 / 完工实景 / 水电防水泥木节点" },
+      { name: "有图纸型", concerns: ["落地", "报价"], worry: "图纸能不能落地", action: "看工地 / 看完工 / 到公司", judge: "用工地和完工案例验证落地能力，带图纸到公司判断施工难点、预算风险和落地路径。", material: "图纸节点 vs 现场节点 / 图纸精算案例" },
+      { name: "报价型", concerns: ["预算", "报价"], worry: "半包报价是否漏项", action: "看工地 / 看完工 / 到公司", judge: "看现场标准和完工结果，再到公司拆报价结构、项目、材料、工艺标准和漏项。", material: "报价结构说明 / 漏项风险清单" }
     ],
     stageScripts: {
       "首次加微信": "您好～玖玖精工这边，我们专注长沙大宅高标准半包施工。纯施工能做，设计+施工一站式也能做，真实工地可以看。\\n\\n你现在是已经有设计图，还是还在前期规划？",
       "D0接待": "你现在不用急着定施工方。半包施工最怕不是价格高一点，而是图纸落不了地、报价漏项、施工过程没人管。\\n\\n我先发一组真实工地给你。",
       "D1补证据": "这组工地你重点看水电、防水、基层和收口。现场看一眼更容易判断施工标准。",
-      "D2-D3轻邀约": "你现在不用急着定，也不用急着交钱。你最该先判断的是施工靠不靠谱、报价有没有漏项、后期能不能把设计图落地。\\n\\n你看这周工作日，还是周末看工地更方便？",
+      "D2-D3轻邀约": "你现在不用急着定，也不用急着交钱。你最该先判断的是施工靠不靠谱、完工效果稳不稳、报价有没有漏项、后期能不能把设计图落地。\\n\\n这一步建议按顺序来：先看工地，再看完工，有图纸或报价问题再到公司拆清楚。你看这周工作日，还是周末更方便？",
       "D5-D7二次证据": "我再发你一组图纸精算和现场节点的对比。半包不能只看总价，关键要看项目有没有漏、材料有没有写清楚。",
       "D10-D15长期培育": "我先不连续打扰你。后面如果还在找施工方，直接把小区、面积、有没有图纸发我。",
       "拒绝处理": "理解，你先看。后面如果还拿不准，发我小区、面积和最担心的问题，我再帮你判断该看什么。"
@@ -548,21 +672,21 @@ const brandProfiles = {
     code: "宅",
     title: "宅师傅半包",
     short: "普通家庭透明半包｜438起｜免费量房出图预算",
-    action: "免费量房",
-    promise: "算清半包预算、图纸和增项风险。",
-    mind: "客户来宅师傅，不是听装修报价，而是先把自己家怎么装、半包多少钱、哪里容易增项、付款是否安全算清楚。",
-    materials: ["免费量房出图预算流程", "预算拆解", "工地实拍", "付款验收规则"],
+    action: "看工地 / 到公司 / 免费量房",
+    promise: "先验证工地，再讲规则，最后量房算清预算。",
+    mind: "客户来宅师傅，不是听装修报价，而是先看真实工地验证施工，再到公司把付款、预算和增项规则讲清楚，最后免费量房把自己家怎么算清楚。",
+    materials: ["工地实拍", "付款验收规则", "免费量房出图预算流程", "预算拆解"],
     redlines: ["免费量房只用于宅师傅。", "438元/㎡起不能说成所有客户最终价。", "不要包装成高端大宅品牌。"],
     types: [
-      { name: "预算型", concerns: ["预算", "报价"], worry: "半包到底多少钱", action: "免费量房", judge: "先算清你家半包大概要多少钱，别只听每平米价格。", material: "预算拆解图 / 免费量房出图流程" },
-      { name: "增项型", concerns: ["增项"], worry: "怕后期加钱", action: "免费量房", judge: "先把图纸和预算做清楚，提前看哪些地方容易增项。", material: "图纸预算流程 / 容易增项清单" },
-      { name: "工艺型", concerns: ["工艺", "落地"], worry: "便宜会不会质量差", action: "看工地", judge: "现场看施工和完工，比微信上讲工艺更直观。", material: "真实工地实拍 / 工艺节点图" }
+      { name: "预算型", concerns: ["预算", "报价"], worry: "半包到底多少钱", action: "看工地 / 到公司 / 免费量房", judge: "先看工地判断施工标准，再到公司讲清报价和付款规则，最后免费量房算清你家预算。", material: "预算拆解图 / 免费量房出图流程" },
+      { name: "增项型", concerns: ["增项"], worry: "怕后期加钱", action: "看工地 / 到公司 / 免费量房", judge: "先看工地，再到公司把增项边界和付款验收讲清楚，最后用图纸和预算提前排雷。", material: "图纸预算流程 / 容易增项清单" },
+      { name: "工艺型", concerns: ["工艺", "落地"], worry: "便宜会不会质量差", action: "看工地 / 到公司 / 免费量房", judge: "先现场看施工和完工，再到公司确认规则，最后量房算清方案和预算。", material: "真实工地实拍 / 工艺节点图" }
     ],
     stageScripts: {
       "首次加微信": "您好～宅师傅这边，我们做长沙普通家庭透明半包，438元/㎡起。\\n\\n可以先免费量房，出平面图、施工图和精准预算，不签约也能带走参考。",
       "D0接待": "你现在不用急着定装修公司。普通家庭装修最怕预算不清楚，前期听着便宜，后面越装越超。",
       "D1补证据": "这组资料是免费量房出图预算流程。先出图纸再做预算，是为了减少后期临时加钱和扯皮。",
-      "D2-D3轻邀约": "你现在不用急着定，也不用急着交钱。你最该先判断的是你家怎么装、半包大概要多少钱、哪些地方容易增项。\\n\\n你看这周工作日晚上，还是周末量房方便？",
+      "D2-D3轻邀约": "你现在不用急着定，也不用急着交钱。你最该先判断的是施工靠不靠谱、付款和增项规则清不清楚、你家半包大概要多少钱。\\n\\n这一步建议按顺序来：先看工地，再到公司把规则讲清楚，最后免费量房出图做预算。你看这周工作日晚上，还是周末更方便？",
       "D5-D7二次证据": "我再发你一组工地和完工参考。如果担心438起会不会质量差，后面可以看一次真实工地。",
       "D10-D15长期培育": "我先不连续打扰你。后面如果还在看装修，直接把小区、面积和预算大概范围发我。",
       "拒绝处理": "可以，你先看。后面如果想先算清楚自己家预算，再约免费量房也来得及。"
@@ -575,6 +699,29 @@ let activeBrand = "";
 let currentId = "";
 let ruleLibrary = [];
 let generatedReply = "";
+let quickState = {
+  stage: "D2-D3轻邀约",
+  level: "A高意向",
+  typeIndex: 0
+};
+
+const stageLabels = {
+  "首次加微信": "刚加上",
+  "D0接待": "刚聊起来",
+  "D1补证据": "该补证据",
+  "D2-D3轻邀约": "准备邀约",
+  "D5-D7二次证据": "二次推进",
+  "D10-D15长期培育": "长期养",
+  "拒绝处理": "他拒绝了"
+};
+
+const actionText = {
+  "看工地": "看真实工地",
+  "看完工": "看完工落地",
+  "看完工现场": "看完工现场",
+  "到公司": "到公司当面判断",
+  "免费量房": "免费量房出图预算"
+};
 
 function showToast(message) {
   const el = $("#toast");
@@ -629,9 +776,9 @@ async function loadClients() {
   try {
     const data = await api("/api/scripts-clients?ts=" + Date.now());
     clients = Array.isArray(data.items) ? data.items : [];
-    $("#cloudState").textContent = "云端客户池：已同步";
+    $("#cloudState").textContent = "点击式推进：云端已同步";
   } catch (error) {
-    $("#cloudState").textContent = "云端客户池：异常";
+    $("#cloudState").textContent = "点击式推进：离线也能用";
     console.error(error);
   }
   renderBrandGate();
@@ -674,6 +821,140 @@ function materialScript(type) {
 看完以后，如果你还是拿不准，我们再决定下一步是${type.action}，还是先继续补资料。`;
 }
 
+function currentQuickType() {
+  const profile = currentProfile();
+  return profile.types[quickState.typeIndex] || profile.types[0];
+}
+
+function splitActions(action) {
+  return String(action || "").split("/").map(item => item.trim()).filter(Boolean);
+}
+
+function quickStageScript(type = currentQuickType()) {
+  const profile = currentProfile();
+  if (quickState.stage === "拒绝处理") {
+    return `没关系，不急。
+
+你先不要硬推。这个客户现在更适合低压力处理：先发一组能证明「${type.worry}」的资料，让他自己判断。
+
+如果他看完还拿不准，再顺着推进：${type.action}。`;
+  }
+  return profile.stageScripts[quickState.stage] || profile.stageScripts["D0接待"];
+}
+
+function quickInviteScript(type = currentQuickType()) {
+  return `你现在不用急着定，也不用急着交钱。
+
+你这个情况，最该先判断的是：${type.worry}。
+
+我建议下一步先做这个动作：${type.action}。
+
+这一趟主要帮你判断：${type.judge}
+
+你看这周工作日，还是周末方便？`;
+}
+
+function quickMaterialScript(type = currentQuickType()) {
+  return `我先发你一组【${type.material}】，你不用马上做决定。
+
+你重点看三件事：
+1. 它能不能解释你担心的「${type.worry}」；
+2. 这个判断标准是不是能在线下验证；
+3. 看完以后是否值得进入下一步：${type.action}。`;
+}
+
+function renderQuickButtons() {
+  if (!activeBrand) return;
+  const profile = currentProfile();
+  $("#stagePicked").textContent = stageLabels[quickState.stage] || quickState.stage;
+  $("#levelPicked").textContent = quickState.level.replace(/[A-D]/, "");
+  const type = currentQuickType();
+  $("#typePicked").textContent = type.name;
+  $("#stageButtons").innerHTML = stages.map(stage => `<button class="decision-btn ${stage === quickState.stage ? "active" : ""}" type="button" data-quick-stage="${escapeHtml(stage)}">
+    ${escapeHtml(stageLabels[stage] || stage)}
+    <small>${escapeHtml(stage)}</small>
+  </button>`).join("");
+  $("#levelButtons").innerHTML = Object.entries(levels).map(([level, text]) => `<button class="decision-btn ${level === quickState.level ? "active" : ""}" type="button" data-quick-level="${escapeHtml(level)}">
+    ${escapeHtml(level)}
+    <small>${escapeHtml(text)}</small>
+  </button>`).join("");
+  $("#typeButtons").innerHTML = profile.types.map((item, index) => `<button class="decision-btn ${index === quickState.typeIndex ? "active" : ""}" type="button" data-quick-type="${index}">
+    ${escapeHtml(item.name)}
+    <small>${escapeHtml(item.worry)}</small>
+  </button>`).join("");
+  $$("[data-quick-stage]").forEach(button => button.addEventListener("click", () => {
+    quickState.stage = button.dataset.quickStage;
+    renderQuickDecision();
+  }));
+  $$("[data-quick-level]").forEach(button => button.addEventListener("click", () => {
+    quickState.level = button.dataset.quickLevel;
+    renderQuickDecision();
+  }));
+  $$("[data-quick-type]").forEach(button => button.addEventListener("click", () => {
+    quickState.typeIndex = Number(button.dataset.quickType) || 0;
+    renderQuickDecision();
+  }));
+}
+
+function renderQuickDecision() {
+  if (!activeBrand) return;
+  const profile = currentProfile();
+  if (quickState.typeIndex >= profile.types.length) quickState.typeIndex = 0;
+  const type = currentQuickType();
+  syncSecondaryFormToQuick(type);
+  const actions = splitActions(type.action);
+  const stageText = quickStageScript(type);
+  const invite = quickInviteScript(type);
+  const material = quickMaterialScript(type);
+  renderQuickButtons();
+  $("#quickMeta").textContent = `${profile.title} / ${stageLabels[quickState.stage] || quickState.stage} / ${type.name}`;
+  $("#quickPlan").innerHTML = `
+    <div class="chips">
+      <span class="chip good">${escapeHtml(type.action)}</span>
+      <span class="chip">${escapeHtml(quickState.level)}</span>
+      <span class="chip warn">${escapeHtml(type.name)}</span>
+    </div>
+    <div class="quick-card">
+      <h4>一句话判断</h4>
+      <div class="quote">${escapeHtml(levels[quickState.level] || "")}
+
+客户现在卡在：${escapeHtml(type.worry)}
+你要帮他判断：${escapeHtml(type.judge)}</div>
+    </div>
+    <div class="quick-card">
+      <h4>动作顺序</h4>
+      <div class="action-steps">${actions.map((action, index) => `<div class="action-step"><b>${index + 1}</b><span><strong>${escapeHtml(actionText[action] || action)}</strong><br><small class="muted">${escapeHtml(index === 0 ? "先用这个动作降低不确定性" : index === actions.length - 1 ? "最后把关键问题当面/到场确认" : "用它补足信任证据")}</small></span></div>`).join("")}</div>
+    </div>
+    <div class="quick-card">
+      <h4>先发物料</h4>
+      <div class="quote">${escapeHtml(type.material)}</div>
+    </div>
+    <div class="quick-card">
+      <h4>别踩这个坑</h4>
+      <div class="quote">${escapeHtml(profile.redlines.join("\\n"))}</div>
+    </div>`;
+  $("#quickScripts").innerHTML = [
+    ["阶段话术", stageText],
+    ["邀约话术", invite],
+    ["物料话术", material]
+  ].map(([title, text], index) => `<div class="quick-card">
+    <h4>${escapeHtml(title)}</h4>
+    <div class="quote">${escapeHtml(text)}</div>
+    <div class="actions-row"><button class="copy" type="button" data-copy-quick="${index}">复制</button></div>
+  </div>`).join("");
+  const scripts = [stageText, invite, material];
+  $$("[data-copy-quick]").forEach(button => button.addEventListener("click", () => copyText(scripts[Number(button.dataset.copyQuick)])));
+}
+
+function syncSecondaryFormToQuick(type = currentQuickType()) {
+  const stageEl = $("#clientStage");
+  if (!stageEl || !stageEl.options.length) return;
+  stageEl.value = quickState.stage;
+  $("#clientLevel").value = quickState.level;
+  $("#clientConcern").value = type.concerns[0] || "预算";
+  $("#clientAction").value = type.action;
+}
+
 function defaultClient(brand = activeBrand) {
   const profile = brandProfiles[brand] || brandProfiles["8K设计"];
   return {
@@ -698,7 +979,7 @@ function defaultClient(brand = activeBrand) {
 
 function renderBrandGate() {
   const total = clients.length;
-  $("#gateSummary").textContent = `云端已有 ${total} 个客户`;
+  $("#gateSummary").textContent = total ? `可选云端记录 ${total} 个，但不是必填` : "不录客户，先判断动作";
   $("#brandGrid").innerHTML = Object.entries(brandProfiles).map(([brand, profile]) => {
     const count = clients.filter(item => item.brand === brand).length;
     const waiting = clients.filter(item => item.brand === brand && (!item.nextFollowAt || item.nextFollowAt <= todayPlus(0))).length;
@@ -709,7 +990,7 @@ function renderBrandGate() {
       <div class="card-meta">
         <span><b>主动作</b>${escapeHtml(profile.action)}</span>
         <span><b>判断价值</b>${escapeHtml(profile.promise)}</span>
-        <span><b>客户</b>${count} 个｜待跟进 ${waiting} 个</span>
+        <span><b>使用</b>点阶段 / 点顾虑</span>
       </div>
     </button>`;
   }).join("");
@@ -782,11 +1063,12 @@ function currentClient() {
 function renderDesk() {
   const profile = currentProfile();
   $("#deskTitle").textContent = `${profile.title}｜客户推进台`;
-  $("#deskSubtitle").textContent = profile.mind;
+  $("#deskSubtitle").textContent = "点阶段、热度和顾虑，右边直接出动作和话术。客户资料、云端保存和 AI 生成都放在二级工具里。";
   renderSelects();
   renderClientList();
   const selected = currentClient() || defaultClient(activeBrand);
   fillClientForm(selected);
+  renderQuickDecision();
   renderGrowth();
 }
 
