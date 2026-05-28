@@ -151,7 +151,7 @@ button { font: inherit; }
 
 .entry-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 .entry-card,
@@ -182,6 +182,7 @@ button { font: inherit; }
   background: linear-gradient(90deg, var(--blue), var(--cyan));
 }
 .entry-card.xhs::before { background: linear-gradient(90deg, #111827, var(--blue), var(--green)); }
+.entry-card.scripts::before { background: linear-gradient(90deg, #111827, var(--gold), var(--blue)); }
 .entry-card.library::before,
 .library-panel::before { background: linear-gradient(90deg, var(--gold), var(--blue)); }
 .entry-head {
@@ -213,6 +214,7 @@ button { font: inherit; }
   flex: 0 0 auto;
 }
 .entry-card.xhs .mark { color: var(--green); }
+.entry-card.scripts .mark { color: var(--gold); }
 .entry-card.library .mark { color: var(--gold); }
 .entry-meta {
   display: grid;
@@ -246,6 +248,7 @@ button { font: inherit; }
   box-shadow: 0 14px 30px rgba(31,111,235,.22);
 }
 .entry-card.xhs .entry-button { background: linear-gradient(135deg, var(--blue), var(--cyan), var(--green)); }
+.entry-card.scripts .entry-button { background: linear-gradient(135deg, #111827, var(--gold), var(--blue)); }
 .entry-card.library .entry-button { background: linear-gradient(135deg, #111827, var(--gold)); }
 .entry-button small { color: inherit; opacity: .72; font-size: 12px; font-weight: 700; }
 .entry-button:hover { transform: translateY(-1px); box-shadow: var(--shadow-strong); }
@@ -387,19 +390,19 @@ button { font: inherit; }
   </section>
 
   <section class="entry-grid" aria-label="工作台主入口">
-    <article class="entry-card">
+    <article class="entry-card scripts">
       <div class="entry-head">
         <div>
-          <h2>进入官网</h2>
-          <p>查看线上门面、服务价格和品牌呈现，确认外面看到的老谭是否清楚可信。</p>
+          <h2>客户线上转化系统</h2>
+          <p>微信有效接触、销售动作导航、物料发送节奏、判断型邀约和一键复制话术。销售执行优先从这里进。</p>
         </div>
-        <span class="mark">官</span>
+        <span class="mark">转</span>
       </div>
       <div class="entry-meta">
-        <span><b>用途</b>看门面和转化页</span>
-        <span><b>路径</b>官网首页</span>
+        <span><b>用途</b>客户承接与到访推进</span>
+        <span><b>路径</b>转化系统主入口</span>
       </div>
-      <a class="entry-button" href="/">进入官网 <small>打开</small></a>
+      <a class="entry-button" href="/tools/scripts/#b2b">进入转化系统 <small>执行</small></a>
     </article>
 
     <article class="entry-card xhs">
@@ -415,6 +418,21 @@ button { font: inherit; }
         <span><b>路径</b>小红书 AI 工作台</span>
       </div>
       <a class="entry-button" href="/tools/xhs/?mode=new">开始写小红书 <small>开写</small></a>
+    </article>
+
+    <article class="entry-card">
+      <div class="entry-head">
+        <div>
+          <h2>进入官网</h2>
+          <p>查看线上门面、服务价格和品牌呈现，确认外面看到的老谭是否清楚可信。</p>
+        </div>
+        <span class="mark">官</span>
+      </div>
+      <div class="entry-meta">
+        <span><b>用途</b>看门面和转化页</span>
+        <span><b>路径</b>官网首页</span>
+      </div>
+      <a class="entry-button" href="/">进入官网 <small>打开</small></a>
     </article>
 
     <article class="entry-card library">
@@ -447,7 +465,7 @@ button { font: inherit; }
         <a class="library-link" href="/dashboard/brand.html"><b>老谭终身品牌</b><span>品牌线</span></a>
         <a class="library-link" href="/dashboard/agency.html"><b>老谭代运营</b><span>B 端增长线</span></a>
         <a class="library-link" href="/dashboard/consultant.html"><b>装修顾问</b><span>C 端服务线</span></a>
-        <a class="library-link" href="/tools/scripts/"><b>话术工作台</b><span>客户承接回复</span></a>
+        <a class="library-link" href="/tools/scripts/#b2b"><b>客户线上转化系统</b><span>有效接触 / 销售动作导航</span></a>
       </div>
     </div>
   </section>
@@ -469,6 +487,7 @@ button { font: inherit; }
         <a class="tool-card" href="/workspace/brand/"><span class="icon">牌</span><h3>品牌作战卡</h3><p>各品牌资料卡</p></a>
         <a class="tool-card" href="/workspace/data/"><span class="icon">数</span><h3>经营数据驾驶舱</h3><p>内容到成交数据</p></a>
         <a class="tool-card" href="/workspace/content/"><span class="icon">文</span><h3>内容生产中台</h3><p>选题和内容方案</p></a>
+        <a class="tool-card" href="/tools/scripts/#b2b"><span class="icon">转</span><h3>客户线上转化系统</h3><p>有效接触动作、物料、邀约话术</p></a>
         <a class="tool-card" href="/workspace/dialog/"><span class="icon">话</span><h3>客户对话判断器</h3><p>判断客户原话</p></a>
         <a class="tool-card" href="/workspace/follow/"><span class="icon">跟</span><h3>客户跟进看板</h3><p>按天数生成动作</p></a>
         <a class="tool-card" href="/workspace/review/"><span class="icon">复</span><h3>项目复盘生成器</h3><p>沉淀复盘报告</p></a>
