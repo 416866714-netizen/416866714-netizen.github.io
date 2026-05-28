@@ -417,7 +417,7 @@
       <div class="panel-bd">
         <div class="quote result-box" id="generatedReply">还没有生成。先填客户原话，再点“生成客户回复”。</div>
         <div class="two" style="margin-top:12px">
-          <div class="field"><label>客户结果</label><select id="clientResult"><option value="">选择本次结果</option><option>已发物料</option><option>已邀约</option><option>已约看工地</option><option>已约到公司</option><option>已约免费量房</option><option>客户回复了</option><option>客户没回复</option><option>成交</option><option>流失</option></select></div>
+          <div class="field"><label>客户结果</label><select id="clientResult"><option value="">选择本次结果</option><option>已发物料</option><option>已邀约</option><option>已约看工地</option><option>已约到公司</option><option>已约看完工现场</option><option>已约免费量房</option><option>客户回复了</option><option>客户没回复</option><option>成交</option><option>流失</option></select></div>
           <div class="field"><label>结果备注</label><input id="resultNote" placeholder="例：约周六看工地 / 客户说先看看"></div>
         </div>
         <button class="btn dark" id="saveResultBtn" type="button">保存结果并更新客户</button>
@@ -476,21 +476,21 @@ const brandProfiles = {
     code: "8K",
     title: "8K设计",
     short: "高审美全案设计｜8000设计费清晰｜效果图能落地",
-    action: "到公司",
-    promise: "看设计能力、案例匹配、设计费和落地。",
-    mind: "客户来8K，不是来听销售介绍，而是来做一次设计判断：设计能力、案例匹配、设计费值不值、效果图能不能真实做出来。",
+    action: "到公司 / 看完工",
+    promise: "看设计能力、案例匹配、设计费和完工落地。",
+    mind: "客户来8K，不是来听销售介绍，而是来做一次设计判断：到公司看方案、案例和服务边界，也可以看完工现场判断效果图能不能真实落地。",
     materials: ["效果图 vs 完工实拍", "同面积/同风格案例", "8000设计服务清单", "设计过程"],
     redlines: ["不讲宅师傅半包价格。", "不把看公司规模当主钩子。", "不说“聊聊需求”，要说“带户型图判断设计方向、预算和落地难度”。"],
     types: [
-      { name: "设计信任型", concerns: ["设计"], worry: "你们到底会不会设计", action: "到公司", judge: "看设计师怎么分析户型、需求和风格。", material: "设计师户型分析过程 / 同风格案例菜单" },
-      { name: "落地型", concerns: ["落地", "工艺"], worry: "效果图能不能做出来", action: "到公司", judge: "看效果图、施工图、完工实景之间的完整链路。", material: "效果图 vs 完工实拍 / 施工节点落地证据" },
-      { name: "设计费型", concerns: ["预算", "报价"], worry: "8000元设计费值不值", action: "到公司", judge: "看服务边界，确认8000到底包含什么。", material: "8000设计服务清单 / 服务边界图" }
+      { name: "设计信任型", concerns: ["设计"], worry: "你们到底会不会设计", action: "到公司 / 看完工", judge: "到公司看设计师怎么分析户型、需求和风格，必要时再看完工落地。", material: "设计师户型分析过程 / 同风格案例菜单" },
+      { name: "落地型", concerns: ["落地", "工艺"], worry: "效果图能不能做出来", action: "到公司 / 看完工", judge: "看效果图、施工图、完工实景之间的完整链路。", material: "效果图 vs 完工实拍 / 施工节点落地证据" },
+      { name: "设计费型", concerns: ["预算", "报价"], worry: "8000元设计费值不值", action: "到公司 / 看完工", judge: "到公司看服务边界，确认8000到底包含什么，再用完工案例判断落地价值。", material: "8000设计服务清单 / 服务边界图" }
     ],
     stageScripts: {
       "首次加微信": "您好～我是8K全案设计这边主理人。我们不是只出效果图的纯设计，主要做「设计 + 半包落地」：好设计、高审美，但不做高溢价。\\n\\n您是哪个楼盘、大概多大面积？我看看有没有同楼盘、同面积或相近风格的案例，先发您参考。",
       "D0接待": "你现在不用急着定设计，也不用急着交钱。\\n\\n我先按你家情况发一组相关案例。你重点不是看图好不好看，而是看：风格和你家像不像、预算能不能撑住、后期能不能落地。",
       "D1补证据": "这组资料我建议你重点看效果图和完工实景的关系。线上看图只能看审美，真正难的是效果图最后怎么做出来。",
-      "D2-D3轻邀约": "你现在不用急着定，也不用急着交钱。你这个情况，最该先判断的是：设计方向、8000设计费包含什么、你喜欢的效果最后能不能真实落地。\\n\\n你看这周工作日晚上，还是周末带户型图来更方便？",
+      "D2-D3轻邀约": "你现在不用急着定，也不用急着交钱。你这个情况，最该先判断的是：设计方向、8000设计费包含什么、你喜欢的效果最后能不能真实落地。\\n\\n这一步可以到公司带户型图看方案和服务边界，也可以安排看完工现场判断落地质感。你看这周工作日晚上，还是周末更方便？",
       "D5-D7二次证据": "我再发你一组效果图和实景对比，你可以留着看。重点看收口、灯光、材质和比例。",
       "D10-D15长期培育": "我先不连续打扰你。后面如果还在看设计，直接发我「楼盘+面积+喜欢风格」就行。",
       "拒绝处理": "没关系，不急。你先看资料，如果还觉得拿不准，我们再约一个最方便的时间。"
@@ -952,7 +952,7 @@ async function saveResult() {
     showToast("先选择客户结果");
     return;
   }
-  const nextMap = { "已发物料": 2, "已邀约": 1, "已约看工地": 1, "已约到公司": 1, "已约免费量房": 1, "客户回复了": 1, "客户没回复": 3, "成交": 30, "流失": 30 };
+  const nextMap = { "已发物料": 2, "已邀约": 1, "已约看工地": 1, "已约到公司": 1, "已约看完工现场": 1, "已约免费量房": 1, "客户回复了": 1, "客户没回复": 3, "成交": 30, "流失": 30 };
   const client = readClientForm();
   client.latestReply = generatedReply;
   client.lastResult = resultType;
