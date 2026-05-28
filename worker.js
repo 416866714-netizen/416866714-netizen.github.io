@@ -1572,6 +1572,105 @@ async function handleXhsBenchmarks(request, env) {
   return json({ error: 'Method Not Allowed' }, 405);
 }
 
+function scriptClientStore(env) {
+  return env.SCRIPTS_CLIENTS || env.XHS_BENCHMARKS;
+}
+
+function scriptClientsKey() {
+  return 'scripts:clients:v2';
+}
+
+function nowChina() {
+  return new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+}
+
+function cleanString(value, max = 6000) {
+  return String(value || '').slice(0, max).trim();
+}
+
+function sanitizeScriptClient(item = {}, previous = {}) {
+  const oldResults = Array.isArray(previous.results) ? previous.results : [];
+  const incomingResults = Array.isArray(item.results) ? item.results : oldResults;
+  const now = Date.now();
+  const results = incomingResults
+    .filter(Boolean)
+    .slice(-80)
+    .map(x => ({
+      type: cleanString(x.type || x.result || x.outcome, 80),
+      note: cleanString(x.note, 1000),
+      message: cleanString(x.message, 3000),
+      reply: cleanString(x.reply, 5000),
+      savedAt: cleanString(x.savedAt || nowChina(), 40),
+    }));
+  return {
+    id: cleanString(item.id || previous.id || String(Date.now()), 80),
+    brand: cleanString(item.brand || previous.brand, 80),
+    name: cleanString(item.name || previous.name || '未命名客户', 80),
+    source: cleanString(item.source || previous.source, 80),
+    area: cleanString(item.area || previous.area, 120),
+    size: cleanString(item.size || previous.size, 80),
+    budget: cleanString(item.budget || previous.budget, 80),
+    stage: cleanString(item.stage || previous.stage || '首次加微信', 80),
+    level: cleanString(item.level || previous.level || 'A高意向', 80),
+    concern: cleanString(item.concern || previous.concern || '预算', 80),
+    action: cleanString(item.action || previous.action, 80),
+    latestMessage: cleanString(item.latestMessage || previous.latestMessage, 6000),
+    latestReply: cleanString(item.latestReply || previous.latestReply, 8000),
+    nextFollowAt: cleanString(item.nextFollowAt || previous.nextFollowAt, 80),
+    lastResult: cleanString(item.lastResult || previous.lastResult, 80),
+    results,
+    createdAt: cleanString(previous.createdAt || item.createdAt || nowChina(), 40),
+    createdTs: Number(previous.createdTs || item.createdTs || now),
+    updatedAt: nowChina(),
+    updatedTs: now,
+  };
+}
+
+async function handleScriptsClients(request, env) {
+  if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
+  const store = scriptClientStore(env);
+  if (!store) return json({ error: 'SCRIPTS_CLIENTS KV is not configured' }, 500);
+  const key = scriptClientsKey();
+  if (request.method === 'GET') {
+    const items = await store.get(key, 'json').catch(() => null);
+    return json({ ok: true, source: env.SCRIPTS_CLIENTS ? 'cloudflare-kv:scripts-clients' : 'cloudflare-kv:fallback', items: Array.isArray(items) ? items : [] });
+  }
+  if (request.method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const incoming = body.item || body.client || {};
+    const current = await store.get(key, 'json').catch(() => null);
+    const items = Array.isArray(current) ? current : [];
+    const id = cleanString(incoming.id || body.id || String(Date.now()), 80);
+    const previous = items.find(x => String(x.id) === String(id)) || {};
+    const result = body.result ? {
+      type: cleanString(body.result.type || body.result.result || body.result.outcome, 80),
+      note: cleanString(body.result.note, 1000),
+      message: cleanString(body.result.message || incoming.latestMessage || previous.latestMessage, 3000),
+      reply: cleanString(body.result.reply || incoming.latestReply || previous.latestReply, 5000),
+      savedAt: nowChina(),
+    } : null;
+    const item = sanitizeScriptClient({ ...incoming, id }, previous);
+    if (result && result.type) {
+      item.results = [...(Array.isArray(previous.results) ? previous.results : []), result].slice(-80);
+      item.lastResult = result.type;
+    }
+    const next = [item, ...items.filter(x => String(x.id) !== String(id))]
+      .sort((a, b) => Number(b.updatedTs || 0) - Number(a.updatedTs || 0))
+      .slice(0, 300);
+    await store.put(key, JSON.stringify(next));
+    return json({ ok: true, item, items: next });
+  }
+  if (request.method === 'DELETE') {
+    const id = new URL(request.url).searchParams.get('id') || '';
+    const current = await store.get(key, 'json').catch(() => null);
+    const items = Array.isArray(current) ? current : [];
+    const next = items.filter(x => String(x.id) !== String(id));
+    await store.put(key, JSON.stringify(next));
+    return json({ ok: true, items: next });
+  }
+  return json({ error: 'Method Not Allowed' }, 405);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -1581,6 +1680,7 @@ export default {
     if (url.pathname === '/api/scripts-reply') return handleScriptsReply(request, env);
     if (url.pathname === '/api/scripts-library') return json({ ok: true, source: 'feishu-doc:NkgtdR8eAoW470xdgtMcYePVnmf', items: getScriptsLibrary() });
     if (url.pathname === '/api/scripts-b2b-library') return json({ ok: true, source: 'b2b-effective-contact-rules', items: getB2BEffectiveContactLibrary() });
+    if (url.pathname === '/api/scripts-clients') return handleScriptsClients(request, env);
     const res = await env.ASSETS.fetch(request);
     const out = new Response(res.body, res);
     if (url.pathname.startsWith('/tools/xhs') || url.pathname.startsWith('/tools/scripts')) out.headers.set('Cache-Control','no-store');

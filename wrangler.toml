@@ -11,3 +11,7 @@ run_worker_first = true
 [[kv_namespaces]]
 binding = "XHS_BENCHMARKS"
 id = "f9c542955110427eb5931d37e03b8740"
+
+[[kv_namespaces]]
+binding = "SCRIPTS_CLIENTS"
+id = "006991d87ffd4d588367790a8e6dba39"
