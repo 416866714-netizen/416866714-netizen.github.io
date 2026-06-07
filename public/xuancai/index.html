@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>老谭长沙装修选材笔记｜主材、定制、软装高性价比资源</title>
+  <meta name="description" content="长沙装修后面这9笔钱，老谭帮你先看清楚。全屋定制、木门、瓷砖、卫浴、地板、家电、软装、窗帘、美缝选购避坑与本地资源咨询入口。" />
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --soft: #f5f7f2;
+      --paper: #fffdf8;
+      --card: rgba(255, 255, 255, .94);
+      --line: rgba(23, 32, 51, .12);
+      --green: #17775a;
+      --red: #b33a2f;
+      --gold: #b9822c;
+      --blue: #355f8c;
+      --shadow: 0 18px 48px rgba(23, 32, 51, .10);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(120deg, rgba(23, 119, 90, .08), transparent 34%),
+        linear-gradient(240deg, rgba(179, 58, 47, .07), transparent 32%),
+        linear-gradient(180deg, #fffdf8 0%, #f5f7f2 56%, #edf3ef 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    img { max-width: 100%; display: block; }
+
+    .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 253, 248, .88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    .brand img { width: 34px; height: 34px; border-radius: 8px; }
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 760;
+    }
+    .nav a:hover { color: var(--green); }
+
+    .btn {
+      border: 0;
+      border-radius: var(--radius);
+      min-height: 46px;
+      padding: 12px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn-primary { color: #fff; background: linear-gradient(135deg, var(--green), var(--blue)); }
+    .btn-red { color: #fff; background: linear-gradient(135deg, var(--red), #c46f31); }
+    .btn-ghost { color: var(--ink); background: #fff; border: 1px solid var(--line); }
+    .btn-small { min-height: 38px; padding: 9px 12px; font-size: 13px; }
+
+    .hero {
+      padding: 52px 0 30px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(330px, .72fr);
+      gap: 28px;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(23, 119, 90, .18);
+      border-radius: 999px;
+      padding: 7px 11px;
+      color: var(--green);
+      background: rgba(255, 255, 255, .78);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    h1 {
+      margin: 16px 0 0;
+      max-width: 820px;
+      font-size: clamp(38px, 6vw, 74px);
+      line-height: 1.03;
+      letter-spacing: 0;
+      font-weight: 980;
+    }
+    .lead {
+      margin: 18px 0 0;
+      max-width: 760px;
+      color: #485568;
+      font-size: clamp(17px, 2vw, 22px);
+      line-height: 1.58;
+      font-weight: 650;
+    }
+    .hero-actions { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .trust-line {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .hero-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel-photo {
+      position: relative;
+      min-height: 176px;
+      background:
+        linear-gradient(135deg, rgba(23, 119, 90, .9), rgba(53, 95, 140, .74)),
+        url("/assets/brand/lt-concepts/03-check-compass.png") center/160px no-repeat;
+    }
+    .panel-photo::after {
+      content: "老谭先看风险，再推荐资源";
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      color: #fff;
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 980;
+      max-width: 260px;
+    }
+    .panel-body { padding: 18px; }
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .mini-stats div {
+      border: 1px solid rgba(23, 32, 51, .1);
+      border-radius: var(--radius);
+      padding: 12px 10px;
+      background: #fff;
+    }
+    .mini-stats strong { display: block; font-size: 24px; line-height: 1; }
+    .mini-stats span { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .quote {
+      margin: 0;
+      padding: 14px;
+      border-left: 4px solid var(--red);
+      border-radius: var(--radius);
+      color: #3f4858;
+      background: #fff7ef;
+      line-height: 1.7;
+      font-weight: 720;
+    }
+
+    section { padding: 34px 0; }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    h2 {
+      margin: 0;
+      font-size: clamp(26px, 3.4vw, 42px);
+      line-height: 1.16;
+      letter-spacing: 0;
+      font-weight: 980;
+    }
+    .section-head p {
+      margin: 0;
+      max-width: 520px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 620;
+    }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .stage-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 14px;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+      min-height: 112px;
+    }
+    .stage-card:hover, .stage-card.active {
+      transform: translateY(-2px);
+      border-color: rgba(23, 119, 90, .42);
+      box-shadow: var(--shadow);
+    }
+    .stage-card b { display: block; margin-bottom: 8px; font-size: 15px; }
+    .stage-card span { color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .category-card, .resource-card, .rule-card, .flow-card, .contact-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 10px 28px rgba(23, 32, 51, .06);
+    }
+    .category-card {
+      display: grid;
+      grid-template-columns: 78px minmax(0, 1fr);
+      gap: 14px;
+      padding: 15px;
+      min-height: 168px;
+    }
+    .visual {
+      border-radius: var(--radius);
+      min-height: 78px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 26px;
+      font-weight: 980;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+    }
+    .category-card:nth-child(2n) .visual { background: linear-gradient(135deg, var(--red), var(--gold)); }
+    .category-card:nth-child(3n) .visual { background: linear-gradient(135deg, var(--blue), #7a5b9e); }
+    .category-card h3, .resource-card h3, .contact-card h3 { margin: 0; font-size: 20px; line-height: 1.22; }
+    .category-card p, .resource-card p, .rule-card p, .flow-card p, .contact-card p {
+      margin: 9px 0 0;
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 14px;
+      font-weight: 610;
+    }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(23, 32, 51, .1);
+      padding: 5px 8px;
+      background: #fff;
+      color: #536071;
+      font-size: 12px;
+      font-weight: 820;
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .resource-card { overflow: hidden; }
+    .resource-top {
+      min-height: 102px;
+      padding: 16px;
+      color: #fff;
+      background: linear-gradient(135deg, #203046, #17775a);
+    }
+    .resource-card:nth-child(2) .resource-top { background: linear-gradient(135deg, #4a2f2a, #b33a2f); }
+    .resource-card:nth-child(3) .resource-top { background: linear-gradient(135deg, #283851, #b9822c); }
+    .resource-card:nth-child(4) .resource-top { background: linear-gradient(135deg, #243e39, #355f8c); }
+    .resource-card:nth-child(5) .resource-top { background: linear-gradient(135deg, #453447, #17775a); }
+    .resource-card:nth-child(6) .resource-top { background: linear-gradient(135deg, #2d3544, #c46f31); }
+    .resource-top small {
+      display: inline-flex;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      padding: 4px 8px;
+      margin-bottom: 12px;
+      font-weight: 850;
+    }
+    .resource-body { padding: 16px; }
+    .list {
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      color: #465366;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .list li { padding-left: 17px; position: relative; }
+    .list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .62em;
+      width: 7px;
+      height: 7px;
+      border-radius: 99px;
+      background: var(--green);
+    }
+    .resource-card .btn { width: 100%; margin-top: 14px; }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .rule-card { padding: 14px; min-height: 128px; }
+    .rule-card strong { display: block; font-size: 15px; line-height: 1.35; }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .contact-card { padding: 20px; }
+    .qr-box {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #fff;
+    }
+    .qr-box img { width: 132px; border-radius: 8px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+    .field { display: grid; gap: 6px; }
+    .field label { color: #475467; font-size: 13px; font-weight: 860; }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 11px 12px;
+      background: #fff;
+      color: var(--ink);
+      outline: 0;
+    }
+    .field textarea { min-height: 112px; resize: vertical; }
+    .field.full { grid-column: 1 / -1; }
+    .note {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: #fff7ef;
+      color: #654238;
+      line-height: 1.65;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .flows {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .flow-card { padding: 16px; }
+    .num {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius);
+      color: #fff;
+      background: var(--red);
+      font-weight: 980;
+      margin-bottom: 12px;
+    }
+
+    .bottom-cta {
+      margin: 22px 0 54px;
+      border: 1px solid rgba(255,255,255,.58);
+      border-radius: var(--radius);
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, #172033, #17775a 60%, #b9822c);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .bottom-cta h2 { color: #fff; }
+    .bottom-cta p { margin: 10px 0 0; color: rgba(255,255,255,.82); line-height: 1.65; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(10, 18, 30, .62);
+    }
+    .modal.show { display: flex; }
+    .modal-card {
+      width: min(440px, 100%);
+      border-radius: var(--radius);
+      background: var(--paper);
+      padding: 20px;
+      box-shadow: 0 26px 80px rgba(0,0,0,.22);
+    }
+    .modal-card h3 { margin: 0; font-size: 24px; }
+    .modal-card p { color: var(--muted); line-height: 1.7; }
+    .modal-card img { width: 210px; margin: 14px auto; border-radius: 8px; }
+    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    @media (max-width: 980px) {
+      .hero, .split { grid-template-columns: 1fr; }
+      .stage-grid, .rules { grid-template-columns: repeat(3, 1fr); }
+      .category-grid, .resource-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flows { grid-template-columns: repeat(2, 1fr); }
+      .nav { display: none; }
+    }
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 22px, 1180px); }
+      .topbar-inner { min-height: 56px; }
+      .hero { padding-top: 34px; }
+      .hero-actions .btn, .bottom-cta .btn { width: 100%; }
+      .stage-grid, .category-grid, .resource-grid, .rules, .flows, .form-grid { grid-template-columns: 1fr; }
+      .category-card { grid-template-columns: 64px minmax(0, 1fr); min-height: auto; }
+      .visual { min-height: 64px; font-size: 22px; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 10px; }
+      .qr-box { grid-template-columns: 1fr; }
+      .qr-box img { width: 160px; }
+      .bottom-cta { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="/">
+        <img src="/assets/brand/laotan-mark.png" alt="老谭" />
+        <span>老谭长沙装修选材笔记</span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#stages">装修阶段</a>
+        <a href="#categories">9大品类</a>
+        <a href="#resources">资源清单</a>
+        <a href="#contact">发给老谭</a>
+      </nav>
+      <button class="btn btn-primary btn-small js-open-qr" type="button">找老谭看看</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero shell">
+      <div>
+        <span class="eyebrow">长沙业主群可转发｜主材、定制、软装、家电咨询入口</span>
+        <h1>长沙装修后面这9笔钱，老谭帮你先看清楚。</h1>
+        <p class="lead">你不一定要选我推荐的装修公司。但全屋定制、木门、瓷砖、卫浴、地板、家电、软装、窗帘、美缝，每一项都可能买贵、买错、装错。先把报价、清单、图片发我，我帮你看明显风险，再决定要不要推荐长沙本地资源。</p>
+        <div class="hero-actions">
+          <a class="btn btn-red" href="#contact">发我看看有没有坑</a>
+          <a class="btn btn-ghost" href="#categories">先看9大品类</a>
+        </div>
+        <p class="trust-line">老谭不强推品牌，不替商家做绝对担保；先帮你看适不适合，再判断该不该买、找谁买。</p>
+      </div>
+
+      <aside class="hero-panel" aria-label="老谭选材顾问说明">
+        <div class="panel-photo"></div>
+        <div class="panel-body">
+          <div class="mini-stats">
+            <div><strong>9</strong><span>装修后续高花钱品类</span></div>
+            <div><strong>3</strong><span>先看价格、适配、风险</span></div>
+            <div><strong>1</strong><span>老谭本地判断入口</span></div>
+          </div>
+          <p class="quote">“别急着买最便宜的。装修选材真正要看的是：适不适合你家、后期会不会加钱、出问题有没有人管。”</p>
+        </div>
+      </aside>
+    </section>
+
+    <section id="stages" class="shell">
+      <div class="section-head">
+        <h2>你现在装修到哪一步？</h2>
+        <p>先按阶段入口走，比直接看品牌更准。不同阶段，老谭帮你看的重点不一样。</p>
+      </div>
+      <div class="stage-grid" role="list">
+        <button class="stage-card active" type="button" data-message="我还没定装修公司，想先看后面材料和定制怎么规划。"><b>还没定公司</b><span>先看预算、模式和后续大项。</span></button>
+        <button class="stage-card" type="button" data-message="我已经签了装修公司，想看主材和定制怎么选。"><b>已经签约</b><span>重点看主材、定制、家电预留。</span></button>
+        <button class="stage-card" type="button" data-message="我准备买主材，想让老谭看一下报价和品牌。"><b>准备买主材</b><span>瓷砖、卫浴、地板、木门先别急。</span></button>
+        <button class="stage-card" type="button" data-message="我准备做全屋定制，想先看报价有没有坑。"><b>准备做定制</b><span>板材、五金、计价方式、增项。</span></button>
+        <button class="stage-card" type="button" data-message="我准备买家电软装，想看尺寸、风格和预算。"><b>家电软装</b><span>先定尺寸，再定款式和预算。</span></button>
+        <button class="stage-card" type="button" data-message="我已经拿到报价，想发给老谭看看明显风险。"><b>已有报价</b><span>把清单发来，先看明显风险。</span></button>
+      </div>
+    </section>
+
+    <section id="categories" class="shell">
+      <div class="section-head">
+        <h2>9个最容易花大钱的地方</h2>
+        <p>每个品类都不是只看“便宜”。老谭先看计价方式、安装边界、售后责任和你家是否适配。</p>
+      </div>
+      <div class="category-grid">
+        <article class="category-card">
+          <div class="visual">柜</div>
+          <div>
+            <h3>全屋定制</h3>
+            <p>同一套柜子，报价能差几万。重点看投影/展开计价、板材、五金、见光板和增项。</p>
+            <div class="tag-row"><span class="tag">报价体检</span><span class="tag">板材五金</span></div>
+          </div>
+        </article>
+        <article class="category-card">
+          <div class="visual">门</div>
+          <div>
+            <h3>木门</h3>
+            <p>门不贵，门套、锁具、合页、安装和垭口容易加钱。先看清楚总价和安装边界。</p>
+            <div class="tag-row"><span class="tag">门套</span><span class="tag">安装</span></div>
+          </div>
+        </article>
+        <article class="category-card">
+          <div class="visual">砖</div>
+          <div>
+            <h3>瓷砖</h3>
+            <p>别只看单片价。损耗、加工、铺贴方式、上楼费、退补货都会影响最终预算。</p>
+            <div class="tag-row"><span class="tag">损耗</span><span class="tag">铺贴</span></div>
+          </div>
+        </article>
+        <article class="category-card">
+          <div class="visual">浴</div>
+          <div>
+            <h3>卫浴</h3>
+            <p>马桶坑距、浴室柜尺寸、花洒水压、智能设备电位，买错会返工或不好用。</p>
+            <div class="tag-row"><span class="tag">尺寸</span><span class="tag">电位</span></div>
+          </div>
+        </article>
+        <article class="category-card">
+          <div class="visual">地</div>
+          <div>
+            <h3>地板</h3>
+            <p>环保等级、辅料、找平、踢脚线、安装损耗要一起看，不要只盯每平方米价格。</p>
+            <div class="tag-row"><span class="tag">环保</span><span class="tag">辅料</span></div>
+          </div>
+        </article>
+        <article class="category-card">
+          <div class="visual">电</div>
+          <div>
+            <h3>家电</h3>
+            <p>嵌入式冰箱、洗碗机、烘干机、净水、新风，最好装修前定尺寸和电位。</p>
+            <div class="tag-row"><span class="tag">尺寸预留</span><span class="tag">动线</span></div>
+          </div>
+        </article>
+        <article class="category-card">
+          <div class="visual">软</div>
+          <div>
+            <h3>软装</h3>
+            <p>单品好看不等于全屋好看。要看色彩、材质、灯光和你家的真实生活习惯。</p>
+            <div class="tag-row"><span class="tag">搭配</span><span class="tag">预算</span></div>
+          </div>
+        </article>
+        <article class="category-card">
+          <div class="visual">帘</div>
+          <div>
+            <h3>窗帘</h3>
+            <p>布料之外，纱帘、褶皱倍数、轨道、盒子、安装和遮光率才是最终体验。</p>
+            <div class="tag-row"><span class="tag">褶皱</span><span class="tag">轨道</span></div>
+          </div>
+        </article>
+        <article class="category-card">
+          <div class="visual">缝</div>
+          <div>
+            <h3>美缝</h3>
+            <p>材料、施工方式、计价口径和工人手艺，决定后期会不会发黑、脱落、难清洁。</p>
+            <div class="tag-row"><span class="tag">材料</span><span class="tag">施工</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="resources" class="shell">
+      <div class="section-head">
+        <h2>长沙高性价比资源清单</h2>
+        <p>初稿先用资源位呈现，后续把真实合作品牌、门店、价格带、案例图补进去，就能变成群里可转发的本地选材入口。</p>
+      </div>
+      <div class="resource-grid">
+        <article class="resource-card">
+          <div class="resource-top"><small>资源位 01</small><h3>本地工厂型全屋定制</h3></div>
+          <div class="resource-body">
+            <p>适合想控制预算、又希望本地安装和售后能跟上的长沙家庭。</p>
+            <ul class="list">
+              <li>重点看板材、五金、计价方式</li>
+              <li>适合刚需和改善型预算</li>
+              <li>不适合极复杂高定需求</li>
+            </ul>
+            <button class="btn btn-primary js-open-qr" type="button">把户型发给老谭看看</button>
+          </div>
+        </article>
+        <article class="resource-card">
+          <div class="resource-top"><small>资源位 02</small><h3>长沙瓷砖仓储/门店资源</h3></div>
+          <div class="resource-body">
+            <p>适合已经定风格、想把瓷砖预算压实，同时不想踩加工和损耗坑的业主。</p>
+            <ul class="list">
+              <li>重点看单价、损耗、加工和退补</li>
+              <li>适合现代、奶油、原木等常见风格</li>
+              <li>需提前确认铺贴方式</li>
+            </ul>
+            <button class="btn btn-primary js-open-qr" type="button">发瓷砖清单给老谭</button>
+          </div>
+        </article>
+        <article class="resource-card">
+          <div class="resource-top"><small>资源位 03</small><h3>卫浴组合采购资源</h3></div>
+          <div class="resource-body">
+            <p>适合马桶、花洒、浴室柜、五金一次性配置，想少跑店、少踩尺寸坑的业主。</p>
+            <ul class="list">
+              <li>重点看坑距、尺寸、下水、电位</li>
+              <li>适合刚需到改善型卫生间</li>
+              <li>智能卫浴需提前看电路</li>
+            </ul>
+            <button class="btn btn-primary js-open-qr" type="button">帮我看卫浴搭配</button>
+          </div>
+        </article>
+        <article class="resource-card">
+          <div class="resource-top"><small>资源位 04</small><h3>木门与地板安装资源</h3></div>
+          <div class="resource-body">
+            <p>适合想把门、门套、踢脚线、地板、辅料和安装边界一次说清的业主。</p>
+            <ul class="list">
+              <li>重点看总价，不只看单品价</li>
+              <li>适合预算透明型客户</li>
+              <li>安装前需确认基层条件</li>
+            </ul>
+            <button class="btn btn-primary js-open-qr" type="button">发木门地板报价</button>
+          </div>
+        </article>
+        <article class="resource-card">
+          <div class="resource-top"><small>资源位 05</small><h3>家电尺寸预留清单</h3></div>
+          <div class="resource-body">
+            <p>适合还没水电定位、准备买嵌入式家电或全屋智能的业主。</p>
+            <ul class="list">
+              <li>重点看冰箱、洗碗机、烘干机尺寸</li>
+              <li>适合水电前和定制前咨询</li>
+              <li>先定预留，再定最终型号</li>
+            </ul>
+            <button class="btn btn-primary js-open-qr" type="button">帮我看家电预留</button>
+          </div>
+        </article>
+        <article class="resource-card">
+          <div class="resource-top"><small>资源位 06</small><h3>窗帘软装美缝资源</h3></div>
+          <div class="resource-body">
+            <p>适合硬装快结束、想把窗帘、灯具、软装和美缝预算控制住的业主。</p>
+            <ul class="list">
+              <li>重点看褶皱倍数、轨道、材料</li>
+              <li>适合入住前集中采购</li>
+              <li>先看全屋风格，不盲买爆款</li>
+            </ul>
+            <button class="btn btn-primary js-open-qr" type="button">发软装需求给老谭</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="shell">
+      <div class="section-head">
+        <h2>老谭筛选资源，看这6件事</h2>
+        <p>便宜只是其中一项。真正适合长沙业主的资源，要能把价格、边界、安装、售后说清楚。</p>
+      </div>
+      <div class="rules">
+        <article class="rule-card"><strong>价格透明</strong><p>报价能拆开看，不靠后期加项赚钱。</p></article>
+        <article class="rule-card"><strong>本地可看</strong><p>长沙有门店、展厅、工地或交付案例。</p></article>
+        <article class="rule-card"><strong>边界清楚</strong><p>材料、安装、上楼、售后写清楚。</p></article>
+        <article class="rule-card"><strong>适合家庭</strong><p>不是只好看，要适合预算和生活习惯。</p></article>
+        <article class="rule-card"><strong>安装稳定</strong><p>装修后半场，安装比单品更关键。</p></article>
+        <article class="rule-card"><strong>有人负责</strong><p>出问题后能找到人，不互相推。</p></article>
+      </div>
+    </section>
+
+    <section class="shell">
+      <div class="section-head">
+        <h2>找老谭，不是让你马上买</h2>
+        <p>先把信息发来，老谭帮你判断值不值得细看。适合再推荐，不适合就提醒你别急着下单。</p>
+      </div>
+      <div class="flows">
+        <article class="flow-card"><span class="num">1</span><strong>你发资料</strong><p>小区、面积、预算、报价、清单或现场照片。</p></article>
+        <article class="flow-card"><span class="num">2</span><strong>老谭看风险</strong><p>先看明显增项、尺寸、安装和售后边界。</p></article>
+        <article class="flow-card"><span class="num">3</span><strong>判断适配</strong><p>你家适不适合这个品牌、这个方案、这个预算。</p></article>
+        <article class="flow-card"><span class="num">4</span><strong>再推资源</strong><p>确实合适，再对接长沙本地资源。</p></article>
+      </div>
+    </section>
+
+    <section id="contact" class="shell">
+      <div class="split">
+        <article class="contact-card">
+          <h2>把报价、清单、户型发给老谭</h2>
+          <p>你可以先加微信，把资料发来。第一句话建议直接说清楚：小区、面积、装修阶段、想看哪个品类。</p>
+          <div class="qr-box">
+            <img src="/wechat-qr.jpg" alt="老谭微信二维码" />
+            <div>
+              <h3>微信咨询入口</h3>
+              <p>适合发报价截图、清单、户型图、现场照片。老谭先帮你看方向和明显风险。</p>
+              <button class="btn btn-red btn-small js-copy" type="button">复制咨询开场白</button>
+            </div>
+          </div>
+          <div class="note">建议开场白：老谭你好，我是长沙业主，正在看装修后续材料。我家在【小区】，面积【面积】，现在想看【品类】，麻烦你帮我先判断一下有没有明显坑。</div>
+        </article>
+
+        <article class="contact-card">
+          <h2>先做个选材需求卡</h2>
+          <p>这个表单先作为初稿演示，正式版可以接入微信、飞书或表单工具。</p>
+          <div class="form-grid">
+            <div class="field"><label for="area">房子面积</label><input id="area" placeholder="例如 120 平" /></div>
+            <div class="field"><label for="stage">装修阶段</label><select id="stage"><option>还没定装修公司</option><option>已签装修公司</option><option>准备买主材</option><option>准备做定制</option><option>准备买家电软装</option><option>已经拿到报价</option></select></div>
+            <div class="field"><label for="category">想看的品类</label><select id="category"><option>全屋定制</option><option>木门</option><option>瓷砖</option><option>卫浴</option><option>地板</option><option>家电</option><option>软装</option><option>窗帘</option><option>美缝</option></select></div>
+            <div class="field"><label for="budget">预算范围</label><input id="budget" placeholder="例如 2-5 万" /></div>
+            <div class="field full"><label for="detail">你最担心什么</label><textarea id="detail" placeholder="比如怕报价增项、怕品牌不靠谱、怕尺寸买错、怕安装售后没人管"></textarea></div>
+          </div>
+          <button class="btn btn-primary js-build" type="button" style="width: 100%; margin-top: 14px;">生成发给老谭的话</button>
+          <p class="note" id="buildResult">填写后点上方按钮，会自动整理成一段适合发微信的话。</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="shell bottom-cta">
+      <div>
+        <h2>群里看到这页，先收藏。</h2>
+        <p>装修公司可以自己选，但后面主材、定制、软装、家电这些钱，最好先让懂长沙本地资源的人帮你过一遍。</p>
+      </div>
+      <button class="btn btn-red js-open-qr" type="button">现在找老谭看看</button>
+    </div>
+  </main>
+
+  <div class="modal" id="qrModal" aria-hidden="true" role="dialog" aria-label="微信咨询二维码">
+    <div class="modal-card">
+      <h3>加老谭微信，先发资料</h3>
+      <p>把报价、清单、户型图或现场照片发来，第一句话说清楚小区、面积和想看的品类。</p>
+      <img src="/wechat-qr.jpg" alt="老谭微信二维码" />
+      <div class="modal-actions">
+        <button class="btn btn-primary js-copy" type="button">复制咨询开场白</button>
+        <button class="btn btn-ghost js-close" type="button">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById("qrModal");
+    const opener = document.querySelectorAll(".js-open-qr");
+    const closer = document.querySelectorAll(".js-close");
+    const stageButtons = document.querySelectorAll(".stage-card");
+    const buildButton = document.querySelector(".js-build");
+    const buildResult = document.getElementById("buildResult");
+    let selectedMessage = "我还没定装修公司，想先看后面材料和定制怎么规划。";
+
+    function openQr() {
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+    function closeQr() {
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+    opener.forEach(button => button.addEventListener("click", openQr));
+    closer.forEach(button => button.addEventListener("click", closeQr));
+    modal.addEventListener("click", event => {
+      if (event.target === modal) closeQr();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeQr();
+    });
+
+    stageButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        stageButtons.forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        selectedMessage = button.dataset.message;
+      });
+    });
+
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      const temp = document.createElement("textarea");
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      temp.remove();
+      return Promise.resolve();
+    }
+
+    document.querySelectorAll(".js-copy").forEach(button => {
+      button.addEventListener("click", async () => {
+        const text = "老谭你好，我是长沙业主，正在看装修后续材料。我家在【小区】，面积【面积】，现在想看【全屋定制/瓷砖/卫浴/木门/地板/家电/软装/窗帘/美缝】，麻烦你帮我先判断一下有没有明显坑。";
+        await copyText(text);
+        button.textContent = "已复制，发微信给老谭";
+      });
+    });
+
+    buildButton.addEventListener("click", async () => {
+      const area = document.getElementById("area").value.trim() || "还没填面积";
+      const stage = document.getElementById("stage").value;
+      const category = document.getElementById("category").value;
+      const budget = document.getElementById("budget").value.trim() || "预算还没定";
+      const detail = document.getElementById("detail").value.trim() || "想先看明显风险和性价比";
+      const text = `老谭你好，我是长沙业主。房子面积：${area}；装修阶段：${stage}；想看的品类：${category}；预算：${budget}；我最担心：${detail}。${selectedMessage}麻烦你帮我先判断一下有没有明显坑。`;
+      buildResult.textContent = text;
+      await copyText(text);
+      buildButton.textContent = "已生成并复制，发微信给老谭";
+    });
+  </script>
+</body>
+</html>
