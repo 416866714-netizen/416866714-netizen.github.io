@@ -3,326 +3,245 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>老谭长沙装修选材笔记</title>
-  <meta name="description" content="长沙装修后续选材咨询入口。全屋定制、瓷砖、卫浴、木门、地板、家电、软装、窗帘、美缝，先发给老谭看看。" />
+  <title>长沙装修选材清单</title>
+  <meta name="description" content="长沙装修选材清单，按品类浏览品牌、优势、价格区间和店铺地址。" />
   <style>
     :root {
-      --bg: #f6f4ee;
-      --paper: #fffdf8;
-      --card: #ffffff;
-      --ink: #172033;
+      --bg: #f5f6f8;
+      --card: #fff;
+      --ink: #151923;
       --muted: #667085;
-      --line: rgba(23, 32, 51, .12);
-      --green: #176b55;
-      --red: #b23b31;
-      --gold: #b9832f;
-      --blue: #315f86;
+      --line: #e5e7eb;
+      --soft: #f0f3f6;
+      --dark: #111827;
+      --blue: #1f5f99;
+      --green: #17735a;
+      --orange: #b86226;
       --radius: 8px;
-      --shadow: 0 14px 34px rgba(23, 32, 51, .10);
-      --bottom: 86px;
+      --bottom: 82px;
+      --shadow: 0 10px 24px rgba(17, 24, 39, .08);
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       color: var(--ink);
-      background:
-        linear-gradient(145deg, rgba(23, 107, 85, .12), transparent 34%),
-        linear-gradient(225deg, rgba(178, 59, 49, .08), transparent 32%),
-        var(--bg);
+      background: var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-
-    a, button { -webkit-tap-highlight-color: transparent; }
-    button, input, textarea { font: inherit; }
+    button { font: inherit; }
     a { color: inherit; text-decoration: none; }
 
     .page {
       width: min(100%, 480px);
       min-height: 100vh;
       margin: 0 auto;
-      padding: 14px 14px calc(var(--bottom) + env(safe-area-inset-bottom));
+      padding: 12px 12px calc(var(--bottom) + env(safe-area-inset-bottom));
     }
 
     .top {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin: -12px -12px 0;
+      padding: 12px 12px 10px;
+      background: rgba(245, 246, 248, .96);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(229, 231, 235, .82);
+    }
+
+    .top-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding: 4px 0 12px;
-    }
-
-    .brand {
-      display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 900;
-    }
-
-    .brand-mark {
-      display: grid;
-      place-items: center;
-      width: 30px;
-      height: 30px;
-      border-radius: var(--radius);
-      color: #fff;
-      background: linear-gradient(135deg, #172033, var(--green));
-      font-size: 13px;
-    }
-
-    .top-pill {
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 6px 10px;
-      background: rgba(255, 255, 255, .72);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .hero {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px 17px 17px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.90)),
-        linear-gradient(135deg, rgba(23,107,85,.08), rgba(178,59,49,.06));
-      box-shadow: var(--shadow);
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      border-radius: 999px;
-      padding: 5px 9px;
-      background: rgba(23, 107, 85, .10);
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 900;
+      gap: 10px;
     }
 
     h1 {
-      margin: 12px 0 0;
-      font-size: 34px;
-      line-height: 1.08;
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
       letter-spacing: 0;
-      font-weight: 980;
-    }
-
-    .lead {
-      margin: 12px 0 0;
-      color: #475467;
-      font-size: 16px;
-      line-height: 1.62;
-      font-weight: 650;
-    }
-
-    .hero-actions {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 9px;
-      margin-top: 16px;
-    }
-
-    .btn {
-      min-height: 48px;
-      border: 0;
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 14px;
-      cursor: pointer;
-      font-size: 15px;
       font-weight: 950;
     }
 
-    .btn-primary { color: #fff; background: linear-gradient(135deg, var(--red), var(--gold)); }
-    .btn-green { color: #fff; background: linear-gradient(135deg, var(--green), var(--blue)); }
-    .btn-ghost { color: var(--ink); background: #fff; border: 1px solid var(--line); }
-
-    section { margin-top: 14px; }
-
-    .section-card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, .92);
-      box-shadow: 0 8px 22px rgba(23, 32, 51, .06);
-      padding: 15px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 20px;
-      line-height: 1.25;
-      font-weight: 980;
-    }
-
-    .hint {
-      margin: 0;
+    .count {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 6px 9px;
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .quick-grid {
-      display: grid;
-      gap: 8px;
-    }
-
-    .quick {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
       background: #fff;
-      padding: 13px;
-      text-align: left;
-      cursor: pointer;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 800;
     }
 
-    .quick b {
-      display: block;
-      font-size: 16px;
-      line-height: 1.3;
-    }
-
-    .quick span {
-      display: block;
-      margin-top: 5px;
+    .subtitle {
+      margin: 7px 0 0;
       color: var(--muted);
       font-size: 13px;
       line-height: 1.45;
     }
 
-    .quick.active {
-      border-color: rgba(23, 107, 85, .56);
-      background: #f2faf6;
-      box-shadow: inset 0 0 0 1px rgba(23, 107, 85, .20);
-    }
-
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .tabs {
+      display: flex;
       gap: 8px;
+      overflow-x: auto;
+      padding: 12px 0 2px;
+      scrollbar-width: none;
     }
+    .tabs::-webkit-scrollbar { display: none; }
 
-    .cat {
-      min-height: 68px;
+    .tab {
+      flex: 0 0 auto;
+      min-height: 36px;
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: 999px;
+      padding: 8px 12px;
       background: #fff;
-      display: grid;
-      place-items: center;
-      gap: 4px;
-      padding: 8px 5px;
-      cursor: pointer;
-      color: var(--ink);
-      font-weight: 900;
-    }
-
-    .cat small {
-      display: block;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 750;
-    }
-
-    .cat.active {
-      color: #fff;
-      border-color: transparent;
-      background: linear-gradient(135deg, var(--green), var(--blue));
-    }
-
-    .cat.active small { color: rgba(255,255,255,.82); }
-
-    .resource-list {
-      display: grid;
-      gap: 8px;
-    }
-
-    .resource {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 13px;
-      background: #fff;
-    }
-
-    .resource b {
-      display: block;
-      font-size: 16px;
-      line-height: 1.35;
-    }
-
-    .resource p {
-      margin: 6px 0 0;
-      color: var(--muted);
+      color: #344054;
       font-size: 13px;
-      line-height: 1.55;
+      font-weight: 850;
+      cursor: pointer;
     }
 
-    .steps {
-      display: grid;
-      gap: 8px;
+    .tab.active {
+      color: #fff;
+      background: var(--dark);
+      border-color: var(--dark);
     }
 
-    .step {
+    .list {
       display: grid;
-      grid-template-columns: 30px minmax(0, 1fr);
       gap: 10px;
-      align-items: start;
+      margin-top: 12px;
+    }
+
+    .card {
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 12px;
-      background: #fff;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
-    .num {
-      display: grid;
-      place-items: center;
-      width: 30px;
-      height: 30px;
-      border-radius: var(--radius);
-      color: #fff;
-      background: var(--red);
+    .card-main {
+      padding: 14px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .brand h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.25;
       font-weight: 950;
     }
 
-    .step b { display: block; font-size: 15px; }
-    .step span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .brand span {
+      display: inline-flex;
+      margin-top: 7px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: var(--soft);
+      color: #475467;
+      font-size: 12px;
+      font-weight: 820;
+    }
 
-    .copy-box {
-      border: 1px dashed rgba(23, 107, 85, .42);
-      border-radius: var(--radius);
-      background: #f4fbf7;
-      padding: 12px;
-      color: #315044;
+    .price {
+      flex: 0 0 auto;
+      color: var(--orange);
+      font-size: 15px;
+      line-height: 1.25;
+      font-weight: 950;
+      text-align: right;
+      max-width: 130px;
+    }
+
+    .advantage {
+      margin: 12px 0 0;
+      color: #344054;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.55;
       font-weight: 650;
     }
 
-    .bottom-bar {
+    .meta {
+      display: grid;
+      gap: 7px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .meta-row b {
+      color: #475467;
+      font-weight: 900;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border-top: 1px solid var(--line);
+    }
+
+    .card-actions button {
+      min-height: 44px;
+      border: 0;
+      background: #fff;
+      color: var(--dark);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .card-actions button.primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+    }
+
+    .empty {
+      display: none;
+      margin-top: 12px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 20px 14px;
+      text-align: center;
+      color: var(--muted);
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .bottom {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 30;
-      padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-      background: rgba(255, 253, 248, .92);
+      z-index: 20;
+      padding: 9px 12px calc(9px + env(safe-area-inset-bottom));
+      background: rgba(255, 255, 255, .95);
       border-top: 1px solid var(--line);
-      backdrop-filter: blur(18px);
+      backdrop-filter: blur(14px);
     }
 
     .bottom-inner {
@@ -333,33 +252,96 @@
       gap: 8px;
     }
 
+    .bottom button {
+      min-height: 46px;
+      border: 0;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 950;
+      cursor: pointer;
+    }
+
+    .consult {
+      color: #fff;
+      background: var(--dark);
+    }
+
+    .copy {
+      color: #fff;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+    }
+
+    .drawer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(var(--bottom) + env(safe-area-inset-bottom));
+      z-index: 30;
+      transform: translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+      padding: 0 12px;
+    }
+
+    .drawer.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-card {
+      width: min(100%, 480px);
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 20px 56px rgba(17, 24, 39, .18);
+      padding: 12px;
+    }
+
+    .drawer-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .drawer-text {
+      margin: 8px 0 0;
+      color: #344054;
+      font-size: 13px;
+      line-height: 1.55;
+      word-break: break-all;
+    }
+
     .toast {
       position: fixed;
       left: 50%;
-      bottom: calc(var(--bottom) + 14px);
+      top: 16px;
       z-index: 40;
-      transform: translateX(-50%) translateY(10px);
+      transform: translateX(-50%) translateY(-8px);
       opacity: 0;
       pointer-events: none;
-      width: min(calc(100% - 28px), 420px);
-      border-radius: var(--radius);
-      padding: 11px 13px;
-      background: rgba(23, 32, 51, .94);
+      border-radius: 999px;
+      padding: 9px 12px;
       color: #fff;
+      background: rgba(17, 24, 39, .94);
       font-size: 13px;
-      line-height: 1.45;
-      text-align: center;
+      font-weight: 850;
       transition: .18s ease;
+      white-space: nowrap;
     }
 
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     @media (min-width: 560px) {
-      body { background: #e9eee9; }
+      body { background: #e9edf2; }
       .page {
-        margin-top: 18px;
-        margin-bottom: 18px;
-        border-radius: 18px;
+        margin-top: 16px;
+        margin-bottom: 16px;
         background: var(--bg);
       }
     }
@@ -368,141 +350,133 @@
 <body>
   <main class="page">
     <header class="top">
-      <div class="brand"><span class="brand-mark">谭</span>老谭选材笔记</div>
-      <span class="top-pill">长沙业主群入口</span>
+      <div class="top-row">
+        <h1>长沙装修选材清单</h1>
+        <span class="count" id="count">0 家</span>
+      </div>
+      <p class="subtitle">按品类看品牌、优势、价格区间和店铺地址。第一版为占位资源，后续替换真实商家。</p>
+      <nav class="tabs" id="tabs" aria-label="品类筛选"></nav>
     </header>
 
-    <section class="hero">
-      <span class="eyebrow">装修后半场，先别急着买</span>
-      <h1>这9笔钱，先发给老谭看看。</h1>
-      <p class="lead">全屋定制、瓷砖、卫浴、木门、地板、家电、软装、窗帘、美缝，最怕不是买贵一点，是买错、加钱、没人管。</p>
-      <div class="hero-actions">
-        <button class="btn btn-primary js-copy" type="button">复制咨询话术</button>
-        <a class="btn btn-ghost" href="#cats">先选品类</a>
-      </div>
-    </section>
-
-    <section class="section-card">
-      <div class="section-head">
-        <h2>你是哪种情况？</h2>
-      </div>
-      <div class="quick-grid">
-        <button class="quick active" type="button" data-scene="我已经拿到报价或清单，想让老谭帮我看明显风险。">
-          <b>已有报价/清单</b>
-          <span>最适合直接发给老谭看。</span>
-        </button>
-        <button class="quick" type="button" data-scene="我还没买，想先知道这个品类怎么选、长沙有哪些资源。">
-          <b>还没买，怕选错</b>
-          <span>先问方向，再决定去哪看。</span>
-        </button>
-        <button class="quick" type="button" data-scene="我已经看了几家，但不知道哪家更适合我。">
-          <b>看了几家，不会比</b>
-          <span>适合让老谭帮你看差异。</span>
-        </button>
-      </div>
-    </section>
-
-    <section class="section-card" id="cats">
-      <div class="section-head">
-        <h2>选一个你要看的</h2>
-        <p class="hint">点一下，下面话术会自动带上。</p>
-      </div>
-      <div class="category-grid">
-        <button class="cat active" type="button" data-cat="全屋定制">全屋定制<small>板材/五金</small></button>
-        <button class="cat" type="button" data-cat="瓷砖">瓷砖<small>损耗/加工</small></button>
-        <button class="cat" type="button" data-cat="卫浴">卫浴<small>尺寸/电位</small></button>
-        <button class="cat" type="button" data-cat="木门">木门<small>门套/安装</small></button>
-        <button class="cat" type="button" data-cat="地板">地板<small>辅料/环保</small></button>
-        <button class="cat" type="button" data-cat="家电">家电<small>预留/嵌入</small></button>
-        <button class="cat" type="button" data-cat="软装">软装<small>搭配/预算</small></button>
-        <button class="cat" type="button" data-cat="窗帘">窗帘<small>褶皱/轨道</small></button>
-        <button class="cat" type="button" data-cat="美缝">美缝<small>材料/施工</small></button>
-      </div>
-    </section>
-
-    <section class="section-card">
-      <div class="section-head">
-        <h2>老谭先帮你看3件事</h2>
-      </div>
-      <div class="steps">
-        <div class="step"><span class="num">1</span><div><b>有没有明显坑</b><span>报价、增项、尺寸、安装、售后边界。</span></div></div>
-        <div class="step"><span class="num">2</span><div><b>适不适合你家</b><span>不是别人买得好，你家就一定适合。</span></div></div>
-        <div class="step"><span class="num">3</span><div><b>要不要推荐资源</b><span>合适再推荐，不合适先劝你别急。</span></div></div>
-      </div>
-    </section>
-
-    <section class="section-card">
-      <div class="section-head">
-        <h2>长沙资源先这样看</h2>
-      </div>
-      <div class="resource-list">
-        <div class="resource">
-          <b>预算型：先控制总价</b>
-          <p>适合刚需业主，重点看报价是否透明、后面会不会加钱。</p>
-        </div>
-        <div class="resource">
-          <b>改善型：看品质和适配</b>
-          <p>适合想住得舒服一点的家庭，重点看安装、售后和整体搭配。</p>
-        </div>
-        <div class="resource">
-          <b>品牌型：看值不值得</b>
-          <p>适合已经看中品牌的业主，重点判断贵在哪里、有没有必要。</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-card">
-      <div class="section-head">
-        <h2>发给老谭的话</h2>
-      </div>
-      <div class="copy-box" id="copyText">老谭你好，我是长沙业主，正在看全屋定制。我已经拿到报价或清单，想让老谭帮我看明显风险。麻烦你帮我先判断一下：有没有明显坑、适不适合我家、需不需要推荐长沙本地资源。</div>
-      <div style="margin-top: 10px;">
-        <button class="btn btn-green js-copy" type="button" style="width:100%;">复制这段话</button>
-      </div>
-    </section>
+    <section class="list" id="list" aria-label="品牌列表"></section>
+    <section class="empty" id="empty">当前品类暂无资源。</section>
   </main>
 
-  <div class="bottom-bar">
-    <div class="bottom-inner">
-      <button class="btn btn-green js-copy" type="button">复制话术</button>
-      <a class="btn btn-primary" href="#cats">选品类</a>
+  <aside class="drawer" id="drawer" aria-live="polite">
+    <div class="drawer-card">
+      <p class="drawer-title">咨询话术</p>
+      <p class="drawer-text" id="drawerText">请选择一家品牌。</p>
     </div>
-  </div>
+  </aside>
 
-  <div class="toast" id="toast">已复制。打开微信发给老谭，并附上报价/清单/图片。</div>
+  <footer class="bottom">
+    <div class="bottom-inner">
+      <button class="consult" type="button" id="consultBtn">咨询这家</button>
+      <button class="copy" type="button" id="copyBtn">复制咨询话术</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">已复制咨询话术</div>
 
   <script>
-    const quickButtons = document.querySelectorAll(".quick");
-    const catButtons = document.querySelectorAll(".cat");
-    const copyText = document.getElementById("copyText");
-    const toast = document.getElementById("toast");
-    let scene = "我已经拿到报价或清单，想让老谭帮我看明显风险。";
-    let category = "全屋定制";
+    const categories = ["全部", "全屋定制", "瓷砖", "卫浴", "木门", "地板", "家电", "软装", "窗帘", "美缝"];
 
-    function updateText() {
-      copyText.textContent = `老谭你好，我是长沙业主，正在看${category}。${scene}麻烦你帮我先判断一下：有没有明显坑、适不适合我家、需不需要推荐长沙本地资源。`;
+    const items = [
+      { category: "全屋定制", brand: "定制品牌 A", advantage: "适合刚需和改善型家庭，主打本地测量、报价透明、基础五金配置清楚。", price: "¥800-1500/㎡", address: "待补充：长沙某全屋定制展厅" },
+      { category: "全屋定制", brand: "定制品牌 B", advantage: "适合重视颜值和收纳的业主，可做柜门颜色、拉手、灯带和局部高配。", price: "¥1200-2200/㎡", address: "待补充：长沙某家居卖场" },
+      { category: "瓷砖", brand: "瓷砖品牌 A", advantage: "常规规格选择多，适合客餐厅、厨房、卫生间一次性搭配。", price: "¥60-180/片", address: "待补充：长沙某瓷砖门店" },
+      { category: "瓷砖", brand: "瓷砖品牌 B", advantage: "适合现代、奶油、原木风，重点看加工、损耗、补货和铺贴方式。", price: "¥90-260/片", address: "待补充：长沙某建材市场" },
+      { category: "卫浴", brand: "卫浴品牌 A", advantage: "适合普通家庭整套配置，马桶、花洒、浴室柜、五金可组合。", price: "¥3000-8000/套", address: "待补充：长沙某卫浴展厅" },
+      { category: "卫浴", brand: "卫浴品牌 B", advantage: "适合想做智能马桶和品质花洒的业主，需提前确认尺寸和电位。", price: "¥6000-15000/套", address: "待补充：长沙某品牌门店" },
+      { category: "木门", brand: "木门品牌 A", advantage: "适合预算型家庭，重点看门套、锁具、合页和安装是否包含。", price: "¥1200-2600/樘", address: "待补充：长沙某木门门店" },
+      { category: "木门", brand: "木门品牌 B", advantage: "适合改善型装修，可看静音、材质、门套线和颜色稳定性。", price: "¥2200-4500/樘", address: "待补充：长沙某家居卖场" },
+      { category: "地板", brand: "地板品牌 A", advantage: "适合卧室和客厅局部铺装，重点看环保、辅料、安装和损耗。", price: "¥120-280/㎡", address: "待补充：长沙某地板门店" },
+      { category: "地板", brand: "地板品牌 B", advantage: "适合对脚感和颜值要求更高的业主，可看实木复合和高端系列。", price: "¥260-600/㎡", address: "待补充：长沙某地板展厅" },
+      { category: "家电", brand: "家电品牌 A", advantage: "适合提前确定冰箱、洗碗机、洗烘套装和净水设备尺寸。", price: "¥8000-30000/套", address: "待补充：长沙某家电卖场" },
+      { category: "家电", brand: "家电品牌 B", advantage: "适合嵌入式家电和全屋智能需求，需配合定制柜提前预留。", price: "¥20000-60000/套", address: "待补充：长沙某品牌体验店" },
+      { category: "软装", brand: "软装品牌 A", advantage: "适合沙发、餐桌、床、灯具、装饰画集中搭配，控制整体风格。", price: "¥10000-50000/套", address: "待补充：长沙某软装展厅" },
+      { category: "软装", brand: "软装品牌 B", advantage: "适合改善型客户，可做色彩、材质、灯光和家具整体方案。", price: "¥30000-100000/套", address: "待补充：长沙某设计集合店" },
+      { category: "窗帘", brand: "窗帘品牌 A", advantage: "适合普通家庭全屋窗帘，重点看褶皱倍数、轨道、纱帘和安装。", price: "¥3000-12000/套", address: "待补充：长沙某窗帘门店" },
+      { category: "窗帘", brand: "窗帘品牌 B", advantage: "适合看重遮光、质感和色彩统一的业主，可做全屋搭配。", price: "¥8000-25000/套", address: "待补充：长沙某软装馆" },
+      { category: "美缝", brand: "美缝施工 A", advantage: "适合常规瓷砖美缝，重点看材料、施工方式、计价口径和售后。", price: "¥18-35/米", address: "待补充：长沙本地施工服务" },
+      { category: "美缝", brand: "美缝施工 B", advantage: "适合大砖、异形砖和高要求区域，需看样板和现场施工标准。", price: "¥30-60/米", address: "待补充：长沙本地施工团队" }
+    ];
+
+    const tabs = document.getElementById("tabs");
+    const list = document.getElementById("list");
+    const empty = document.getElementById("empty");
+    const count = document.getElementById("count");
+    const drawer = document.getElementById("drawer");
+    const drawerText = document.getElementById("drawerText");
+    const toast = document.getElementById("toast");
+    const consultBtn = document.getElementById("consultBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    let activeCategory = "全部";
+    let activeItem = items[0];
+
+    function consultText(item) {
+      return `你好，我想咨询【${item.brand}】。品类：${item.category}；价格区间：${item.price}；地址：${item.address}。麻烦帮我看看这个资源是否适合我家。`;
     }
 
-    quickButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        quickButtons.forEach(item => item.classList.remove("active"));
-        button.classList.add("active");
-        scene = button.dataset.scene;
-        updateText();
-      });
-    });
+    function setActiveItem(item) {
+      activeItem = item;
+      drawerText.textContent = consultText(item);
+      drawer.classList.add("show");
+    }
 
-    catButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        catButtons.forEach(item => item.classList.remove("active"));
-        button.classList.add("active");
-        category = button.dataset.cat;
-        updateText();
+    function renderTabs() {
+      tabs.innerHTML = categories.map(category => (
+        `<button class="tab${category === activeCategory ? " active" : ""}" type="button" data-category="${category}">${category}</button>`
+      )).join("");
+      tabs.querySelectorAll(".tab").forEach(button => {
+        button.addEventListener("click", () => {
+          activeCategory = button.dataset.category;
+          renderTabs();
+          renderList();
+        });
       });
-    });
+    }
 
-    async function copyConsultText() {
-      const text = copyText.textContent;
+    function renderList() {
+      const filtered = activeCategory === "全部" ? items : items.filter(item => item.category === activeCategory);
+      count.textContent = `${filtered.length} 家`;
+      empty.style.display = filtered.length ? "none" : "block";
+      list.innerHTML = filtered.map((item, index) => `
+        <article class="card">
+          <div class="card-main">
+            <div class="card-head">
+              <div class="brand">
+                <h2>${item.brand}</h2>
+                <span>${item.category}</span>
+              </div>
+              <div class="price">${item.price}</div>
+            </div>
+            <p class="advantage">${item.advantage}</p>
+            <div class="meta">
+              <div class="meta-row"><b>地址</b><span>${item.address}</span></div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button type="button" data-index="${items.indexOf(item)}">看话术</button>
+            <button class="primary" type="button" data-copy="${items.indexOf(item)}">咨询这家</button>
+          </div>
+        </article>
+      `).join("");
+
+      list.querySelectorAll("[data-index]").forEach(button => {
+        button.addEventListener("click", () => setActiveItem(items[Number(button.dataset.index)]));
+      });
+      list.querySelectorAll("[data-copy]").forEach(button => {
+        button.addEventListener("click", async () => {
+          setActiveItem(items[Number(button.dataset.copy)]);
+          await copyActiveText();
+        });
+      });
+      if (filtered[0]) setActiveItem(filtered[0]);
+    }
+
+    async function copyActiveText() {
+      const text = consultText(activeItem);
       try {
         await navigator.clipboard.writeText(text);
       } catch (error) {
@@ -514,12 +488,13 @@
         temp.remove();
       }
       toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 2200);
+      setTimeout(() => toast.classList.remove("show"), 1800);
     }
 
-    document.querySelectorAll(".js-copy").forEach(button => {
-      button.addEventListener("click", copyConsultText);
-    });
+    consultBtn.addEventListener("click", () => setActiveItem(activeItem));
+    copyBtn.addEventListener("click", copyActiveText);
+    renderTabs();
+    renderList();
   </script>
 </body>
 </html>
