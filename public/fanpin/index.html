@@ -266,60 +266,6 @@ body.is-loaded .hero-link{ opacity:1; transform:none; }
 .showroom-copy .kicker{ display:block; margin-bottom:20px; }
 .showroom-copy .sec-title{ margin-bottom:24px; }
 
-/* ============================ 作品 ============================ */
-.works{ background:var(--paper); }
-.works-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:24px; padding-bottom:clamp(36px,4vw,52px); }
-.works-head .t{ display:flex; flex-direction:column; }
-.works-head .kicker{ margin-bottom:12px; }
-.works-head .note{ color:var(--muted); text-align:right; font-size:13px; line-height:1.7; }
-.project{ position:relative; display:block; margin-bottom:clamp(28px,3.4vw,44px); }
-.project .ph{ overflow:hidden; background:var(--paper-2); }
-.project .ph img{ width:100%; height:clamp(320px,58vw,720px); object-fit:cover; transition:transform 1.2s var(--ease-out); }
-.project:hover .ph img{ transform:scale(1.05); }
-.project-meta{ display:flex; align-items:flex-start; gap:26px; padding-top:20px; border-top:1px solid var(--line); }
-.project-meta .no{ color:var(--terra); font-family:var(--num); font-size:22px; }
-.project-meta .info{ flex:1; }
-.project-meta .info .nm{ color:var(--muted); font-size:13px; letter-spacing:.06em; }
-.project-meta .info .ln{ margin-top:7px; font-family:var(--serif); font-size:clamp(18px,2vw,24px); line-height:1.4; color:var(--ink); }
-.project-meta .view{ font-size:12px; letter-spacing:.2em; color:var(--ink); white-space:nowrap; padding-top:4px; }
-.works-more{ text-align:right; margin-top:8px; }
-.works-more a{ display:inline-block; font-size:14px; letter-spacing:.06em; color:var(--ink); border-bottom:1px solid var(--ink); padding-bottom:4px; transition:color .35s, border-color .35s; }
-.works-more a:hover{ color:var(--terra); border-color:var(--terra); }
-/* 作品 · 筛选与网格 */
-.filter{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:clamp(28px,3.4vw,42px); }
-.f-chip{
-  padding:10px 24px; border:1px solid var(--line); border-radius:999px;
-  font-size:13px; letter-spacing:.12em; color:var(--muted); background:transparent; cursor:pointer;
-  transition:all .35s;
-}
-.f-chip:hover{ border-color:var(--terra); color:var(--ink); }
-.f-chip.active{ background:var(--green-deep); border-color:var(--green-deep); color:var(--paper); }
-.case-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,2.6vw,34px); }
-.case{ margin:0; cursor:pointer; transition:opacity .45s var(--ease-out), transform .45s var(--ease-out); }
-.case.hide{ opacity:0; transform:scale(.94); pointer-events:none; }
-.case .ph{ overflow:hidden; background:var(--paper-2); aspect-ratio:4/3; }
-.case .ph img{ width:100%; height:100%; object-fit:cover; transition:transform 1.1s var(--ease-out); }
-.case:hover .ph img{ transform:scale(1.06); }
-.case .meta{ display:flex; align-items:baseline; gap:18px; padding-top:16px; border-top:1px solid var(--line); margin-top:16px; }
-.case .meta .no{ color:var(--terra); font-family:var(--num); font-size:18px; }
-.case .meta .info{ display:flex; flex-direction:column; }
-.case .meta .info .nm{ color:var(--muted); font-size:13px; letter-spacing:.06em; }
-.case .meta .info .ln{ margin-top:6px; font-family:var(--serif); font-size:clamp(17px,1.9vw,22px); line-height:1.4; color:var(--ink); }
-@media (max-width:640px){ .case-grid{ grid-template-columns:1fr; } }
-
-/* ============================ 画廊 ============================ */
-.gallery{ background:var(--white); border-top:1px solid var(--line); }
-.gal-wrap{ columns:3; column-gap:22px; }
-.gal-item{ break-inside:avoid; margin-bottom:22px; position:relative; overflow:hidden; cursor:pointer; }
-.gal-item img{ transition:transform 1s var(--ease-out); }
-.gal-item::after{
-  content:attr(data-cap); position:absolute; left:0; right:0; bottom:0; padding:28px 20px 18px;
-  background:linear-gradient(to top, rgba(27,36,30,.82), transparent); color:#fff;
-  font-size:12px; letter-spacing:.16em; opacity:0; transform:translateY(10px); transition:opacity .5s, transform .5s;
-}
-.gal-item:hover img{ transform:scale(1.06); }
-.gal-item:hover::after{ opacity:1; transform:none; }
-
 /* ============================ 结尾 CTA ============================ */
 .finale{ background:var(--terra-deep); color:#fff; text-align:center; padding:clamp(90px,12vw,150px) 0; }
 .finale .f-kicker{ color:rgba(255,255,255,.68); font-size:12px; letter-spacing:.4em; }
@@ -422,7 +368,7 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
 
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"></div>
-<div class="cursor-label" id="cursorLabel">查看作品</div>
+<div class="cursor-label" id="cursorLabel"></div>
 
 <div id="preloader">
   <div class="pre-inner">
@@ -441,7 +387,6 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
       <a href="#concept" data-scroll>理念</a>
       <a href="#delivery" data-scroll>交付</a>
       <a href="#craft" data-scroll>木作</a>
-      <a href="#works" data-scroll>作品</a>
       <a href="#contact" data-scroll>联系</a>
     </nav>
     <button class="nav-cta magnetic" data-open-modal>加微信咨询</button>
@@ -459,7 +404,6 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
       <p class="hero-slogan">献给事业繁忙、热爱生活的长沙业主，<br />卸下装修纷繁琐事，筑就心中理想居所。</p>
       <div class="hero-actions">
         <button class="hero-btn magnetic" data-open-modal>加微信咨询</button>
-        <a class="hero-link" href="#works" data-scroll>查看作品 ↗</a>
       </div>
     </div>
   </section>
@@ -547,114 +491,6 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
         <p class="sec-body">在真实尺度里看空间、木作与材质，先感受，再决定。</p>
       </div>
       <div class="img-reveal"><img src="assets/showroom.jpg" alt="梵品长沙洋湖店展厅" /></div>
-    </div>
-  </section>
-
-  <!-- 作品 -->
-  <section class="section works" id="works">
-    <div class="container">
-      <div class="works-head reveal">
-        <div class="t">
-          <span class="kicker">FANPIN PROJECTS</span>
-          <h2 class="sec-title">项目作品</h2>
-        </div>
-        <span class="note">先看作品，<br />再了解梵品。</span>
-      </div>
-
-      <!-- 风格筛选 -->
-      <div class="filter reveal">
-        <button class="f-chip active" data-filter="all">全部</button>
-        <button class="f-chip" data-filter="yishi">意式</button>
-        <button class="f-chip" data-filter="jijian">极简</button>
-        <button class="f-chip" data-filter="yuanshu">原木</button>
-        <button class="f-chip" data-filter="naiyou">奶油</button>
-        <button class="f-chip" data-filter="fashi">法式</button>
-        <button class="f-chip" data-filter="zhonggu">中古</button>
-      </div>
-
-      <!-- 案例网格 -->
-      <div class="case-grid">
-        <figure class="case reveal" data-style="yishi">
-          <div class="ph"><img src="assets/case-01.jpg" alt="铂悦湘江 · 意式完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">01</span><span class="info"><span class="nm">铂悦湘江 · 1-210</span><span class="ln">意式，是低调的讲究</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yishi">
-          <div class="ph"><img src="assets/case-02.jpg" alt="凤起麓鸣 · 意式轻奢完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">02</span><span class="info"><span class="nm">凤起麓鸣 · 意式轻奢</span><span class="ln">石材与木皮，一处一景</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yishi">
-          <div class="ph"><img src="assets/case-03.jpg" alt="楚天御府 · 意式轻奢完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">03</span><span class="info"><span class="nm">楚天御府 · 意式轻奢</span><span class="ln">餐厅的灯亮起，家就成立了</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yishi">
-          <div class="ph"><img src="assets/case-04.jpg" alt="铂悦湘江 · 胡桃木意式完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">04</span><span class="info"><span class="nm">铂悦湘江 · 意式极简</span><span class="ln">胡桃木的温度，收进每一道缝</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yishi">
-          <div class="ph"><img src="assets/case-05.jpg" alt="铂悦湘江 5 栋 · 意式极简完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">05</span><span class="info"><span class="nm">铂悦湘江 · 5 栋</span><span class="ln">窗外是城，窗内是生活</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="jijian">
-          <div class="ph"><img src="assets/case-06.jpg" alt="铂悦湘江 · 黑白极简完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">06</span><span class="info"><span class="nm">铂悦湘江 · 黑白极简</span><span class="ln">黑与白之间，留一点灰</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yuanshu">
-          <div class="ph"><img src="assets/case-07.jpg" alt="麓云国际 · 原木极简完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">07</span><span class="info"><span class="nm">麓云国际 · 4-1501</span><span class="ln">一把椅子的弧度，就是居所的呼吸</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="jijian">
-          <div class="ph"><img src="assets/case-08.jpg" alt="凤起麓鸣 · 极简完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">08</span><span class="info"><span class="nm">凤起麓鸣 · 极简</span><span class="ln">窗边一隅，把城市留给城市</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yuanshu">
-          <div class="ph"><img src="assets/case-09.jpg" alt="润府 · 原木风完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">09</span><span class="info"><span class="nm">润府 · 原木风</span><span class="ln">木纹是年轮，也是日子</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yuanshu">
-          <div class="ph"><img src="assets/case-10.jpg" alt="凤起麓鸣 · 原木风完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">10</span><span class="info"><span class="nm">凤起麓鸣 · 原木风</span><span class="ln">挑高的光，落在刚好接住它的地方</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yuanshu">
-          <div class="ph"><img src="assets/case-11.jpg" alt="滨江境 · 255㎡ 原木完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">11</span><span class="info"><span class="nm">滨江境 · 255㎡</span><span class="ln">楼梯的转角，是回家的仪式</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="naiyou">
-          <div class="ph"><img src="assets/case-12.jpg" alt="湘江壹号 · 原木奶油风完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">12</span><span class="info"><span class="nm">湘江壹号 · 原木奶油</span><span class="ln">开门的第一眼，是温柔的</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="fashi">
-          <div class="ph"><img src="assets/case-13.jpg" alt="橘郡礼顿山 · 法式完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">13</span><span class="info"><span class="nm">橘郡礼顿山 · 法式</span><span class="ln">法式不靠堆，靠分寸</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="zhonggu">
-          <div class="ph"><img src="assets/case-14.jpg" alt="福天藏郡 · 中古风完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">14</span><span class="info"><span class="nm">福天藏郡 · 中古</span><span class="ln">旧时光的家具，住进新日子</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="jijian">
-          <div class="ph"><img src="assets/case-15.jpg" alt="江山境 · 极简完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">15</span><span class="info"><span class="nm">江山境</span><span class="ln">主卧的灯带，是夜里最后一句晚安</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yuanshu">
-          <div class="ph"><img src="assets/case-16.jpg" alt="桂语云峯 · 320㎡ 完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">16</span><span class="info"><span class="nm">桂语云峯 · 320㎡</span><span class="ln">格柜一盏灯，书与光都有了位置</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="jijian">
-          <div class="ph"><img src="assets/case-17.jpg" alt="天际湘府 · 完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">17</span><span class="info"><span class="nm">天际湘府</span><span class="ln">飘窗的地台，坐下来看云</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="jijian">
-          <div class="ph"><img src="assets/case-18.jpg" alt="江山壹号 · 完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">18</span><span class="info"><span class="nm">江山壹号</span><span class="ln">挑高的灯，点亮整个家的气场</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="yishi">
-          <div class="ph"><img src="assets/case-19.jpg" alt="嘉臣道 · 270㎡ 意式完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">19</span><span class="info"><span class="nm">嘉臣道 · 270㎡</span><span class="ln">黑金的书房，是思考的地方</span></span></figcaption>
-        </figure>
-        <figure class="case reveal" data-style="jijian">
-          <div class="ph"><img src="assets/case-20.jpg" alt="堤亚纳湾 · 神乐家 完工实景" loading="lazy" /></div>
-          <figcaption class="meta"><span class="no">20</span><span class="info"><span class="nm">堤亚纳湾 · 神乐家</span><span class="ln">光从上面落下来，落进生活</span></span></figcaption>
-        </figure>
-      </div>
     </div>
   </section>
 
@@ -865,29 +701,6 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
         it.style.transform = "perspective(800px) rotateY("+(px*5)+"deg) rotateX("+(-py*5)+"deg)";
       });
       it.addEventListener("mouseleave", function(){ it.style.transform=""; });
-    });
-  }
-
-  /* 案例风格筛选 */
-  var chips = doc.querySelectorAll(".f-chip");
-  var cases = doc.querySelectorAll(".case");
-  if (chips.length && cases.length){
-    chips.forEach(function(c){
-      c.addEventListener("click", function(){
-        if (c.classList.contains("active")) return;
-        chips.forEach(function(x){ x.classList.remove("active"); });
-        c.classList.add("active");
-        var f = c.getAttribute("data-filter");
-        cases.forEach(function(card){
-          var show = (f === "all" || card.getAttribute("data-style") === f);
-          card.style.display = "";
-          card.classList.add("hide");
-          setTimeout(function(){
-            card.classList.remove("hide");
-            if (!show) card.style.display = "none";
-          }, 260);
-        });
-      });
     });
   }
 
