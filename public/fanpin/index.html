@@ -13,8 +13,7 @@
   · 品牌口径以 00_品牌定位/品牌口径.json 为准（2026-08-14）。
   · 文案遵守写作禁忌：不写「高端/极致/第一」等空泛形容词，
     用具体空间、真实案例、材料与收口细节建立信任。
-  · 替换联系方式：搜索「TODO-CONTACT」即可定位，接入真实电话/
-    微信/二维码/表单服务。
+  · 咨询电话：156 7411 7703（tel:15674117703），已接入弹窗/页脚。
   ═══════════════════════════════════════════════════════════════
 -->
 
@@ -403,6 +402,12 @@ section{ position:relative; }
   font-size:15px; letter-spacing:.16em;
 }
 .finale .f-cta:hover{ background:var(--paper); }
+.finale .f-phone{
+  margin:24px auto 0; display:block; font-size:14px; letter-spacing:.12em;
+  color:var(--paper-dim); transition:color .35s;
+}
+.finale .f-phone span{ color:var(--brass); font-size:18px; letter-spacing:.03em; margin-left:10px; font-family:var(--serif); }
+.finale .f-phone:hover{ color:var(--paper); }
 
 /* 页脚 */
 footer.site-footer{
@@ -413,6 +418,8 @@ footer.site-footer{
 .footer-brand .cn{ font-family:var(--serif); font-size:20px; letter-spacing:.08em; }
 .footer-brand .en{ font-size:9px; letter-spacing:.42em; color:var(--paper-dim); margin-top:5px; }
 .footer-meta{ font-size:12px; color:var(--paper-dim); letter-spacing:.06em; text-align:right; line-height:2; }
+.footer-tel{ color:var(--paper); transition:color .35s; }
+.footer-tel:hover{ color:var(--brass); }
 
 /* ============================ 预约弹窗 ============================ */
 .modal{ position:fixed; inset:0; z-index:30000; display:grid; place-items:center; visibility:hidden; }
@@ -429,6 +436,8 @@ footer.site-footer{
 .modal-close:hover{ color:var(--paper); transform:rotate(90deg); }
 .modal-title{ font-family:var(--serif); font-size:26px; letter-spacing:.04em; }
 .modal-desc{ margin:10px 0 28px; font-size:13px; color:var(--paper-dim); }
+.modal-desc a{ color:var(--brass); }
+.modal-desc a:hover{ text-decoration:underline; }
 .field{ margin-bottom:18px; }
 .field label{ display:block; font-size:12px; letter-spacing:.2em; color:var(--paper-dim); margin-bottom:8px; }
 .field input{
@@ -787,6 +796,7 @@ footer.site-footer{
       </h2>
       <p class="f-sub reveal">私信发楼盘名和面积，帮你匹配同小区案例。事业繁忙、热爱生活的长沙业主，把装修交给一个负责到底的团队。</p>
       <button class="f-cta magnetic reveal" data-open-modal>预约咨询</button>
+      <a class="f-phone reveal" href="tel:15674117703">或直接致电<span>156 7411 7703</span></a>
     </div>
   </section>
 
@@ -800,6 +810,7 @@ footer.site-footer{
       <span class="en">FANPIN · FULL-CASE DESIGN</span>
     </div>
     <div class="footer-meta">
+      咨询电话：<a href="tel:15674117703" class="footer-tel">156 7411 7703</a><br />
       乐居集团 · 梵品品牌体系<br />
       © 2026 梵品全案设计 · 长沙
     </div>
@@ -812,16 +823,16 @@ footer.site-footer{
   <div class="modal-card">
     <button class="modal-close" data-close-modal aria-label="关闭">×</button>
     <h3 class="modal-title">预约全案咨询</h3>
-    <p class="modal-desc">留下楼盘名与面积，我们为你匹配同小区案例。</p>
+    <p class="modal-desc">留下楼盘名与面积，我们为你匹配同小区案例。或直接致电 <a href="tel:15674117703">156 7411 7703</a>。</p>
     <form id="modalForm">
       <div class="field"><label>楼盘名</label><input type="text" placeholder="例如：嘉臣道" required /></div>
       <div class="field"><label>建筑面积</label><input type="text" placeholder="例如：270㎡" required /></div>
-      <div class="field"><label>联系方式（选填）</label><input type="text" placeholder="<!-- TODO-CONTACT：电话 / 微信 / 邮箱 -->" /></div>
+      <div class="field"><label>联系方式（选填）</label><input type="text" placeholder="例如：你的手机号 / 微信" /></div>
       <button type="submit" class="modal-submit">提交咨询</button>
     </form>
     <div class="modal-thanks" id="modalThanks">
       <div class="t">已收到，谢谢你</div>
-      <div class="d">我们会根据你提供的信息，尽快为你匹配同小区案例。<br />（此处可接入表单服务 / 企业微信，见源码 TODO-CONTACT）</div>
+      <div class="d">我们会根据你提供的信息，尽快为你匹配同小区案例。<br />也可以直接致电 <a href="tel:15674117703">156 7411 7703</a>。</div>
     </div>
   </div>
 </div>
