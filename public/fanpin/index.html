@@ -347,6 +347,12 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
 .modal-desc{ margin:10px 0 26px; font-size:13px; color:var(--muted); line-height:1.8; }
 .modal-desc a{ color:var(--terra); }
 .modal-desc a:hover{ text-decoration:underline; }
+.wechat-num{
+  font-family:var(--num); font-size:clamp(28px,5vw,38px); letter-spacing:.04em; color:var(--ink);
+  text-align:center; padding:22px 0; margin-bottom:18px;
+  border:1px solid var(--line); border-radius:3px; background:var(--paper);
+}
+.modal-hint{ margin-top:14px; text-align:center; font-size:12px; color:var(--muted); letter-spacing:.04em; }
 .field{ margin-bottom:16px; }
 .field label{ display:block; font-size:12px; letter-spacing:.2em; color:var(--muted); margin-bottom:8px; }
 .field input{
@@ -417,7 +423,7 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
       <a href="#works" data-scroll>作品</a>
       <a href="#contact" data-scroll>联系</a>
     </nav>
-    <button class="nav-cta magnetic" data-open-modal>预约咨询</button>
+    <button class="nav-cta magnetic" data-open-modal>加微信咨询</button>
     <button class="burger" id="burger" aria-label="菜单"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -431,7 +437,7 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
       <h1 class="hero-title"><span class="mask"><span>梵品全案设计</span></span></h1>
       <p class="hero-slogan">献给事业繁忙、热爱生活的长沙业主，<br />卸下装修纷繁琐事，筑就心中理想居所。</p>
       <div class="hero-actions">
-        <button class="hero-btn magnetic" data-open-modal>预约咨询</button>
+        <button class="hero-btn magnetic" data-open-modal>加微信咨询</button>
         <a class="hero-link" href="#works" data-scroll>查看作品 ↗</a>
       </div>
     </div>
@@ -583,11 +589,10 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
       <div class="f-kicker reveal">FANPIN · CHANGSHA</div>
       <h2 class="f-title reveal" data-delay="80">梵品 · 长沙<br />从生活细节出发，从设计到交付。</h2>
       <div class="f-actions reveal" data-delay="140">
-        <button class="f-cta magnetic" data-open-modal>预约全案咨询</button>
+        <button class="f-cta magnetic" id="copyPhone" type="button">复制微信号</button>
         <div class="f-contact">
-          <span class="lbl">电话 · 微信同号</span>
+          <span class="lbl">微信号 · 与电话同号</span>
           <span class="val">156 7411 7703</span>
-          <button class="f-copy" id="copyPhone" type="button">复制号码</button>
         </div>
       </div>
     </div>
@@ -613,18 +618,11 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
   <div class="modal-bg" data-close-modal></div>
   <div class="modal-card">
     <button class="modal-close" data-close-modal aria-label="关闭">×</button>
-    <h3 class="modal-title">预约全案咨询</h3>
-    <p class="modal-desc">留下楼盘名与面积，我们为你匹配同小区案例。或致电 / 加微信（同号）<a href="tel:15674117703">156 7411 7703</a>。</p>
-    <form id="modalForm">
-      <div class="field"><label>楼盘名</label><input type="text" placeholder="例如：嘉臣道" required /></div>
-      <div class="field"><label>建筑面积</label><input type="text" placeholder="例如：270㎡" required /></div>
-      <div class="field"><label>联系方式（选填）</label><input type="text" placeholder="例如：你的手机号 / 微信" /></div>
-      <button type="submit" class="modal-submit">提交咨询</button>
-    </form>
-    <div class="modal-thanks" id="modalThanks">
-      <div class="t">已收到，谢谢你</div>
-      <div class="d">我们会根据你提供的信息，尽快为你匹配同小区案例。<br />也可致电或加微信（同号）<a href="tel:15674117703">156 7411 7703</a>。</div>
-    </div>
+    <h3 class="modal-title">添加微信咨询</h3>
+    <p class="modal-desc">微信号与电话同号，复制后到微信「添加朋友」粘贴搜索即可。</p>
+    <div class="wechat-num">156 7411 7703</div>
+    <button class="modal-submit" id="modalCopy" type="button">复制微信号</button>
+    <p class="modal-hint">复制后打开微信 → 添加朋友 → 粘贴搜索该号码</p>
   </div>
 </div>
 
@@ -795,29 +793,38 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
     });
   }
 
-  /* 复制号码 */
-  var copyBtn = doc.getElementById("copyPhone");
-  if (copyBtn && navigator.clipboard){
-    copyBtn.addEventListener("click", function(){
-      navigator.clipboard.writeText("15674117703").then(function(){
-        copyBtn.textContent = "已复制 ✓";
-        setTimeout(function(){ copyBtn.textContent = "复制号码"; }, 2000);
-      }).catch(function(){});
-    });
+  /* 复制微信号 */
+  function copyWechat(btn){
+    var txt = "15674117703";
+    function done(){
+      var o = btn.textContent;
+      btn.textContent = "已复制 ✓ 去微信添加";
+      btn.classList.add("copied");
+      setTimeout(function(){ btn.textContent = o; btn.classList.remove("copied"); }, 2400);
+    }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = txt; ta.setAttribute("readonly",""); ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); done(); }catch(e){}
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done).catch(fallback);
+    } else { fallback(); }
   }
+  ["copyPhone","modalCopy"].forEach(function(id){
+    var b = doc.getElementById(id);
+    if (b) b.addEventListener("click", function(){ copyWechat(b); });
+  });
 
   /* 弹窗 */
-  var modal=doc.getElementById("modal"), form=doc.getElementById("modalForm"), thanks=doc.getElementById("modalThanks");
+  var modal=doc.getElementById("modal");
   function openModal(){ modal.classList.add("open"); modal.setAttribute("aria-hidden","false"); body.style.overflow="hidden"; }
   function closeModal(){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); body.style.overflow=""; }
   doc.querySelectorAll("[data-open-modal]").forEach(function(b){ b.addEventListener("click", openModal); });
   doc.querySelectorAll("[data-close-modal]").forEach(function(b){ b.addEventListener("click", closeModal); });
   win.addEventListener("keydown", function(e){ if(e.key==="Escape") closeModal(); });
-  form.addEventListener("submit", function(e){
-    e.preventDefault(); form.style.display="none"; thanks.style.display="block";
-    setTimeout(closeModal, 2600);
-    setTimeout(function(){ form.style.display="block"; thanks.style.display="none"; form.reset(); }, 3200);
-  });
 
   /* 移动端菜单 */
   var burger = doc.getElementById("burger");
