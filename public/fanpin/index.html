@@ -266,6 +266,25 @@ body.is-loaded .hero-link{ opacity:1; transform:none; }
 .showroom-copy .kicker{ display:block; margin-bottom:20px; }
 .showroom-copy .sec-title{ margin-bottom:24px; }
 
+/* ============================ 作品实景 ============================ */
+.works{ background:var(--paper); overflow:hidden; }
+.works-head-text{ display:flex; align-items:baseline; justify-content:space-between; gap:20px; margin-top:clamp(24px,3vw,36px); flex-wrap:wrap; }
+.works-head-text .note{ color:var(--muted); font-size:13px; letter-spacing:.06em; }
+.h-stage{ position:relative; margin-top:clamp(28px,3.4vw,40px); }
+.h-track{ display:flex; gap:clamp(16px,2.4vw,28px); overflow-x:auto; scroll-snap-type:x mandatory; padding:0 5vw 26px; cursor:grab; scrollbar-width:none; }
+.h-track::-webkit-scrollbar{ display:none; }
+.h-track.dragging{ cursor:grabbing; scroll-snap-type:none; }
+.h-panel{ flex:0 0 min(78vw, 860px); scroll-snap-align:center; }
+.h-img{ overflow:hidden; background:var(--paper-2); aspect-ratio:4/3; }
+.h-img img{ width:100%; height:100%; object-fit:cover; transition:transform 1s var(--ease-out); }
+.h-panel:hover .h-img img{ transform:scale(1.05); }
+.h-panel figcaption{ display:flex; flex-direction:column; padding-top:14px; border-top:1px solid var(--line); margin-top:14px; }
+.h-panel .nm{ color:var(--muted); font-size:13px; letter-spacing:.06em; }
+.h-panel .ln{ margin-top:6px; font-family:var(--serif); font-size:clamp(18px,2vw,24px); line-height:1.4; color:var(--ink); }
+.h-progress{ height:2px; background:var(--line); margin:6px 5vw 0; position:relative; }
+.h-progress span{ position:absolute; left:0; top:0; height:100%; width:0; background:var(--terra); transition:width .1s linear; }
+@media (max-width:640px){ .h-panel{ flex-basis:88vw; } }
+
 /* ============================ 结尾 CTA ============================ */
 .finale{ background:var(--terra-deep); color:#fff; text-align:center; padding:clamp(90px,12vw,150px) 0; }
 .finale .f-kicker{ color:rgba(255,255,255,.68); font-size:12px; letter-spacing:.4em; }
@@ -387,6 +406,7 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
       <a href="#concept" data-scroll>理念</a>
       <a href="#delivery" data-scroll>交付</a>
       <a href="#craft" data-scroll>木作</a>
+      <a href="#works" data-scroll>实景</a>
       <a href="#contact" data-scroll>联系</a>
     </nav>
     <button class="nav-cta magnetic" data-open-modal>加微信咨询</button>
@@ -404,6 +424,7 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
       <p class="hero-slogan">献给事业繁忙、热爱生活的长沙业主，<br />卸下装修纷繁琐事，筑就心中理想居所。</p>
       <div class="hero-actions">
         <button class="hero-btn magnetic" data-open-modal>加微信咨询</button>
+        <a class="hero-link" href="#works" data-scroll>查看实景 ↗</a>
       </div>
     </div>
   </section>
@@ -491,6 +512,58 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
         <p class="sec-body">在真实尺度里看空间、木作与材质，先感受，再决定。</p>
       </div>
       <div class="img-reveal"><img src="assets/showroom.jpg" alt="梵品长沙洋湖店展厅" /></div>
+    </div>
+  </section>
+
+  <!-- 作品实景 -->
+  <section class="section works" id="works">
+    <div class="container">
+      <div class="folio reveal"><span>实景 / PROJECTS</span><span class="no">01</span></div>
+      <div class="works-head-text reveal" data-delay="60">
+        <h2 class="sec-title">完工实景</h2>
+        <p class="note">横向滑动 · 长沙，真实的家</p>
+      </div>
+    </div>
+    <div class="h-stage reveal">
+      <div class="h-track" id="hTrack">
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-01.jpg" alt="堤亚纳湾 · 挑空客厅" loading="lazy" /></div>
+          <figcaption><span class="nm">堤亚纳湾 · 320㎡复式 · 极简</span><span class="ln">光从上面落下来，落进生活</span></figcaption>
+        </figure>
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-02.jpg" alt="堤亚纳湾 · 俯视客厅" loading="lazy" /></div>
+          <figcaption><span class="nm">堤亚纳湾 · 极简</span><span class="ln">俯视，是对尺度的确认</span></figcaption>
+        </figure>
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-03.jpg" alt="堤亚纳湾 · 厨房" loading="lazy" /></div>
+          <figcaption><span class="nm">堤亚纳湾 · 极简</span><span class="ln">厨房的光，落在手边</span></figcaption>
+        </figure>
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-04.jpg" alt="堤亚纳湾 · 傍晚" loading="lazy" /></div>
+          <figcaption><span class="nm">堤亚纳湾 · 极简</span><span class="ln">傍晚的灯，先于夜幕亮起</span></figcaption>
+        </figure>
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-05.jpg" alt="堤亚纳湾 · 餐厅" loading="lazy" /></div>
+          <figcaption><span class="nm">堤亚纳湾 · 极简</span><span class="ln">一桌一椅，一餐一饭</span></figcaption>
+        </figure>
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-06.jpg" alt="堤亚纳湾 · 卧室" loading="lazy" /></div>
+          <figcaption><span class="nm">堤亚纳湾 · 极简</span><span class="ln">卧室，只留安静</span></figcaption>
+        </figure>
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-07.jpg" alt="嘉臣道 · 客餐厅" loading="lazy" /></div>
+          <figcaption><span class="nm">嘉臣道 · 270㎡ · 意式</span><span class="ln">意式，是低调的讲究</span></figcaption>
+        </figure>
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-08.jpg" alt="嘉臣道 · 过道" loading="lazy" /></div>
+          <figcaption><span class="nm">嘉臣道 · 意式</span><span class="ln">过道的灯带，把夜引向深处</span></figcaption>
+        </figure>
+        <figure class="h-panel">
+          <div class="h-img"><img src="assets/w-09.jpg" alt="嘉臣道 · 衣帽间" loading="lazy" /></div>
+          <figcaption><span class="nm">嘉臣道 · 意式</span><span class="ln">衣帽间，是秩序感的注脚</span></figcaption>
+        </figure>
+      </div>
+      <div class="h-progress"><span id="hBar"></span></div>
     </div>
   </section>
 
@@ -702,6 +775,26 @@ footer.site-footer{ background:var(--green-deep); color:var(--paper); padding:46
       });
       it.addEventListener("mouseleave", function(){ it.style.transform=""; });
     });
+  }
+
+  /* 横向实景滚动 */
+  var hTrack = doc.getElementById("hTrack");
+  if (hTrack){
+    var hBar = doc.getElementById("hBar");
+    var dragging=false, startX=0, startScroll=0;
+    hTrack.addEventListener("mousedown", function(e){ dragging=true; startX=e.pageX; startScroll=hTrack.scrollLeft; hTrack.classList.add("dragging"); });
+    win.addEventListener("mousemove", function(e){ if(dragging){ hTrack.scrollLeft = startScroll - (e.pageX - startX); } });
+    win.addEventListener("mouseup", function(){ dragging=false; hTrack.classList.remove("dragging"); });
+    hTrack.addEventListener("wheel", function(e){
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)){ e.preventDefault(); hTrack.scrollLeft += e.deltaY; }
+    }, { passive:false });
+    function hProgress(){
+      var max = hTrack.scrollWidth - hTrack.clientWidth;
+      hBar.style.width = (max>0 ? (hTrack.scrollLeft/max)*100 : 0) + "%";
+    }
+    hTrack.addEventListener("scroll", hProgress);
+    win.addEventListener("resize", hProgress);
+    hProgress();
   }
 
   /* 复制微信号 */
