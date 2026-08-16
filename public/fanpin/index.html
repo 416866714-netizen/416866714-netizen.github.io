@@ -141,12 +141,13 @@ header.nav.scrolled .burger span{ background:var(--ink); }
 /* ============================ 作品 ============================ */
 .works{ border-top:1px solid var(--line); }
 .work{ display:block; margin-top:clamp(48px,6vw,80px); }
-.work .ph{ overflow:hidden; background:#eceae3; }
-.work .ph img{ width:100%; height:clamp(340px,62vw,720px); object-fit:cover; transition:transform 1.2s var(--ease-out, cubic-bezier(.19,1,.22,1)); }
+.work .ph{ overflow:hidden; background:#eceae3; max-width:880px; margin:0 auto; }
+.work .ph img{ width:100%; aspect-ratio:16/10; object-fit:cover; transition:transform 1.2s var(--ease-out, cubic-bezier(.19,1,.22,1)); }
 .work:hover .ph img{ transform:scale(1.03); }
 .work .meta{
   display:flex; align-items:baseline; gap:34px; flex-wrap:wrap;
-  padding-top:22px; border-top:1px solid var(--ink); margin-top:22px;
+  max-width:880px; margin:22px auto 0;
+  padding-top:22px; border-top:1px solid var(--ink);
 }
 .work .meta .no{ font-family:var(--num); font-size:15px; color:var(--terra); }
 .work .meta .info{ display:flex; flex-direction:column; }
@@ -304,8 +305,8 @@ footer.site-footer{ background:var(--green); color:var(--paper); padding:52px 0;
       </a>
 
       <a class="work reveal">
-        <div class="ph"><img src="assets/w-04.jpg" alt="堤亚纳湾 · 傍晚" loading="lazy" /></div>
-        <div class="meta"><span class="no">03</span><span class="info"><span class="nm">堤亚纳湾 · 极简 · 傍晚</span><span class="ln">傍晚的灯，先于夜幕亮起</span></span></div>
+        <div class="ph"><img src="assets/w-04.jpg" alt="堤亚纳湾 · 俯视客厅" loading="lazy" /></div>
+        <div class="meta"><span class="no">03</span><span class="info"><span class="nm">堤亚纳湾 · 极简 · 俯视</span><span class="ln">俯视，是对尺度的确认</span></span></div>
       </a>
 
       <span class="more reveal">更多作品，到店或微信看完整实景 ↗</span>
